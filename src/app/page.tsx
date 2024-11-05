@@ -185,7 +185,7 @@ export default function Home() {
             <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl text-center">
               At DaXSome, we are committed to providing accessible, localized
               data for academia, government, and industry to drive insights and
-              impactful decisions. Our goal is to empower Ghana's data-driven
+              impactful decisions. Our goal is to empower Ghana&apos;s data-driven
               future through high-quality, comprehensive datasets and innovative
               open source projects.
             </p>
@@ -279,7 +279,7 @@ export default function Home() {
             <span className="text-xl font-bold">DaXSome</span>
           </div>
           <p className="text-sm text-gray-600 mt-4 md:mt-0">
-            Empowering Ghana's data-driven future through open collaboration and
+            Empowering Ghana&apos;s data-driven future through open collaboration and
             innovation. &copy; 2024 DaXSome
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
