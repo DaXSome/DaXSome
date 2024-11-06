@@ -86,7 +86,7 @@ export default function DatasetsPageComponent() {
       <header className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Explore Our Datasets</h1>
         <p className="text-xl text-muted-foreground">
-          Discover DaXSome's curated datasets
+          Discover DaXSome&apos;s curated datasets
         </p>
       </header>
 
