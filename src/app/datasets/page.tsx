@@ -198,11 +198,13 @@ export default function DatasetsPageComponent() {
                       <p>{selectedDataset?.useCases}</p>
                     </div>
                   </div>
-                  <DialogFooter>
-                    <Link href={selectedDataset?.assetUrl!}>
-                      <Button>Download</Button>
-                    </Link>
-                  </DialogFooter>
+                  {selectedDataset?.assetUrl && (
+                    <DialogFooter>
+                      <Link href={selectedDataset?.assetUrl}>
+                        <Button>Download</Button>
+                      </Link>
+                    </DialogFooter>
+                  )}
                 </DialogContent>
               </Dialog>
             </CardFooter>
