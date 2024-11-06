@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 const datasets = [
   {
@@ -45,6 +46,8 @@ const datasets = [
     fullDescription:
       "This dataset provides comprehensive information on gained admission to KNUST for the 2023-2024 academic year. It includes data on admission programmes, location, and more.",
     useCases: "Admission planning, educational research, policy evaluation",
+    assetUrl:
+      "https://firebasestorage.googleapis.com/v0/b/exacheer-c9099.appspot.com/o/DaXSome%2Fdatasets%2Fust_admission_23_24.csv?alt=media&token=d433da53-e306-429c-b2f9-ac54c7bdf62c",
   },
   {
     name: "E-Commerce products dataset",
@@ -56,6 +59,8 @@ const datasets = [
     fullDescription:
       "Product data from multiple e-commerce sites. Includes product name, price, category, and more.",
     useCases: "E-commerce analysis, product recommendation",
+    assetUrl:
+      "https://firebasestorage.googleapis.com/v0/b/exacheer-c9099.appspot.com/o/DaXSome%2Fdatasets%2Fcedi-search.csv?alt=media&token=b5fe5fbc-aa0d-46ea-bdfd-a505af69348b",
   },
 ];
 
@@ -194,7 +199,9 @@ export default function DatasetsPageComponent() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Download</Button>
+                    <Link href={selectedDataset?.assetUrl!}>
+                      <Button>Download</Button>
+                    </Link>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
