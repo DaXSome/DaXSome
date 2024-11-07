@@ -50,6 +50,20 @@ const datasets = [
       "https://firebasestorage.googleapis.com/v0/b/exacheer-c9099.appspot.com/o/DaXSome%2Fdatasets%2Fust_admission_23_24.csv?alt=media&token=d433da53-e306-429c-b2f9-ac54c7bdf62c",
   },
   {
+    name: "KNUST 2021-2022 Admission",
+    category: "Education",
+    description:
+      "Data on gained admissions to KNUST for the 2021-2022 academic year.",
+    tags: ["Education", "KNUST", "University"],
+    featured: true,
+    accessType: "Free",
+    fullDescription:
+      "This dataset provides comprehensive information on gained admission to KNUST for the 2021-2022 academic year. It includes data on admission programmes, location, and more.",
+    useCases: "Admission planning, educational research, policy evaluation",
+    assetUrl:
+      "https://firebasestorage.googleapis.com/v0/b/exacheer-c9099.appspot.com/o/DaXSome%2Fdatasets%2Fust_admission_21_22.csv?alt=media&token=bd080917-f896-41af-9a00-49c13bc6bb85",
+  },
+  {
     name: "E-Commerce products dataset",
     category: "E-commerce",
     description: "Curated list of products from multiple e-commerce sites",
