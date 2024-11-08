@@ -58,7 +58,7 @@ export default function RootLayout({
       >
         <header className="sticky top-0 z-50 w-full border-b bg-white">
           <div className="container flex h-16 items-center justify-between">
-            <Link className="flex items-center space-x-2" href="#">
+            <Link className="flex items-center space-x-2" href="/">
               <Database className="h-6 w-6 text-green-600" />
               <span className="text-xl font-bold">DaXSome</span>
             </Link>
