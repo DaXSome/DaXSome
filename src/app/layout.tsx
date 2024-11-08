@@ -8,23 +8,23 @@ import "./globals.css";
 const navLinks = [
   {
     label: "About Us",
-    href: "#about",
+    href: "/#about",
   },
   {
     label: "Data Services",
-    href: "#services",
+    href: "/#services",
   },
   {
     label: "Clients",
-    href: "#clients",
+    href: "/#clients",
   },
   {
     label: "Open Source",
-    href: "#opensource",
+    href: "/#opensource",
   },
   {
     label: "Contact Us",
-    href: "#contact",
+    href: "/#contact",
   },
 ];
 
