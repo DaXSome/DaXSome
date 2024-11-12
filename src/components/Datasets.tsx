@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -21,41 +20,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRightIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-
-type Dataset = {
-  updated_at: string;
-  name: string;
-  category: string;
-  tags: string[];
-  access_type: string;
-  full_description: string;
-  use_cases: string;
-  asset_url: string;
-  description: string;
-  id: string;
-};
+import { DatasetMeta } from "@/types";
+import { parseDatasetSlug } from "@/utils";
 
 interface Props {
-  datasets: Dataset[];
+  datasets: DatasetMeta[];
 }
 
 export default function Datasets({ datasets }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedAccessType, setSelectedAccessType] = useState("");
-  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
 
   const filteredDatasets =
     selectedCategory === "all"
@@ -136,66 +114,36 @@ export default function Datasets({ datasets }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {filteredDatasets.map((dataset) => (
-          <Card key={dataset.id} className={"border-primary"}>
-            <CardHeader>
-              <CardTitle>{dataset.name}</CardTitle>
-              <CardDescription>{dataset.category}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">{dataset.description}</p>
-              <div className="flex flex-wrap gap-2">
-                {dataset.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Badge
-                variant={
-                  dataset.access_type === "Free" ? "default" : "destructive"
-                }
-              >
-                {dataset.access_type}
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Updated: {new Date(dataset.updated_at).toLocaleDateString()}
-              </span>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedDataset(dataset)}
-                  >
-                    View Details <ChevronRightIcon className="ml-2 h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[625px]">
-                  <DialogHeader>
-                    <DialogTitle>{selectedDataset?.name}</DialogTitle>
-                    <DialogDescription>
-                      {selectedDataset?.category}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <p>{selectedDataset?.full_description}</p>
-                    <div>
-                      <h4 className="font-semibold mb-2">Use Cases:</h4>
-                      <p>{selectedDataset?.use_cases}</p>
-                    </div>
-                  </div>
-                  {selectedDataset?.asset_url && (
-                    <DialogFooter>
-                      <Link href={selectedDataset?.asset_url}>
-                        <Button>Download</Button>
-                      </Link>
-                    </DialogFooter>
-                  )}
-                </DialogContent>
-              </Dialog>
-            </CardFooter>
-          </Card>
+          <Link
+            key={dataset._id}
+            href={`/datasets/${parseDatasetSlug(dataset.name)}`}
+          >
+            <Card className={"border-primary"}>
+              <CardHeader>
+                <CardTitle>{dataset.name}</CardTitle>
+                <CardDescription>{dataset.category}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-4">{dataset.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {dataset.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Badge
+                  variant={
+                    dataset.access_type === "Free" ? "default" : "destructive"
+                  }
+                >
+                  {dataset.access_type}
+                </Badge>
+              </CardFooter>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

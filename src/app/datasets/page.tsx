@@ -1,16 +1,11 @@
 import Datasets from "@/components/Datasets";
+import { HOST_URL } from "@/utils";
 
 export const revalidate = 86400; //A Day
+export const dynamic = "force-dynamic"
 
 export default async function Page() {
-  const API_KEY = process.env.DB_API_KEY as string;
-
-  const res = await fetch(process.env.DB_HOST_URL as string, {
-    headers: {
-      "Content-Type": "application/json",
-      apikey: API_KEY,
-    },
-  });
+  const res = await fetch(`${HOST_URL}/api/datasets`,);
 
   const datasets = await res.json();
 
