@@ -14,33 +14,39 @@ export class DatasetsService {
   async GetDataset(name: string) {
     const datasetsConnection = await connectToDb();
 
-    const dataset = await datasetsConnection
-      .model("datasets", datasetsSchema)
-      .findOne({ name });
+    const datasetModel =
+      datasetsConnection.models.datasets ||
+      datasetsConnection.model("datasets", datasetsSchema);
+
+    const dataset = await datasetModel.findOne({ name });
 
     if (!dataset) return;
 
     const secondaryDataConn = await connectToDb(dataset.database);
 
-    const metaDataModel = secondaryDataConn.model(
-      "meta_data",
-      new mongoose.Schema(
-        {
-          updated_at: {
-            type: String,
+    const metaDataModel =
+      secondaryDataConn.models.meta_data ||
+      secondaryDataConn.model(
+        "meta_data",
+        new mongoose.Schema(
+          {
+            updated_at: {
+              type: String,
+            },
           },
-        },
-        { collection: "meta_data" },
-      ),
-    );
+          { collection: "meta_data" },
+        ),
+      );
 
-    const sampleModel = secondaryDataConn.model(
-      dataset.sample_collection,
-      new mongoose.Schema(
-        {},
-        { collection: dataset.sample_collection, strict: false },
-      ),
-    );
+    const sampleModel =
+      secondaryDataConn.models[dataset.sample_collection] ||
+      secondaryDataConn.model(
+        dataset.sample_collection,
+        new mongoose.Schema(
+          {},
+          { collection: dataset.sample_collection, strict: false },
+        ),
+      );
 
     const [metaData, sample, totalDocuments] = await Promise.all([
       await metaDataModel.findOne(),
@@ -51,7 +57,7 @@ export class DatasetsService {
     const fullDataset = {
       ...dataset.toObject(),
       sample,
-      updated_at: metaData? metaData.updated_at : "Unknown",
+      updated_at: metaData ? metaData.updated_at : "Unknown",
       format: ["CSV", "JSON"],
       total: totalDocuments,
     };
