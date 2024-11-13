@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server:deploy": "vercel deploy --prod --logs --force"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
