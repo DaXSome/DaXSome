@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
 
 const navLinks = [
   {
@@ -56,6 +57,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextTopLoader color="green"/>
+
         <header className="sticky top-0 z-50 w-full border-b bg-white">
           <div className="container flex h-16 items-center justify-between">
             <Link className="flex items-center space-x-2" href="/">
