@@ -58,7 +58,7 @@ export class DatasetsService {
       ...dataset.toObject(),
       sample,
       updated_at: metaData ? metaData.updated_at : "Unknown",
-      format: ["CSV", "JSON"],
+      format: ["CSV"],
       total: totalDocuments,
     };
 

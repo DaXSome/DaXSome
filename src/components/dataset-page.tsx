@@ -27,6 +27,18 @@ interface Props {
 export function DatasetView({ dataset }: Props) {
   const headers = Object.keys(dataset.sample[0]);
 
+  const handleDownload = () => {
+    const a = document.createElement("a");
+
+    a.href = dataset.asset_url
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
@@ -100,20 +112,11 @@ export function DatasetView({ dataset }: Props) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button className="w-full sm:w-auto">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download as JSON
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Download the full dataset in JSON format</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button className="w-full sm:w-auto" variant="outline">
+                <Button
+                  onClick={handleDownload}
+                  className="w-full sm:w-auto"
+                  variant="outline"
+                >
                   <Download className="mr-2 h-4 w-4" />
                   Download as CSV
                 </Button>
