@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const navLinks = [
   {
@@ -12,7 +13,7 @@ const navLinks = [
     href: "/#about",
   },
   {
-    label: "Data Services",
+    label: "Data ServiceG-BG5DCFML0Bs",
     href: "/#services",
   },
   {
@@ -57,7 +58,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextTopLoader color="green"/>
+        <NextTopLoader color="green" />
 
         <header className="sticky top-0 z-50 w-full border-b bg-white">
           <div className="container flex h-16 items-center justify-between">
@@ -120,6 +121,10 @@ export default function RootLayout({
           </div>
         </footer>
       </body>
+
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId="G-BG5DCFML0B" />
+      )}
     </html>
   );
 }

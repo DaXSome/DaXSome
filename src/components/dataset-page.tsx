@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { DatasetInfo } from "@/types";
+import { sendGAEvent } from "@next/third-parties/google";
 
 interface Props {
   dataset: DatasetInfo;
@@ -28,9 +29,11 @@ export function DatasetView({ dataset }: Props) {
   const headers = Object.keys(dataset.sample[0]);
 
   const handleDownload = () => {
+    sendGAEvent({ event: "download", value: dataset.name });
+
     const a = document.createElement("a");
 
-    a.href = dataset.asset_url
+    a.href = dataset.asset_url;
 
     document.body.appendChild(a);
 
