@@ -25,31 +25,35 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   datasets: DatasetMeta[];
+  categories: string[];
 }
 
-export default function Datasets({ datasets }: Props) {
+export default function Datasets({ datasets, categories }: Props) {
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const selectedCategory = params.get("category") || "All";
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedAccessType, setSelectedAccessType] = useState("");
 
+  const handleCategoryChange = (category: string) => {
+    router.push(`?category=${category}`);
+  };
+
   const filteredDatasets =
-    selectedCategory === "all"
+    selectedCategory === "All"
       ? datasets
       : datasets.filter(
           (dataset) =>
             dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (selectedCategory === "" ||
-              dataset.category === selectedCategory) &&
             (selectedAccessType === "" ||
               dataset.access_type === selectedAccessType),
         );
-
-  const categories = Array.from(
-    new Set(datasets.map((dataset) => dataset.category)),
-  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -77,14 +81,14 @@ export default function Datasets({ datasets }: Props) {
               />
             </div>
           </div>
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Category</SelectLabel>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="All">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}

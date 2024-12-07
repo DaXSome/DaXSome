@@ -1,14 +1,27 @@
 import mongoose from "mongoose";
 import connectToDb from "../config/connectDb";
 import { datasetsSchema } from "../models/datasets";
+import { categoriesSchema } from "../models/categories";
 
 export class DatasetsService {
-  async GetDatasets() {
+  async GetDatasets(category: string | null) {
     const connection = await connectToDb();
 
-    const datasets = await connection.model("datasets", datasetsSchema).find();
+    const query = connection.model("datasets", datasetsSchema);
 
-    return datasets;
+    let datasets;
+
+    if (category && category !== "All" && category !== "undefined") {
+      datasets = await query.find({ category });
+    } else {
+      datasets = await query.find();
+    }
+
+    const categories = (
+      await connection.model("categories", categoriesSchema).find()
+    ).map((category) => category.category);
+
+    return { datasets, categories };
   }
 
   async GetDataset(name: string) {
