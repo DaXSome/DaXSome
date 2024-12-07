@@ -5,11 +5,11 @@ import { Metadata } from "next";
 export const revalidate = 86400; //A Day
 export const dynamic = "force-dynamic";
 
-interface SearchParamsProps {
-  searchParams: {
+type SearchParamsProps = {
+  searchParams: Promise<{
     category: string;
-  };
-}
+  }>;
+};
 
 export const generateMetadata = async ({ searchParams }: SearchParamsProps) => {
   const { category } = await searchParams;
@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: SearchParamsProps) {
 
   const res = await fetch(`${HOST_URL}/api/datasets?category=${category}`);
 
-  const {datasets, categories} = await res.json();
+  const { datasets, categories } = await res.json();
 
   return <Datasets datasets={datasets} categories={categories} />;
 }
