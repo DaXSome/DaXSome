@@ -13,7 +13,7 @@ const navLinks = [
     href: "/#about",
   },
   {
-    label: "Data ServiceG-BG5DCFML0Bs",
+    label: "Data Services",
     href: "/#services",
   },
   {
