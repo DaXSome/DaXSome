@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "knust-admission-analytics.owbird.site",
+      },
+    ],
+  }
 };
 
 export default nextConfig;
