@@ -28,6 +28,10 @@ const navLinks = [
     label: "Contact Us",
     href: "/#contact",
   },
+  {
+    label: "Visualizations",
+    href: "/viz",
+  },
 ];
 
 const geistSans = localFont({
