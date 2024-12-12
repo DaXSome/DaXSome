@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -136,8 +137,8 @@ export default function KNUSTAdmissionPage() {
 
   const sortedSelectedCourses: typeof selectedCourses = [];
 
-  for (let course of selectedCourses) {
-    const sorted = Object.entries(course)
+  for (const course of selectedCourses) {
+    const sorted = (Object.entries(course) as any[])
       .sort(([, a], [, b]) => (b as any) - (a as any))
       // Year is first
       .slice(0, 6)
