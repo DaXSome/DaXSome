@@ -63,7 +63,7 @@ export class DatasetsService {
 
     const [metaData, sample, totalDocuments] = await Promise.all([
       await metaDataModel.findOne(),
-      await sampleModel.find().limit(20),
+      await sampleModel.find().limit(20).select({ _id: 0 }),
       await sampleModel.countDocuments(),
     ]);
 
