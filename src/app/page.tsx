@@ -122,8 +122,8 @@ export default function Home() {
                     Explore Our Data
                   </Button>
                 </Link>
-                <Link href="#opensource">
-                  <Button variant="outline">View Open Source Projects</Button>
+                <Link href="/viz">
+                  <Button variant="outline">View Dataset Visualizations</Button>
                 </Link>
               </div>
             </div>
