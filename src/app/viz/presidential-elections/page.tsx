@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import AppSkeleton from "@/components/AppSkeleton";
+import { colors } from "@/utils";
 
 interface Dataset {
   regional: Record<string, number>;
@@ -66,63 +67,6 @@ export default function PresidentialElectionsPage() {
     year,
     votes: Object.values(datasets[year]["regional"]).reduce((acc, total) => acc +total, 0),
   }));
-
-  const colors = [
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#ff8042",
-    "#d0ed57",
-    "#8dd1e1",
-    "#a4de6c",
-    "#d084d8",
-    "#f3a683",
-    "#ff6f61",
-    "#2ec4b6",
-    "#e71d36",
-    "#011627",
-    "#ff9f1c",
-    "#6a4c93",
-    "#d90368",
-    "#bc5090",
-    "#ff6361",
-    "#ffa600",
-    "#003f5c",
-    "#7a5195",
-    "#ef5675",
-    "#ffa07a",
-    "#4682b4",
-    "#b0e57c",
-    "#ffb3ba",
-    "#bae1ff",
-    "#1abc9c",
-    "#3498db",
-    "#9b59b6",
-    "#e67e22",
-    "#e74c3c",
-    "#2ecc71",
-    "#f39c12",
-    "#16a085",
-    "#27ae60",
-    "#2980b9",
-    "#8e44ad",
-    "#f1c40f",
-    "#d35400",
-    "#c0392b",
-    "#7f8c8d",
-    "#34495e",
-    "#2c3e50",
-    "#5dade2",
-    "#ec7063",
-    "#af7ac5",
-    "#45b39d",
-    "#f5cba7",
-    "#5d6d7e",
-    "#eb984e",
-    "#abebc6",
-    "#85c1e9",
-    "#f1948a",
-  ];
 
   if (years.length === 0) return <AppSkeleton />;
 
