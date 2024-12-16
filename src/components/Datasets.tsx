@@ -121,14 +121,15 @@ export default function Datasets({ datasets, categories }: Props) {
           <Link
             key={dataset._id}
             href={`/datasets/${parseDatasetSlug(dataset.name)}`}
+            className="h-full"
           >
-            <Card className={"border-primary"}>
+            <Card className="border-primary h-full flex flex-col">
               <CardHeader>
-                <CardTitle>{dataset.name}</CardTitle>
+                <CardTitle className="line-clamp-2">{dataset.name}</CardTitle>
                 <CardDescription>{dataset.category}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="mb-4">{dataset.description}</p>
+              <CardContent className="flex-grow">
+                <p className="mb-4 line-clamp-3">{dataset.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {dataset.tags.map((tag) => (
                     <Badge key={tag} variant="secondary">
@@ -137,7 +138,7 @@ export default function Datasets({ datasets, categories }: Props) {
                   ))}
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex justify-between mt-auto">
                 <Badge
                   variant={
                     dataset.access_type === "Free" ? "default" : "destructive"
