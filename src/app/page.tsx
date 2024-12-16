@@ -17,23 +17,30 @@ import {
 import Link from "next/link";
 
 export default function Home() {
-  const openSourceInitiatives = [
+  const products = [
+    {
+      link: "https://cedi-search.vercel.app",
+      icon: Search,
+      name: "Cedi Search",
+      desc: "An AI-powered e-commerce search engine optimized for the Ghanaian market, enhancing online shopping experiences.",
+      cta: "Search Now",
+    },
     {
       icon: BarChart,
-      link: "https://github.com/DaXSome/awesome-github-insights",
+      link: "https://github-insights.owbird.site",
       name: "Awesome-Github-Insights",
       desc: "Gain valuable insights into GitHub user accounts, enhancing your understanding of developer activity and contributions.",
-      cta: "Explore Project",
+      cta: "Get insights",
     },
     {
       icon: GraduationCap,
-      link: "https://github.com/DaXSome/Admission-Analytics-KNUST",
+      link: "/viz/knust-admission",
       name: "KNUST Admission Analytics",
       desc: "Analyze and visualize admission data for Kwame Nkrumah University of Science and Technology, providing meaningful insights into educational trends.",
       cta: "View Analytics",
     },
     {
-      link: "https://github.com/DaXSome/Gh-Friends",
+      link: "https://gh-friends.vercel.app/",
       icon: Network,
       name: "Gh Friends",
       desc: "Visualize the network of connections between GitHub users in Ghana, fostering collaboration and community growth.",
@@ -45,13 +52,6 @@ export default function Home() {
       name: "Chat Analysis Tool",
       desc: "Analyze WhatsApp and Telegram chats to visualize most used words, texting patterns, and sentiment analysis of conversations.",
       cta: "Try Analysis",
-    },
-    {
-      link: "https://github.com/Cedi-Search",
-      icon: Search,
-      name: "Cedi Search",
-      desc: "An AI-powered e-commerce search engine optimized for the Ghanaian market, enhancing online shopping experiences.",
-      cta: "Search Now",
     },
     {
       link: "https://github.com/DaXSome",
@@ -200,15 +200,15 @@ export default function Home() {
           </div>
         </section>
         <section
-          id="opensource"
+          id="products"
           className="w-full py-12 md:py-24 lg:py-32 bg-red-50"
         >
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
-              Open Source Initiatives
+              Products
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {openSourceInitiatives.map((proj) => (
+              {products.map((proj) => (
                 <Link key={proj.name} href={proj.link}>
                   <Card>
                     <CardContent className="flex flex-col items-center space-y-4 p-6">

@@ -21,8 +21,8 @@ const navLinks = [
     href: "/#clients",
   },
   {
-    label: "Open Source",
-    href: "/#opensource",
+    label: "Products",
+    href: "/#products",
   },
   {
     label: "Contact Us",
