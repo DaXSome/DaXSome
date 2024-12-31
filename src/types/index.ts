@@ -7,6 +7,7 @@ export type DatasetInfo = Dataset & {
   format: string[];
   sample: { [key: string]: string | number }[];
   total: number;
+  status: "published" | "pending";
 };
 
 export type DatasetMeta = Omit<DatasetInfo, "size" | "format" | "sample">;

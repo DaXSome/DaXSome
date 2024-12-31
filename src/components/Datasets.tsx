@@ -117,39 +117,53 @@ export default function Datasets({ datasets, categories }: Props) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {filteredDatasets.map((dataset) => (
-          <Link
-            key={dataset._id}
-            href={`/datasets/${parseDatasetSlug(dataset.name)}`}
-            className="h-full"
-          >
-            <Card className="border-primary h-full flex flex-col">
-              <CardHeader>
-                <CardTitle className="line-clamp-2">{dataset.name}</CardTitle>
-                <CardDescription>{dataset.category}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="mb-4 line-clamp-3">{dataset.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {dataset.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
+        {filteredDatasets.map((dataset) => {
+          const isPublished = dataset.status === "published";
+
+          return (
+            <Link
+              key={dataset._id}
+              href={
+                !isPublished
+                  ? "#"
+                  : `/datasets/${parseDatasetSlug(dataset.name)}`
+              }
+              className="h-full"
+            >
+              <Card className="border-primary h-full flex flex-col">
+                <CardHeader>
+                  <CardTitle className="line-clamp-2">{dataset.name}</CardTitle>
+                  <CardDescription>{dataset.category}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="mb-4 line-clamp-3">{dataset.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {dataset.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between mt-auto">
+                  {isPublished ? (
+                    <Badge
+                      variant={
+                        dataset.access_type === "Free"
+                          ? "default"
+                          : "destructive"
+                      }
+                    >
+                      {dataset.access_type}
                     </Badge>
-                  ))}
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between mt-auto">
-                <Badge
-                  variant={
-                    dataset.access_type === "Free" ? "default" : "destructive"
-                  }
-                >
-                  {dataset.access_type}
-                </Badge>
-              </CardFooter>
-            </Card>
-          </Link>
-        ))}
+                  ) : (
+                    <Badge variant={"destructive"}>Coming Soon</Badge>
+                  )}
+                </CardFooter>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
