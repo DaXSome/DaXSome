@@ -121,6 +121,13 @@ export default function RootLayout({
                   />
                 </svg>
               </Link>
+              <iframe
+                src="https://github.com/sponsors/DaXSome/button"
+                title="Sponsor DaXSome"
+                height="32"
+                width="114"
+                style={{ border: 0, borderRadius: "6px;" }}
+              ></iframe>
             </div>
           </div>
         </footer>
