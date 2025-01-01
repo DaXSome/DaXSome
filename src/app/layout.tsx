@@ -6,6 +6,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Image from "next/image";
+import Logo from "@/components/Logo";
 
 const navLinks = [
   {
@@ -66,10 +68,7 @@ export default function RootLayout({
 
         <header className="sticky top-0 z-50 w-full border-b bg-white">
           <div className="container flex h-16 items-center justify-between">
-            <Link className="flex items-center space-x-2" href="/">
-              <Database className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold">DaXSome</span>
-            </Link>
+            <Logo />
             <nav className="hidden md:flex space-x-6 text-sm font-medium">
               {navLinks.map((link) => (
                 <Link
@@ -94,10 +93,7 @@ export default function RootLayout({
 
         <footer className="w-full py-6 bg-gray-100">
           <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Database className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold">DaXSome</span>
-            </div>
+            <Logo />
             <p className="text-sm text-gray-600 mt-4 md:mt-0">
               Empowering Ghana&apos;s data-driven future through open
               collaboration and innovation. &copy; 2024 DaXSome
