@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Database } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Image from "next/image";
 import Logo from "@/components/Logo";
 
 const navLinks = [
