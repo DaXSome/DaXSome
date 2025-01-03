@@ -89,7 +89,7 @@ export default function RootLayout({
           </div>
         </header>
 
-        {children}
+        <div className="flex flex-col">{children}</div>
 
         <footer className="w-full py-6 bg-gray-100">
           <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
