@@ -45,15 +45,11 @@ export default function Datasets({ datasets, categories }: Props) {
     router.push(`?category=${category}`);
   };
 
-  const filteredDatasets =
-    selectedCategory === "All"
-      ? datasets
-      : datasets.filter(
-          (dataset) =>
-            dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (selectedAccessType === "" ||
-              dataset.access_type === selectedAccessType),
-        );
+  const filteredDatasets = datasets.filter(
+    (dataset) =>
+      dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedAccessType === "" || dataset.access_type === selectedAccessType),
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
