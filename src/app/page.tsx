@@ -104,10 +104,10 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white">
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-green-50">
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
                   Empowering Data-Driven Decisions in Ghana
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl">
@@ -130,7 +130,7 @@ export default function Home() {
           </div>
         </section>
         <section id="about" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
               Our Mission
             </h2>
@@ -147,7 +147,7 @@ export default function Home() {
           id="services"
           className="w-full py-12 md:py-24 lg:py-32 bg-yellow-50"
         >
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
               Core Services
             </h2>
@@ -180,7 +180,7 @@ export default function Home() {
           </div>
         </section>
         <section id="clients" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
               Clients
             </h2>
@@ -203,7 +203,7 @@ export default function Home() {
           id="products"
           className="w-full py-12 md:py-24 lg:py-32 bg-red-50"
         >
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
               Products
             </h2>
