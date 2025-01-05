@@ -19,7 +19,7 @@ export const generateMetadata = async ({ params }: Props) => {
 
   const data: Metadata = {
     metadataBase: new URL(HOST_URL),
-    title: dataset.title,
+    title: dataset.name,
     description: dataset.description,
   };
 
