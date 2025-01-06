@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "server:deploy": "vercel deploy --prod --logs --force"
+    "server:deploy": "vercel deploy --prod --logs --force",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@next/third-parties": "^15.0.3",
@@ -23,6 +24,7 @@
     "lucide-react": "^0.454.0",
     "mongoose": "^8.8.1",
     "next": "15.0.2",
+    "next-sitemap": "^4.2.3",
     "nextjs-toploader": "^3.7.15",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
