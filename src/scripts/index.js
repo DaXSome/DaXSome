@@ -57,7 +57,7 @@ import { join } from "path";
       if (name !== "" && programme !== "") {
         const isObuasi = programme.toLowerCase().includes("obuasi");
 
-        const [degree, course] = programme.split(".");
+        const [degree, course] = programme.split(". ");
 
         applicants.push({
           name,
