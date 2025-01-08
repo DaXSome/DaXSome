@@ -54,14 +54,16 @@ export default function KNUSTAdmissionPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [twentyOne, twentyThree] = await Promise.all([
+      const [twentyOne, twentyThree, twentyFour] = await Promise.all([
         loadDataset("2021-2022"),
         loadDataset("2023-2024"),
+        loadDataset("2024-2025"),
       ]);
 
       const datasets = {
         "2021/2022": twentyOne,
         "2023/2024": twentyThree,
+        "2024/2025": twentyFour,
       };
 
       setDatasets(datasets);
@@ -99,10 +101,7 @@ export default function KNUSTAdmissionPage() {
 
         if (!target) return acc;
 
-        // Remove the trailing periods for consistency
-        if (value === "degree") {
-          target = target.replace(/\.$/, "").trim();
-        }
+        target = target.replace(/\.$/, "").toLowerCase().trim();
 
         if (!acc[target]) {
           acc[target] = 0;
@@ -159,11 +158,11 @@ export default function KNUSTAdmissionPage() {
     new Set(
       Object.values(datasets)
         .flat()
-        .map((d) => d.course),
+        .map((d) =>
+          (d.course || d.degree).replace(/\.$/, "").toLowerCase().trim(),
+        ),
     ),
-  )
-    .sort((a, b) => a.localeCompare(b))
-    .filter((c) => c !== undefined);
+  ).sort((a, b) => a.localeCompare(b));
 
   if (years.length === 0) return <AppSkeleton />;
 
