@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import connectToDb from "../config/connectDb";
 import { datasetsSchema } from "../models/datasets";
 import { categoriesSchema } from "../models/categories";
+import { linksSchema } from "../models/links";
 
 export class DatasetsService {
   async GetDatasets(category: string | null) {
@@ -76,5 +77,15 @@ export class DatasetsService {
     };
 
     return fullDataset;
+  }
+
+  async getAltLink(id: string) {
+    const connection = await connectToDb();
+
+    const link = await connection
+      .model("links", linksSchema)
+      .findById(id);
+
+    return link;
   }
 }
