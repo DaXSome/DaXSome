@@ -107,7 +107,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6 max-w-screen-xl">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+                <h1 className="text-3xl font-bold  md:text-5xl lg:text-6xl">
                   Empowering Data-Driven Decisions in Ghana
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl">
@@ -118,8 +118,8 @@ export default function Home() {
               </div>
               <div className="space-x-4">
                 <Link href="/datasets">
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    Explore Our Data
+                  <Button className="mb-2 bg-green-600 hover:bg-green-700">
+                    Explore Our Datasets
                   </Button>
                 </Link>
                 <Link href="/viz">

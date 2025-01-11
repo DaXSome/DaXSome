@@ -66,7 +66,9 @@ export default function RootLayout({
 
         <header className="sticky top-0 z-50 w-full border-b bg-white">
           <div className="container flex h-16 items-center justify-between">
-            <Logo />
+            <div className="ml-2">
+              <Logo />
+            </div>
             <nav className="hidden md:flex space-x-6 text-sm font-medium">
               {navLinks.map((link) => (
                 <Link
