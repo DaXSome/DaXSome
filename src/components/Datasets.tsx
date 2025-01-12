@@ -93,22 +93,6 @@ export default function Datasets({ datasets, categories }: Props) {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select
-            value={selectedAccessType}
-            onValueChange={setSelectedAccessType}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Access Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Access Type</SelectLabel>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Free">Free</SelectItem>
-                <SelectItem value="Premium">Premium</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
@@ -142,17 +126,7 @@ export default function Datasets({ datasets, categories }: Props) {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between mt-auto">
-                  {isPublished ? (
-                    <Badge
-                      variant={
-                        dataset.access_type === "Free"
-                          ? "default"
-                          : "destructive"
-                      }
-                    >
-                      {dataset.access_type}
-                    </Badge>
-                  ) : (
+                  {!isPublished && (
                     <Badge variant={"destructive"}>Coming Soon</Badge>
                   )}
                 </CardFooter>
