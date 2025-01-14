@@ -1,20 +1,22 @@
-import { HOST_URL } from "@/utils";
+import { DatasetsService } from "@/backend/services/datasets";
 import { redirect } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
+const datasetService = new DatasetsService();
+
+
 export default async function Page({ params }: Props) {
   const { id } = await params;
 
-  const res = await fetch(`${HOST_URL}/api/d/${id}`);
+  const link = await datasetService.getAltLink(id);
 
-  const { link } = await res.json();
 
-  if (res.status === 404) {
+  if (!link) {
     return redirect("/datasets");
   }
 
-  return redirect(link);
+  return redirect(link.link);
 }

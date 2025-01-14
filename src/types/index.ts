@@ -10,4 +10,7 @@ export type DatasetInfo = Dataset & {
   status: "published" | "pending";
 };
 
-export type DatasetMeta = Omit<DatasetInfo, "size" | "format" | "sample">;
+export type DatasetMeta = Omit<
+  DatasetInfo,
+  "size" | "format" | "sample" | "_id"
+>;

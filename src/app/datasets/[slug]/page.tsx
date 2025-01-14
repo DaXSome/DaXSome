@@ -1,7 +1,7 @@
 import { Dataset } from "@/backend/models/datasets";
+import { DatasetsService } from "@/backend/services/datasets";
 import { DatasetView } from "@/components/dataset-page";
-import { DatasetInfo } from "@/types";
-import { HOST_URL, parseDatasetSlug } from "@/utils";
+import { HOST_URL, normalizeDatasetSlug, parseDatasetSlug } from "@/utils";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -10,12 +10,16 @@ interface Props {
 
 export const revalidate = 86400; //A Day
 
+
+const datasetService = new DatasetsService();
+
 export const generateMetadata = async ({ params }: Props) => {
   const { slug } = await params;
 
-  const res = await fetch(`${HOST_URL}/api/datasets/${slug}`);
 
-  const dataset = await res.json();
+  const normalizedSlug = normalizeDatasetSlug(slug);
+
+  const dataset = await datasetService.GetDataset(normalizedSlug);
 
   return {
     metadataBase: new URL(HOST_URL),
@@ -25,9 +29,8 @@ export const generateMetadata = async ({ params }: Props) => {
 };
 
 export async function generateStaticParams() {
-  const res = await fetch(`${HOST_URL}/api/datasets`);
 
-  const { datasets } = await res.json();
+  const { datasets } = await datasetService.GetDatasets(null);
 
   const paths = (datasets as Dataset[]).map((dataset) => ({
     slug: parseDatasetSlug(dataset.name),
@@ -39,11 +42,12 @@ export async function generateStaticParams() {
 export default async function Page({ params }: Props) {
   const { slug } = await params;
 
-  const res = await fetch(`${HOST_URL}/api/datasets/${slug}`);
 
-  const dataset = await res.json() as DatasetInfo
+  const normalizedSlug = normalizeDatasetSlug(slug);
 
-  if (res.status === 404 || dataset.status === "pending") {
+  const dataset = await datasetService.GetDataset(normalizedSlug);
+
+  if (!dataset || dataset.status === "pending") {
     return notFound();
   }
 

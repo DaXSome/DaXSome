@@ -1,9 +1,12 @@
+import { DatasetsService } from "@/backend/services/datasets";
 import Datasets from "@/components/Datasets";
 import { HOST_URL } from "@/utils";
 import { Metadata } from "next";
 
 export const revalidate = 86400; //A Day
 export const dynamic = "force-dynamic";
+
+const datasetsService = new DatasetsService();
 
 type SearchParamsProps = {
   searchParams: Promise<{
@@ -26,9 +29,7 @@ export const generateMetadata = async ({ searchParams }: SearchParamsProps) => {
 export default async function Page({ searchParams }: SearchParamsProps) {
   const { category } = await searchParams;
 
-  const res = await fetch(`${HOST_URL}/api/datasets?category=${category}`);
-
-  const { datasets, categories } = await res.json();
+  const { datasets, categories } = await datasetsService.GetDatasets(category);
 
   return <Datasets datasets={datasets} categories={categories} />;
 }

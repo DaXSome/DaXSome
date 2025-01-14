@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import connectToDb from "../config/connectDb";
 import { datasetsSchema } from "../models/datasets";
 import { categoriesSchema } from "../models/categories";
-import { linksSchema } from "../models/links";
+import { Link, linksSchema } from "../models/links";
+import { DatasetMeta } from "@/types";
 
 export class DatasetsService {
   async GetDatasets(category: string | null) {
@@ -10,13 +11,18 @@ export class DatasetsService {
 
     const query = connection.model("datasets", datasetsSchema);
 
-    let datasets;
+    let datasets: DatasetMeta[];
 
     if (category && category !== "All" && category !== "undefined") {
       datasets = await query.find({ category });
     } else {
       datasets = await query.find();
     }
+
+    datasets = datasets.map((d) => ({
+      ...d.toJSON(),
+      _id: d.id,
+    }));
 
     const categories = (
       await connection.model("categories", categoriesSchema).find()
@@ -69,8 +75,9 @@ export class DatasetsService {
     ]);
 
     const fullDataset = {
-      ...dataset.toObject(),
-      sample,
+      ...dataset.toJSON(),
+      _id: dataset.id,
+      sample: sample.map((s) => s.toJSON()),
       updated_at: metaData ? metaData.updated_at : "Unknown",
       format: ["CSV"],
       total: totalDocuments,
@@ -82,9 +89,9 @@ export class DatasetsService {
   async getAltLink(id: string) {
     const connection = await connectToDb();
 
-    const link = await connection
+    const link = (await connection
       .model("links", linksSchema)
-      .findById(id);
+      .findById(id)) as Link | null;
 
     return link;
   }
