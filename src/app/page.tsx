@@ -19,7 +19,7 @@ import Link from "next/link";
 export default function Home() {
   const products = [
     {
-      link: "https://cedi-search.vercel.app",
+      link: "https://cedisearch.daxsome.org",
       icon: Search,
       name: "Cedi Search",
       desc: "An AI-powered e-commerce search engine optimized for the Ghanaian market, enhancing online shopping experiences.",
@@ -27,7 +27,7 @@ export default function Home() {
     },
     {
       icon: BarChart,
-      link: "https://github-insights.owbird.site",
+      link: "https://ghinsights.daxsome.org",
       name: "Awesome-Github-Insights",
       desc: "Gain valuable insights into GitHub user accounts, enhancing your understanding of developer activity and contributions.",
       cta: "Get insights",
