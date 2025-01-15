@@ -86,7 +86,7 @@ export class DatasetsService {
     return fullDataset;
   }
 
-  async getAltLink(id: string) {
+  async GetAltLink(id: string) {
     const connection = await connectToDb();
 
     const link = (await connection
