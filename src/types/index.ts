@@ -12,5 +12,5 @@ export type DatasetInfo = Dataset & {
 
 export type DatasetMeta = Omit<
   DatasetInfo,
-  "size" | "format" | "sample" | "_id"
+  "size" | "format" | "sample"
 >;

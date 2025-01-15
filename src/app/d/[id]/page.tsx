@@ -1,18 +1,14 @@
-import { DatasetsService } from "@/backend/services/datasets";
+import { getAltLink } from "@/app/actions/datasets";
 import { redirect } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-const datasetService = new DatasetsService();
-
-
 export default async function Page({ params }: Props) {
   const { id } = await params;
 
-  const link = await datasetService.GetAltLink(id);
-
+  const link = await getAltLink(id);
 
   if (!link) {
     return redirect("/datasets");
