@@ -6,6 +6,7 @@ import { datasetsSchema } from "@/backend/models/datasets";
 import { categoriesSchema } from "@/backend/models/categories";
 import { Link, linksSchema } from "@/backend/models/links";
 import { DatasetMeta } from "@/types";
+import { parseDatasetSlug } from "@/utils";
 
 export async function getDatasets(category: string | null) {
   const connection = await connectToDb();
