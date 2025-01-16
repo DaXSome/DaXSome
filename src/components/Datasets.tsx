@@ -26,6 +26,19 @@ import Link from "next/link";
 import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { createDataset } from "@/app/actions/datasets";
 
 interface Props {
   datasets: DatasetMeta[];
@@ -39,7 +52,21 @@ export default function Datasets({ datasets, categories }: Props) {
   const selectedCategory = params.get("category") || "All";
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedAccessType, setSelectedAccessType] = useState("");
+  const [selectedAccessType] = useState("");
+  const [datasetName, setDatasetName] = useState("");
+
+  const createNewDataset = async () => {
+    if (!datasetName) return;
+
+    try {
+      const slug = await createDataset(datasetName);
+
+      router.push(`/datasets/${slug}`);
+    } catch (err) {
+      //TODO: Handle error
+      console.log(err);
+    }
+  };
 
   const handleCategoryChange = (category: string) => {
     router.push(`?category=${category}`);
@@ -93,6 +120,30 @@ export default function Datasets({ datasets, categories }: Props) {
               </SelectGroup>
             </SelectContent>
           </Select>
+
+          <AlertDialog>
+            <AlertDialogTrigger>
+              {" "}
+              <Button>New</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Create new Dataset</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <Input
+                    placeholder="Dataset Name"
+                    onChange={(e) => setDatasetName(e.target.value)}
+                  />
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={createNewDataset}>
+                  Create
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

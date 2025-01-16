@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import mongoose from "mongoose";
 import connectToDb from "@/backend/config/connectDb";
@@ -95,4 +95,29 @@ export async function getAltLink(id: string) {
     .findById(id)) as Link | null;
 
   return link;
+}
+
+export async function createDataset(name: string) {
+  if (!name) return;
+
+  const datasetsConnection = await connectToDb();
+
+  const DatasetModel =
+    datasetsConnection.models.datasets ||
+    datasetsConnection.model("datasets", datasetsSchema);
+
+  const exists = await DatasetModel.findOne({ name }).collation({
+    locale: "en",
+    strength: 2,
+  });
+
+  if (exists) {
+    throw new Error("Dataset already exists");
+  }
+
+  await DatasetModel.create({
+    name,
+  });
+
+  return parseDatasetSlug(name);
 }

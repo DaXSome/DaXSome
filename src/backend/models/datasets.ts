@@ -8,44 +8,43 @@ export const datasetsSchema = new mongoose.Schema({
 
   category: {
     type: String,
-    required: true,
+    default: "",
   },
 
-  tags: [
-    {
-      type: String,
-    },
-  ],
-
+  tags: {
+    type: [String],
+    default: [],
+  },
+  
   access_type: {
     type: String,
     enum: ["Free", "Paid"],
-    required: true,
+    default: "Free",
   },
 
   full_description: {
     type: String,
-    required: true,
+    default: "",
   },
 
   use_cases: {
-    type: String,
-    required: true,
+    type: [String],
+    default: [],
   },
 
   description: {
     type: String,
-    required: true,
+    default: "",
   },
 
   database: {
     type: String,
-    required: true,
+    default: "",
   },
 
   sample_collection: {
     type: String,
-    required: true,
+    default: "",
   },
 });
 
