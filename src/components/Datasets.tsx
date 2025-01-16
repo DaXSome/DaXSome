@@ -1,14 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,11 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { DatasetMeta } from "@/types";
-import { parseDatasetSlug } from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import {
@@ -40,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { createDataset } from "@/app/actions/datasets";
 import { useUser } from "@clerk/nextjs";
+import DatasetCard from "./DatasetCard";
 
 interface Props {
   datasets: DatasetMeta[];
@@ -152,43 +142,9 @@ export default function Datasets({ datasets, categories }: Props) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {filteredDatasets.map((dataset) => {
-          const isPublished = dataset.status === "published";
-
-          return (
-            <Link
-              key={dataset._id}
-              href={
-                !isPublished
-                  ? "#"
-                  : `/datasets/${parseDatasetSlug(dataset.name)}`
-              }
-              className="h-full"
-            >
-              <Card className="border-primary h-full flex flex-col">
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">{dataset.name}</CardTitle>
-                  <CardDescription>{dataset.category}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="mb-4 line-clamp-3">{dataset.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {dataset.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between mt-auto">
-                  {!isPublished && (
-                    <Badge variant={"destructive"}>Coming Soon</Badge>
-                  )}
-                </CardFooter>
-              </Card>
-            </Link>
-          );
-        })}
+        {filteredDatasets.map((dataset) => (
+          <DatasetCard key={dataset.id} dataset={dataset} />
+        ))}
       </div>
     </div>
   );

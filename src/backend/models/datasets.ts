@@ -6,6 +6,11 @@ export const datasetsSchema = new mongoose.Schema({
     required: true,
   },
 
+  user_id: {
+    type: String,
+    required: true,
+  },
+
   category: {
     type: String,
     default: "",
@@ -15,7 +20,7 @@ export const datasetsSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
-  
+
   access_type: {
     type: String,
     enum: ["Free", "Paid"],
