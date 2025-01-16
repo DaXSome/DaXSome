@@ -39,6 +39,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { createDataset } from "@/app/actions/datasets";
+import { useUser } from "@clerk/nextjs";
 
 interface Props {
   datasets: DatasetMeta[];
@@ -54,6 +55,8 @@ export default function Datasets({ datasets, categories }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAccessType] = useState("");
   const [datasetName, setDatasetName] = useState("");
+
+  const { user, isLoaded } = useUser();
 
   const createNewDataset = async () => {
     if (!datasetName) return;
@@ -121,29 +124,30 @@ export default function Datasets({ datasets, categories }: Props) {
             </SelectContent>
           </Select>
 
-          <AlertDialog>
-            <AlertDialogTrigger>
-              {" "}
-              <Button>New</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Create new Dataset</AlertDialogTitle>
-                <AlertDialogDescription>
-                  <Input
-                    placeholder="Dataset Name"
-                    onChange={(e) => setDatasetName(e.target.value)}
-                  />
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={createNewDataset}>
-                  Create
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {user && isLoaded && (
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button>New</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Create new Dataset</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <Input
+                      placeholder="Dataset Name"
+                      onChange={(e) => setDatasetName(e.target.value)}
+                    />
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={createNewDataset}>
+                    Create
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
 
