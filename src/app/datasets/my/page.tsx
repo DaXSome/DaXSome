@@ -6,9 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Clock, Database, FolderOpen } from "lucide-react";
+import { Clock, Database, FolderOpen, } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CreateNewDataset from "@/components/CreateNewDataset";
 
 const Page = async () => {
   const databases = await getUserDbs();
@@ -16,36 +17,41 @@ const Page = async () => {
   if (!databases) return notFound();
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <h1 className="font-bold text-lg">Databases</h1>
-      <div className="flex gap-3 justify-center items-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Databases</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl px-4">
+        <CreateNewDataset />
+
         {databases.map((database) => (
-          <Link href={`/datasets/my/manage?database=${database.database}`}>
-            <Card className="w-full max-w-md hover:shadow-lg transition-shadow duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-2xl font-bold">
+          <Link
+            key={database.database}
+            href={`/datasets/my/manage?database=${database.database}`}
+            className="hover:no-underline"
+          >
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="flex items-center justify-between pb-2">
+                <CardTitle className="text-xl font-bold text-gray-900">
                   {database.database}
                 </CardTitle>
-                <Database className="h-6 w-6 text-muted-foreground" />
+                <Database className="h-6 w-6 text-gray-500" />
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <div className="flex items-center">
-                    <FolderOpen className="mr-1 h-4 w-4" />
-                    <span>{database.collections.length} collections</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="mr-1 h-4 w-4" />
-                    <span>
-                      Last updated: {database.updatedAt.toLocaleDateString()}
-                    </span>
-                  </div>
+
+              <CardContent className="text-gray-700">
+                <div className="flex items-center space-x-4 text-sm">
+                  <FolderOpen className="h-5 w-5 text-gray-500" />
+                  <span>{database.collections.length} collections</span>
                 </div>
               </CardContent>
+
               <CardFooter>
-                <button className="text-sm text-primary hover:underline">
-                  View Details
-                </button>
+                <div className="flex items-center text-sm text-gray-500">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span>
+                    Last updated:{" "}
+                    {new Date(database.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
               </CardFooter>
             </Card>
           </Link>
