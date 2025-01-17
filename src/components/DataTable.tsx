@@ -15,6 +15,8 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 
 type ColumnType = "string" | "number" | "boolean" | "date" | "array";
 
+type Data = Record<string, unknown>;
+
 interface Column {
   name: string;
   type: ColumnType;
@@ -24,8 +26,8 @@ export function DataTable({
   data,
   setData,
 }: {
-  data: any[];
-  setData: (data: any[]) => void;
+  data: Data[];
+  setData: (data: Data[]) => void;
 }) {
   const [columns, setColumns] = useState<Column[]>(
     data.length === 0
@@ -113,7 +115,7 @@ export function DataTable({
         newValue = new Date(value);
         break;
       case "array":
-        newValue = value.split(",")
+        newValue = value.split(",");
         break;
     }
 
@@ -216,7 +218,7 @@ export function DataTable({
                   >
                     <Textarea
                       className="relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden"
-                      value={row[column.name] || ""}
+                      value={(row[column.name] as string) || ""}
                       onChange={(e) =>
                         updateCell(rowIndex, column.name, e.target.value)
                       }

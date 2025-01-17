@@ -55,7 +55,7 @@ export const datasetsSchema = new mongoose.Schema({
 
 export type Dataset = mongoose.InferSchemaType<typeof datasetsSchema> & {
   _id: string;
-  toJSON: () => any;
+  toJSON: () => Record<string, unknown>;
 };
 
 export const DatasetModel =

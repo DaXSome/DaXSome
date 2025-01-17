@@ -2,7 +2,6 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/clerk-sdk-node";
-import mongoose from "mongoose";
 import connectToDb from "@/backend/config/connectDb";
 import { entriesSchema } from "@/backend/models/databases";
 

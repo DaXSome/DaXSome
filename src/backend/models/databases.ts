@@ -22,7 +22,7 @@ export const entriesSchema = new mongoose.Schema(
 
 export type Entries = mongoose.InferSchemaType<typeof entriesSchema> & {
   _id: string;
-  toJSON: () => any;
+  toJSON: () => Record<string, unknown>;
 };
 
 export const EntriesModel =

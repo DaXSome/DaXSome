@@ -6,13 +6,18 @@ import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { redirect, useSearchParams } from "next/navigation";
 
+type Data = Record<string, unknown>;
+
 interface Props {
   collections: string[];
-  data: any[];
+  data: Data[];
   count: number;
 }
 
 const DatasetManager = ({ collections, data, count }: Props) => {
+  const [tableData, setTableData] = useState<Data[]>(data);
+  const [isLoading, setIsLoading] = useState(false);
+
   const params = useSearchParams();
 
   const database = params.get("database");
@@ -21,23 +26,11 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
   const collection = params.get("collection") || collections[0];
 
-  const [tableData, setTableData] = useState<any[]>(data);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSaveData = async () => {
     if (tableData.length === 0) {
       return;
     }
-
-    const newData = tableData
-      .filter((data) => !data._id)
-      .map((data) => {
-        const newData = { ...data };
-
-        delete newData._id;
-
-        return newData;
-      });
 
     setIsLoading(true);
 

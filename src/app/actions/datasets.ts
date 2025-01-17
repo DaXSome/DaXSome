@@ -24,7 +24,7 @@ export async function getDatasets(category: string | null) {
   datasets = datasets.map((d) => ({
     ...d.toJSON(),
     _id: d.id,
-  }));
+  } as DatasetMeta));
 
   const categories = (
     await connection.model("categories", categoriesSchema).find()
