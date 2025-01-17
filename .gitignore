@@ -40,4 +40,5 @@ yarn-error.log*
 next-env.d.ts
 
 
-datasets/
+/src/app/viz/**/datasets/*.json
+
