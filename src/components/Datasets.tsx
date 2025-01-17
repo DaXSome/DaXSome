@@ -16,20 +16,9 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { DatasetMeta } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { createDataset } from "@/app/actions/datasets";
 import { useUser } from "@clerk/nextjs";
 import DatasetCard from "./DatasetCard";
+import Link from "next/link";
 
 interface Props {
   datasets: DatasetMeta[];
@@ -44,22 +33,8 @@ export default function Datasets({ datasets, categories }: Props) {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAccessType] = useState("");
-  const [datasetName, setDatasetName] = useState("");
 
   const { user, isLoaded } = useUser();
-
-  const createNewDataset = async () => {
-    if (!datasetName) return;
-
-    try {
-      const slug = await createDataset(datasetName);
-
-      router.push(`/datasets/${slug}`);
-    } catch (err) {
-      //TODO: Handle error
-      console.log(err);
-    }
-  };
 
   const handleCategoryChange = (category: string) => {
     router.push(`?category=${category}`);
@@ -115,28 +90,9 @@ export default function Datasets({ datasets, categories }: Props) {
           </Select>
 
           {user && isLoaded && (
-            <AlertDialog>
-              <AlertDialogTrigger>
-                <Button>New</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Create new Dataset</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    <Input
-                      placeholder="Dataset Name"
-                      onChange={(e) => setDatasetName(e.target.value)}
-                    />
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={createNewDataset}>
-                    Create
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Link href={"/datasets/my"}>
+              <Button>My Datasets</Button>{" "}
+            </Link>
           )}
         </div>
       </div>
