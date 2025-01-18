@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/tooltip";
 import { DatasetInfo } from "@/types";
 import { sendGAEvent } from "@next/third-parties/google";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 interface Props {
   dataset: DatasetInfo;
@@ -27,6 +29,8 @@ interface Props {
 
 export function DatasetView({ dataset }: Props) {
   const headers = Object.keys(dataset.sample[0]);
+
+  const { user, isLoaded } = useUser();
 
   const handleDownload = () => {
     sendGAEvent({ event: "download", value: dataset.name });
@@ -45,7 +49,16 @@ export function DatasetView({ dataset }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">{dataset.name}</h1>
+        <div className="flex gap-2 justify-between">
+          <h1 className="text-4xl font-bold mb-2">{dataset.name}</h1>
+          {user && user.id === dataset.user_id && (
+            <Link
+              href={`/datasets/my/manage?database=${dataset.database}&collection=${dataset.sample_collection}`}
+            >
+              <Button className="text-white">Edit</Button>
+            </Link>
+          )}
+        </div>
         <p className="text-xl text-muted-foreground mb-4">
           {dataset.description}
         </p>
