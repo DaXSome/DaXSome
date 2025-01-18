@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import AppSkeleton from "@/components/AppSkeleton";
+import AppSkeleton from "@/components/viz/AppSkeleton";
 import { colors } from "@/utils";
 
 interface Dataset {

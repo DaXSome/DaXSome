@@ -9,7 +9,7 @@ import {
 import { Clock, Database, FolderOpen, } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CreateNewDataset from "@/components/CreateNewDataset";
+import CreateNewDataset from "@/components/datasets/CreateNewDataset";
 
 const Page = async () => {
   const databases = await getUserDbs();

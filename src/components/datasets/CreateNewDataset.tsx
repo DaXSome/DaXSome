@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 
 const CreateNewDataset = () => {
   const [datasetName, setDatasetName] = useState("");

@@ -8,11 +8,11 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "./ui/card";
-import { Badge } from "./ui/badge";
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const DatasetCard = ({ dataset }: { dataset: DatasetMeta }) => {
   const isPublished = dataset.status === "published";
@@ -44,7 +44,9 @@ const DatasetCard = ({ dataset }: { dataset: DatasetMeta }) => {
           <p className="mb-4 line-clamp-3">{dataset.description}</p>
           <div className="flex flex-wrap gap-2">
             {dataset.tags.map((tag) => (
-              <Badge key={tag} className="text-white">{tag}</Badge>
+              <Badge key={tag} className="text-white">
+                {tag}
+              </Badge>
             ))}
           </div>
         </CardContent>

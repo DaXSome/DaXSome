@@ -1,5 +1,5 @@
 import { getCollections, getData } from "@/app/actions/user";
-import DatasetManager from "@/components/DatasetManager";
+import DatasetManager from "@/components/datasets/DatasetManager";
 
 interface Props {
   searchParams: Promise<{ database: string; collection: string }>;

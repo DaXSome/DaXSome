@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CollectionSelector } from "@/components/CollectionSelector";
-import { DataTable } from "@/components/DataTable";
+import { CollectionSelector } from "@/components/datasets/CollectionSelector";
+import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
 import { redirect, useSearchParams } from "next/navigation";
 

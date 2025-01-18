@@ -1,6 +1,6 @@
 import { getDataset, getDatasets } from "@/app/actions/datasets";
 import { Dataset } from "@/backend/models/datasets";
-import { DatasetView } from "@/components/dataset-page";
+import { DatasetView } from "@/components/datasets/DatasetSlug";
 import { HOST_URL, normalizeDatasetSlug, parseDatasetSlug } from "@/utils";
 import { notFound } from "next/navigation";
 

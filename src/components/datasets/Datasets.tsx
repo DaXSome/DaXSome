@@ -15,7 +15,7 @@ import {
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { DatasetMeta } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import DatasetCard from "./DatasetCard";
 import Link from "next/link";

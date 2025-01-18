@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { PlusIcon, TrashIcon } from "lucide-react";
 
 type ColumnType = "string" | "number" | "boolean" | "date" | "array";
