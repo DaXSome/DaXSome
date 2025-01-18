@@ -3,6 +3,14 @@ import mongoose from "mongoose";
 class DatabaseConnection {
   private static instances: Map<string, mongoose.Connection> = new Map();
 
+  /**
+   * Retrieves a MongoDB connection for a given database name.
+   * If a connection already exists and is active, it returns that connection.
+   * If not, it creates a new connection and stores it.
+   *
+   * @param dbName - The name of the MongoDB database. Defaults to "datasets".
+   * @returns A Promise that resolves to the mongoose.Connection instance.
+   */
   static async getConnection(
     dbName = "datasets",
   ): Promise<mongoose.Connection> {
@@ -55,4 +63,4 @@ class DatabaseConnection {
 
 const connectToDb = DatabaseConnection.getConnection;
 
-export default connectToDb; 
+export default connectToDb;

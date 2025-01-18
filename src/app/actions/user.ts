@@ -5,12 +5,22 @@ import { clerkClient } from "@clerk/clerk-sdk-node";
 import connectToDb from "@/backend/config/connectDb";
 import { entriesSchema } from "@/backend/models/databases";
 
+/**
+ * Given a Clerk user ID, returns a simple object with the username and avatar image URL.
+ * @param id The Clerk user ID.
+ * @returns An object with `username` and `avatar` properties.
+ */
 export async function getUser(id: string) {
   const user = await clerkClient.users.getUser(id);
 
   return { username: user.username, avatar: user.imageUrl };
 }
 
+
+/**
+ * Given a Clerk user ID, returns a list of databases that belong to that user.
+ * @returns An array of objects with `user_id` and `database` properties.
+ */
 export async function getUserDbs() {
   const connection = await connectToDb("databases");
 
@@ -23,6 +33,12 @@ export async function getUserDbs() {
   return databases;
 }
 
+  /**
+   * Returns an array of strings representing the names of all collections
+   * in a given MongoDB database.
+   * @param db The name of the database.
+   * @returns An array of strings.
+   */
 export const getCollections = async (db: string) => {
   const conn = await connectToDb(db);
 
@@ -34,22 +50,31 @@ export const getCollections = async (db: string) => {
   return collections.map((collection) => collection.name);
 };
 
-export const getData = async (db: string, collection: string) => {
-  const conn = await connectToDb(db);
+/**
+ * Retrieves a limited set of documents from a specified collection within a MongoDB database.
+ *
+ * @param db - The name of the database to connect to.
+ * @param collection - The name of the collection from which to fetch documents.
+ * @returns An object containing:
+ *  - `data`: An array of documents from the collection, each with its `_id` field converted to a string.
+ *  - `count`: The total number of documents in the collection.
+ */
+export const getData = async (databaseName: string, collectionName: string) => {
+  const connection = await connectToDb(databaseName);
 
-  if (!conn.db) throw new Error("Database connection failed");
-
-  const cursor = conn.db.collection(collection).find().limit(10);
-
-  try {
-    const data = await cursor.toArray();
-
-    return {
-      data: data.map((data) => ({ ...data, _id: data._id.toString() })),
-      count: await conn.db.collection(collection).countDocuments(),
-    };
-  } catch (e) {
-    console.log(e);
-    return { data: [], count: 0 };
+  if (!connection.db) {
+    throw new Error("Database connection failed");
   }
+
+  const collection = connection.db.collection(collectionName);
+
+  const [data, count] = await Promise.all([
+    collection.find().limit(10).toArray(),
+    collection.countDocuments(),
+  ]);
+
+  return {
+    data: data.map((document) => ({ ...document, _id: document._id.toString() })),
+    count,
+  };
 };

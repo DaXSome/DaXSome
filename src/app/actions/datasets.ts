@@ -8,6 +8,12 @@ import { Link, linksSchema } from "@/backend/models/links";
 import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
 
+/**
+ * Retrieve all datasets, optionally filtered by a category.
+ * @param category The category to filter by, or null/undefined for all datasets.
+ * @returns An object with two properties: `datasets`, an array of `DatasetMeta`s,
+ * and `categories`, an array of strings of all categories.
+ */
 export async function getDatasets(category: string | null) {
   const connection = await connectToDb();
 
@@ -33,6 +39,11 @@ export async function getDatasets(category: string | null) {
   return { datasets, categories };
 }
 
+  /**
+   * Retrieve a dataset by its name.
+   * @param name The name of the dataset to retrieve.
+   * @returns The dataset in the format of `DatasetInfo` or `null` if the dataset does not exist.
+   */
 export async function getDataset(name: string) {
   const datasetsConnection = await connectToDb();
 
@@ -88,6 +99,13 @@ export async function getDataset(name: string) {
   return fullDataset;
 }
 
+/**
+ * Retrieves an alternative shortened link from the database using the provided link ID.
+ *
+ * @param id - The ID of the link to retrieve.
+ * @returns A Promise that resolves to a Link object if found, or null if not found.
+ */
+
 export async function getAltLink(id: string) {
   const connection = await connectToDb();
 
@@ -98,6 +116,13 @@ export async function getAltLink(id: string) {
   return link;
 }
 
+  /**
+   * Create a new dataset. If the dataset already exists, throw an error.
+   *
+   * @param name The name of the dataset to create.
+   * @returns The slug version of the dataset name.
+   * @throws If the dataset already exists.
+   */
 export async function createDataset(name: string) {
   if (!name) return;
 

@@ -1,7 +1,17 @@
+/**
+ * Given a dataset name, return the slug version of the name. This is done by replacing all spaces with underscores.
+ * @param name The dataset name to parse.
+ * @returns The slug version of the dataset name.
+ */
 export const parseDatasetSlug = (name: string) => {
   return name.replaceAll(" ", "_");
 };
 
+/**
+ * Given a dataset slug, return the normalized version of the slug. This is done by replacing all underscores with spaces.
+ * @param slug The dataset slug to normalize.
+ * @returns The normalized dataset slug.
+ */
 export const normalizeDatasetSlug = (slug: string) => {
   return slug.replaceAll("_", " ");
 };
