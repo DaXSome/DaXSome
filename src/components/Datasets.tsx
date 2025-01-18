@@ -90,8 +90,8 @@ export default function Datasets({ datasets, categories }: Props) {
           </Select>
 
           {user && isLoaded && (
-            <Link href={"/datasets/my"}>
-              <Button>My Datasets</Button>{" "}
+            <Link href={"/datasets/my"} >
+              <Button className="text-white">My Datasets</Button>{" "}
             </Link>
           )}
         </div>

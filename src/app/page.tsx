@@ -118,7 +118,7 @@ export default function Home() {
               </div>
               <div className="space-x-4">
                 <Link href="/datasets">
-                  <Button className="mb-2 bg-green-600 hover:bg-green-700">
+                  <Button className="mb-2 text-white bg-primary hover:bg-secondary">
                     Explore Our Datasets
                   </Button>
                 </Link>
@@ -154,7 +154,7 @@ export default function Home() {
             <div className="grid gap-10 sm:grid-cols-2">
               <Card>
                 <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <Database className="h-12 w-12 text-green-600" />
+                  <Database className="h-12 w-12 text-primary" />
                   <h3 className="text-xl font-bold">
                     Data Collection & Curation
                   </h3>
@@ -167,7 +167,7 @@ export default function Home() {
               </Card>
               <Card>
                 <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <Server className="h-12 w-12 text-green-600" />
+                  <Server className="h-12 w-12 text-primary" />
                   <h3 className="text-xl font-bold">API Access</h3>
                   <p className="text-center text-gray-600">
                     Our custom API solutions provide easy, programmatic
@@ -188,7 +188,7 @@ export default function Home() {
               {clients.map((item, index) => (
                 <Card key={index}>
                   <CardContent className="flex flex-col items-center space-y-4 p-6">
-                    <item.icon className="h-12 w-12 text-green-600" />
+                    <item.icon className="h-12 w-12 text-primary" />
                     <h3 className="text-xl font-bold">{item.title}</h3>
                     <p className="text-center text-gray-600">
                       {item.description}
@@ -213,7 +213,7 @@ export default function Home() {
                   <Card className="h-full">
                     <CardContent className="flex flex-col items-center justify-between space-y-4 p-6 h-full">
                       <div className="flex flex-col items-center space-y-4">
-                        <proj.icon className="h-12 w-12 text-green-600" />
+                        <proj.icon className="h-12 w-12 text-primary" />
                         <h3 className="text-xl font-bold text-center">
                           {proj.name}
                         </h3>

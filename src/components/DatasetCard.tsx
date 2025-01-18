@@ -44,9 +44,7 @@ const DatasetCard = ({ dataset }: { dataset: DatasetMeta }) => {
           <p className="mb-4 line-clamp-3">{dataset.description}</p>
           <div className="flex flex-wrap gap-2">
             {dataset.tags.map((tag) => (
-              <Badge key={tag} variant="secondary">
-                {tag}
-              </Badge>
+              <Badge key={tag} className="text-white">{tag}</Badge>
             ))}
           </div>
         </CardContent>

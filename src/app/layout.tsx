@@ -70,7 +70,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <NextTopLoader color="green" />
+          <NextTopLoader color="blue" />
 
           <header className="sticky top-0 z-50 w-full border-b bg-white">
             <div className="container flex h-16 items-center justify-between">
