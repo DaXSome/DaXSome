@@ -12,6 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusIcon, TrashIcon } from "lucide-react";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 type ColumnType = "string" | "number" | "boolean" | "date" | "array";
 
@@ -156,14 +162,6 @@ export function DataTable({
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <Button onClick={addColumn}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Column
-        </Button>
-        <Button onClick={addRow}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Row
-        </Button>
         <div>
           <Input type="file" accept=".csv" onChange={handleFileUpload} />
         </div>
@@ -174,36 +172,44 @@ export function DataTable({
             <tr>
               {columns.map((column, index) => (
                 <th key={index} className="border border-gray-300 p-2">
-                  <Input
-                    value={column.name}
-                    onChange={(e) => updateColumnName(index, e.target.value)}
-                    className="mb-2"
-                  />
-                  <Select
-                    value={column.type}
-                    onValueChange={(value: ColumnType) =>
-                      updateColumnType(index, value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="string">String</SelectItem>
-                      <SelectItem value="number">Number</SelectItem>
-                      <SelectItem value="array">Array</SelectItem>
-                      <SelectItem value="boolean">Boolean</SelectItem>
-                      <SelectItem value="date">Date</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeColumn(index)}
-                    className="mt-2"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
+                  <ContextMenu>
+                    <ContextMenuTrigger>
+                      <Input
+                        value={column.name}
+                        onChange={(e) =>
+                          updateColumnName(index, e.target.value)
+                        }
+                        className="mb-2"
+                      />
+                      <Select
+                        value={column.type}
+                        onValueChange={(value: ColumnType) =>
+                          updateColumnType(index, value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="string">String</SelectItem>
+                          <SelectItem value="number">Number</SelectItem>
+                          <SelectItem value="array">Array</SelectItem>
+                          <SelectItem value="boolean">Boolean</SelectItem>
+                          <SelectItem value="date">Date</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </ContextMenuTrigger>
+
+                    <ContextMenuContent>
+                      <ContextMenuItem onClick={addColumn}>
+                        Insert column
+                      </ContextMenuItem>
+
+                      <ContextMenuItem onClick={() => removeColumn(index)}>
+                        Remove
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 </th>
               ))}
             </tr>
@@ -216,13 +222,22 @@ export function DataTable({
                     key={columnIndex}
                     className="w-full border border-gray-300 p-2"
                   >
-                    <Textarea
-                      className="relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden"
-                      value={(row[column.name] as string) || ""}
-                      onChange={(e) =>
-                        updateCell(rowIndex, column.name, e.target.value)
-                      }
-                    />
+                    <ContextMenu>
+                      <ContextMenuContent>
+                        <ContextMenuItem onClick={addRow}>
+                          Add row
+                        </ContextMenuItem>
+                      </ContextMenuContent>
+                      <ContextMenuTrigger>
+                        <Textarea
+                          className="relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden"
+                          value={(row[column.name] as string) || ""}
+                          onChange={(e) =>
+                            updateCell(rowIndex, column.name, e.target.value)
+                          }
+                        />
+                      </ContextMenuTrigger>
+                    </ContextMenu>
                   </td>
                 ))}
               </tr>
