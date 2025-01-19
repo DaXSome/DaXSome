@@ -79,6 +79,11 @@ const useDataTable = ({
     setData([...data, newRow]);
   };
 
+  const removeRow = (index: number) => {
+    const newRows = data.filter((_, i) => i !== index);
+    setData(newRows);
+  };
+
   const updateCell = (rowIndex: number, columnName: string, value: string) => {
     const column = columns.find((col) => col.name === columnName);
 
@@ -141,6 +146,7 @@ const useDataTable = ({
   return {
     columns,
     addColumn,
+    removeRow,
     removeColumn,
     updateColumnName,
     updateColumnType,

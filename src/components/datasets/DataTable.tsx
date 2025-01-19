@@ -35,6 +35,7 @@ export function DataTable({
     updateColumnName,
     removeColumn,
     addColumn,
+    removeRow,
   } = useDataTable({ data, setData });
 
   return (
@@ -104,6 +105,9 @@ export function DataTable({
                       <ContextMenuContent>
                         <ContextMenuItem onClick={addRow}>
                           Add row
+                        </ContextMenuItem>
+                        <ContextMenuItem onClick={() => removeRow(rowIndex)}>
+                          Remove row
                         </ContextMenuItem>
                       </ContextMenuContent>
                       <ContextMenuTrigger>
