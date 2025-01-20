@@ -97,10 +97,7 @@ export function DataTable({
             {data.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {columns.map((column, columnIndex) => (
-                  <td
-                    key={columnIndex}
-                    className="w-full border border-gray-300 p-2"
-                  >
+                  <td key={columnIndex} className=" border border-gray-300 p-2">
                     <ContextMenu>
                       <ContextMenuContent>
                         <ContextMenuItem onClick={addRow}>
@@ -112,6 +109,7 @@ export function DataTable({
                       </ContextMenuContent>
                       <ContextMenuTrigger>
                         <Textarea
+                          disabled={column.name === "_id"}
                           className="relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden"
                           value={(row[column.name] as string) || ""}
                           onChange={(e) =>

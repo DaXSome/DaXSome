@@ -54,17 +54,19 @@ const DatasetManager = ({ collections, data, count }: Props) => {
           />
         )}
         {collection && (
-          <>
-            <span className="mt-4 mb-4">{count} Documents </span>
+          <div className="flex flex-col gap-2">
             <DataTable
               key={`${database}-${collection}-${count}`}
               data={tableData}
               setData={setTableData}
             />
+
+            <span className="mt-4 mb-4 text-gray-600">{count} Documents </span>
+
             <Button disabled={isLoading} onClick={handleSaveData}>
               Save Data
             </Button>
-          </>
+          </div>
         )}
       </div>
     </div>
