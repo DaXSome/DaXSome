@@ -26,7 +26,6 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
   const collection = params.get("collection") || collections[0];
 
-
   const handleSaveData = async () => {
     if (tableData.length === 0) {
       return;

@@ -8,7 +8,11 @@ interface Props {
 const Page = async ({ searchParams }: Props) => {
   const { database, collection } = await searchParams;
 
-  const collections = await getCollections(database);
+  let collections = await getCollections(database);
+
+  if (!collections.includes(collection)) {
+    collections = [...collections, collection];
+  }
 
   const { data, count } = await getData(database, collection || collections[0]);
 

@@ -18,14 +18,17 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 
 const CreateNewDataset = () => {
-  const [datasetName, setDatasetName] = useState("");
+  const [databaseName, setDatabaseName] = useState("");
+  const [collectionName, setCollectionName] = useState("");
+
   const router = useRouter();
 
   const createNewDataset = () => {
-    if (!datasetName) return;
+    if (!databaseName || !collectionName) return;
 
-    router.push(`/datasets/my/manage?database=${datasetName}`);
+    router.push(`/datasets/my/manage?database=${databaseName}&collection=${collectionName}`);
   };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger>
@@ -42,11 +45,16 @@ const CreateNewDataset = () => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Create new Dataset</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogTitle>Create new Database</AlertDialogTitle>
+          <AlertDialogDescription className="flex flex-col gap-2">
             <Input
-              placeholder="Dataset Name"
-              onChange={(e) => setDatasetName(e.target.value)}
+              placeholder="Database Name"
+              onChange={(e) => setDatabaseName(e.target.value)}
+            />
+
+            <Input
+              placeholder="Collection Name"
+              onChange={(e) => setCollectionName(e.target.value)}
             />
           </AlertDialogDescription>
         </AlertDialogHeader>
