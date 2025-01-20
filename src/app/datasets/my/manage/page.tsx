@@ -14,7 +14,11 @@ const Page = async ({ searchParams }: Props) => {
     collections = [...collections, collection];
   }
 
-  const { data, count } = await getData(database, collection || collections[0]);
+  let { data, count } = await getData(database, collection || collections[0]);
+
+  if (data.length === 0) {
+    data = [{ "Column 1": "" }];
+  }
 
   return <DatasetManager collections={collections} data={data} count={count} />;
 };

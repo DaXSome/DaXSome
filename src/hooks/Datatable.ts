@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Data = Record<string, unknown>;
 type ColumnType = "string" | "number" | "boolean" | "date" | "array";

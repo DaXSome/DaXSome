@@ -16,7 +16,6 @@ export async function getUser(id: string) {
   return { username: user.username, avatar: user.imageUrl };
 }
 
-
 /**
  * Given a Clerk user ID, returns a list of databases that belong to that user.
  * @returns An array of objects with `user_id` and `database` properties.
@@ -33,12 +32,12 @@ export async function getUserDbs() {
   return databases;
 }
 
-  /**
-   * Returns an array of strings representing the names of all collections
-   * in a given MongoDB database.
-   * @param db The name of the database.
-   * @returns An array of strings.
-   */
+/**
+ * Returns an array of strings representing the names of all collections
+ * in a given MongoDB database.
+ * @param db The name of the database.
+ * @returns An array of strings.
+ */
 export const getCollections = async (db: string) => {
   const conn = await connectToDb(db);
 
@@ -74,7 +73,10 @@ export const getData = async (databaseName: string, collectionName: string) => {
   ]);
 
   return {
-    data: data.map((document) => ({ ...document, _id: document._id.toString() })),
+    data: data.map((document) => ({
+      ...document,
+      _id: document._id.toString(),
+    })) as Record<string, unknown>[],
     count,
   };
 };
