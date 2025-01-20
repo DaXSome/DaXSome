@@ -27,10 +27,13 @@ export async function getDatasets(category: string | null) {
     datasets = await query.find();
   }
 
-  datasets = datasets.map((d) => ({
-    ...d.toJSON(),
-    _id: d.id,
-  } as DatasetMeta));
+  datasets = datasets.map(
+    (d) =>
+      ({
+        ...d.toJSON(),
+        _id: d.id,
+      }) as DatasetMeta,
+  );
 
   const categories = (
     await connection.model("categories", categoriesSchema).find()
@@ -39,11 +42,11 @@ export async function getDatasets(category: string | null) {
   return { datasets, categories };
 }
 
-  /**
-   * Retrieve a dataset by its name.
-   * @param name The name of the dataset to retrieve.
-   * @returns The dataset in the format of `DatasetInfo` or `null` if the dataset does not exist.
-   */
+/**
+ * Retrieve a dataset by its name.
+ * @param name The name of the dataset to retrieve.
+ * @returns The dataset in the format of `DatasetInfo` or `null` if the dataset does not exist.
+ */
 export async function getDataset(name: string) {
   const datasetsConnection = await connectToDb();
 
@@ -116,13 +119,13 @@ export async function getAltLink(id: string) {
   return link;
 }
 
-  /**
-   * Create a new dataset. If the dataset already exists, throw an error.
-   *
-   * @param name The name of the dataset to create.
-   * @returns The slug version of the dataset name.
-   * @throws If the dataset already exists.
-   */
+/**
+ * Create a new dataset. If the dataset already exists, throw an error.
+ *
+ * @param name The name of the dataset to create.
+ * @returns The slug version of the dataset name.
+ * @throws If the dataset already exists.
+ */
 export async function createDataset(name: string) {
   if (!name) return;
 
@@ -147,3 +150,22 @@ export async function createDataset(name: string) {
 
   return parseDatasetSlug(name);
 }
+
+/**
+ * Saves the created data to the specified database and column
+ *
+ * @param db - The name of the database to connect to.
+ * @param collection - The name of the collection from which to fetch documents.
+ * @param data - the data to save
+ */
+export const saveData = async (
+  db: string,
+  collection: string,
+  data: Record<string, unknown>[],
+) => {
+  const conn = await connectToDb(db);
+
+  if (!conn.db) throw new Error("Database connection failed");
+
+  await conn.db.collection(collection).insertMany(data);
+};

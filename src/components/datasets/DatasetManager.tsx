@@ -4,7 +4,8 @@ import { useState } from "react";
 import { CollectionSelector } from "@/components/datasets/CollectionSelector";
 import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { saveData } from "@/app/actions/datasets";
 
 type Data = Record<string, unknown>;
 
@@ -33,7 +34,11 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
     setIsLoading(true);
 
+    await saveData(database, collection, tableData);
+
     setIsLoading(false);
+
+    window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}`;
   };
 
   return (
@@ -52,7 +57,7 @@ const DatasetManager = ({ collections, data, count }: Props) => {
           <>
             <span className="mt-4 mb-4">{count} Documents </span>
             <DataTable
-              key={`${database}-${collection}-${tableData.length}`}
+              key={`${database}-${collection}-${count}`}
               data={tableData}
               setData={setTableData}
             />
