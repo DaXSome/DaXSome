@@ -32,8 +32,8 @@ const navLinks = [
     href: "/#products",
   },
   {
-    label: "Contact Us",
-    href: "/#contact",
+    label: "Datasets",
+    href: "/datasets",
   },
   {
     label: "Visualizations",
