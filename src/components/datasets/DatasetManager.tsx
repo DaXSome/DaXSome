@@ -4,8 +4,9 @@ import { useState } from "react";
 import { CollectionSelector } from "@/components/datasets/CollectionSelector";
 import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { saveData } from "@/app/actions/datasets";
+import DatasetInfoBtn from "./DatasetInfoBtn";
 
 type Data = Record<string, unknown>;
 
@@ -46,12 +47,16 @@ const DatasetManager = ({ collections, data, count }: Props) => {
       <h1 className="text-2xl font-bold mb-4">{database} Database</h1>
       <div className="space-y-4">
         {database && (
-          <CollectionSelector
-            key={database}
-            selectedCollection={collection!}
-            collections={collections}
-            database={database}
-          />
+          <div className="flex items-center justify-between">
+            <CollectionSelector
+              key={database}
+              selectedCollection={collection!}
+              collections={collections}
+              database={database}
+            />
+
+            <DatasetInfoBtn database={database} collection={collection} />
+          </div>
         )}
         {collection && (
           <div className="flex flex-col gap-2">

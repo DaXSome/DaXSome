@@ -7,6 +7,8 @@ import { categoriesSchema } from "@/backend/models/categories";
 import { Link, linksSchema } from "@/backend/models/links";
 import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
+import { DatasetFormData } from "@/schema";
+import { entriesSchema } from "@/backend/models/databases";
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -126,8 +128,13 @@ export async function getAltLink(id: string) {
  * @returns The slug version of the dataset name.
  * @throws If the dataset already exists.
  */
-export async function createDataset(name: string) {
-  if (!name) return;
+export async function createDataset(
+  user_id: string,
+  dsFormData: DatasetFormData,
+) {
+  if (!user_id) return;
+
+  const { name } = dsFormData;
 
   const datasetsConnection = await connectToDb();
 
@@ -135,17 +142,24 @@ export async function createDataset(name: string) {
     datasetsConnection.models.datasets ||
     datasetsConnection.model("datasets", datasetsSchema);
 
-  const exists = await DatasetModel.findOne({ name }).collation({
+  const exists = await DatasetModel.findOne({ name, user_id }).collation({
     locale: "en",
     strength: 2,
   });
 
   if (exists) {
-    throw new Error("Dataset already exists");
+    await DatasetModel.findOneAndUpdate(exists._id, {
+      ...dsFormData,
+      user_id,
+    });
+  } else {
+    await DatasetModel.create({ ...dsFormData, user_id });
   }
 
-  await DatasetModel.create({
-    name,
+  await createEntry({
+    user_id,
+    sample_collection: dsFormData.sample_collection,
+    database: dsFormData.database,
   });
 
   return parseDatasetSlug(name);
@@ -168,4 +182,40 @@ export const saveData = async (
   if (!conn.db) throw new Error("Database connection failed");
 
   await conn.db.collection(collection).insertMany(data);
+};
+
+/**
+ * Adds or updates the database entries for the user
+ *
+ * @param entries - The entries object to be updated
+ */
+export const createEntry = async ({
+  user_id,
+  database,
+  sample_collection,
+}: Pick<DatasetFormData, "database" | "sample_collection"> & {
+  user_id: string;
+}) => {
+  const entriesConnection = await connectToDb("databases");
+
+  const EntriesModel =
+    entriesConnection.models.datasets ||
+    entriesConnection.model("entries", entriesSchema);
+
+  const exists = await EntriesModel.findOne({
+    user_id,
+    database,
+  });
+
+  if (exists) {
+    await EntriesModel.findOneAndUpdate(exists._id, {
+      collections: [...exists.collections, sample_collection],
+    });
+  } else {
+    await EntriesModel.create({
+      user_id,
+      database,
+      collections: [sample_collection],
+    });
+  }
 };
