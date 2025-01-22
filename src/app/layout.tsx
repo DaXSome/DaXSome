@@ -95,7 +95,12 @@ export default function RootLayout({
                 </Button>
               </SignedOut>
               <SignedIn>
-                <UserButton />
+                <div className="flex items-center justify-center gap-4">
+                  <UserButton />
+                  <Link href="/datasets/my">
+                    <Button className="text-white">My Datasets</Button>
+                  </Link>
+                </div>
               </SignedIn>
             </div>
           </header>
