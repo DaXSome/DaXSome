@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CollectionSelector } from "@/components/datasets/CollectionSelector";
 import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
 import { redirect, useSearchParams } from "next/navigation";
-import { saveData } from "@/app/actions/datasets";
+import { getDatasetInfo, saveData } from "@/app/actions/datasets";
 import DatasetInfoBtn from "./DatasetInfoBtn";
+import { DatasetInfo } from "@/types";
 
 type Data = Record<string, unknown>;
 
@@ -19,6 +20,7 @@ interface Props {
 const DatasetManager = ({ collections, data, count }: Props) => {
   const [tableData, setTableData] = useState<Data[]>(data);
   const [isLoading, setIsLoading] = useState(false);
+  const [datasetInfo, setDatasetInfo] = useState<DatasetInfo | null>(null);
 
   const params = useSearchParams();
 
@@ -42,6 +44,17 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}`;
   };
 
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+
+      const info = await getDatasetInfo({ database, collection });
+      setDatasetInfo(info);
+
+      setIsLoading(false);
+    })();
+  }, []);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">{database} Database</h1>
@@ -55,7 +68,13 @@ const DatasetManager = ({ collections, data, count }: Props) => {
               database={database}
             />
 
-            <DatasetInfoBtn database={database} collection={collection} />
+            <DatasetInfoBtn
+              key={datasetInfo?._id}
+              database={database}
+              collection={collection}
+              info={datasetInfo}
+              isLoading={isLoading}
+            />
           </div>
         )}
         {collection && (

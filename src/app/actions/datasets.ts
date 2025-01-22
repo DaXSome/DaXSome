@@ -157,10 +157,16 @@ export async function createDataset(
   });
 
   if (exists) {
-    await DatasetModel.findOneAndUpdate(exists._id, {
-      ...dsFormData,
-      user_id,
-    });
+    await DatasetModel.updateOne(
+      { _id: exists._id },
+
+      {
+        $set: {
+          ...dsFormData,
+          status: dsFormData.publish ? "published" : "pending",
+        },
+      },
+    );
   } else {
     await DatasetModel.create({ ...dsFormData, user_id });
   }
@@ -208,7 +214,7 @@ export const createEntry = async ({
   const entriesConnection = await connectToDb("databases");
 
   const EntriesModel =
-    entriesConnection.models.datasets ||
+    entriesConnection.models.entries ||
     entriesConnection.model("entries", entriesSchema);
 
   const exists = await EntriesModel.findOne({
@@ -227,4 +233,33 @@ export const createEntry = async ({
       collections: [sample_collection],
     });
   }
+};
+
+/**
+ * Get dataset info from the collection and database
+ *
+ * @param database - the current database
+ * @param collection - the current collection
+ *
+ * @returns The dataset info
+ */
+export const getDatasetInfo = async ({
+  database,
+  collection,
+}: {
+  database: string;
+  collection: string;
+}) => {
+  const datasetsConnection = await connectToDb("datasets");
+
+  const DatasetModel =
+    datasetsConnection.models.datasets ||
+    datasetsConnection.model("datasets", datasetsSchema);
+
+  const info = await DatasetModel.findOne({
+    database,
+    sample_collection: collection,
+  });
+
+  return { ...info.toJSON(), _id: info._id.toString() };
 };

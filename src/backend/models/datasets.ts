@@ -51,6 +51,11 @@ export const datasetsSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+
+  status: {
+    type: String,
+    required: true,
+  },
 });
 
 export type Dataset = mongoose.InferSchemaType<typeof datasetsSchema>;
