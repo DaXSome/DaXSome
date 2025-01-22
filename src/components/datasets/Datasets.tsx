@@ -13,15 +13,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { DatasetMeta } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import DatasetCard from "./DatasetCard";
 import Link from "next/link";
+import { DatasetInfo } from "@/types";
 
 interface Props {
-  datasets: DatasetMeta[];
+  datasets: DatasetInfo[];
   categories: string[];
 }
 
@@ -90,7 +90,7 @@ export default function Datasets({ datasets, categories }: Props) {
           </Select>
 
           {user && isLoaded && (
-            <Link href={"/datasets/my"} >
+            <Link href={"/datasets/my"}>
               <Button className="text-white">My Datasets</Button>{" "}
             </Link>
           )}
@@ -99,7 +99,7 @@ export default function Datasets({ datasets, categories }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {filteredDatasets.map((dataset) => (
-          <DatasetCard key={dataset.id} dataset={dataset} />
+          <DatasetCard key={dataset._id} dataset={dataset} />
         ))}
       </div>
     </div>

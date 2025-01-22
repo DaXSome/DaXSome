@@ -1,5 +1,4 @@
 import { getUser } from "@/app/actions/user";
-import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
 import {
   Card,
@@ -11,23 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DatasetInfo } from "@/types";
 
-const DatasetCard = ({ dataset }: { dataset: DatasetMeta }) => {
+const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
   const isPublished = dataset.status === "published";
-  const [user, setUser] = useState<{
-    username: string | null;
-    avatar: string;
-  } | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      const user = await getUser(dataset.user_id);
-
-      setUser(user);
-    })();
-  }, []);
 
   return (
     <Link
@@ -52,16 +39,15 @@ const DatasetCard = ({ dataset }: { dataset: DatasetMeta }) => {
         </CardContent>
         <CardFooter className="flex justify-between mt-auto">
           {!isPublished && <Badge variant={"destructive"}>Coming Soon</Badge>}
-          {user && (
-            <div className="flex gap-2 items-center">
-              <Avatar>
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>{user.username}</AvatarFallback>
-              </Avatar>
 
-              <p>@{user.username}</p>
-            </div>
-          )}
+          <div className="flex gap-2 items-center">
+            <Avatar>
+              <AvatarImage src={dataset.user.avatar} />
+              <AvatarFallback>{dataset.user.username}</AvatarFallback>
+            </Avatar>
+
+            <p>@{dataset.user.username}</p>
+          </div>
         </CardFooter>
       </Card>
     </Link>

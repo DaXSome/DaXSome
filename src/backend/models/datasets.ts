@@ -1,3 +1,4 @@
+import { DatasetInfo } from "@/types";
 import mongoose from "mongoose";
 
 export const datasetsSchema = new mongoose.Schema({
@@ -53,9 +54,7 @@ export const datasetsSchema = new mongoose.Schema({
   },
 });
 
-export type Dataset = mongoose.InferSchemaType<typeof datasetsSchema> & {
-  toJSON: () => Record<string, unknown>;
-};
+export type Dataset = mongoose.InferSchemaType<typeof datasetsSchema>;
 
 export const DatasetModel =
   mongoose.models.datasets || mongoose.model("datasets", datasetsSchema);

@@ -5,10 +5,11 @@ import connectToDb from "@/backend/config/connectDb";
 import { datasetsSchema } from "@/backend/models/datasets";
 import { categoriesSchema } from "@/backend/models/categories";
 import { Link, linksSchema } from "@/backend/models/links";
-import { DatasetMeta } from "@/types";
 import { parseDatasetSlug } from "@/utils";
 import { DatasetFormData } from "@/schema";
 import { entriesSchema } from "@/backend/models/databases";
+import { getUser } from "./user";
+import { DatasetInfo } from "@/types";
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -21,7 +22,7 @@ export async function getDatasets(category: string | null) {
 
   const query = connection.model("datasets", datasetsSchema);
 
-  let datasets: DatasetMeta[];
+  let datasets;
 
   if (category && category !== "All" && category !== "undefined") {
     datasets = await query.find({ category });
@@ -29,13 +30,21 @@ export async function getDatasets(category: string | null) {
     datasets = await query.find();
   }
 
-  datasets = datasets.map(
-    (d) =>
-      ({
-        ...d.toJSON(),
-        _id: d.id,
-      }) as DatasetMeta,
+  const users = await Promise.all(
+    datasets.map((dataset) => getUser(dataset.user_id)),
   );
+
+  datasets = datasets.map((dataset, index) => {
+    const plainDataset = dataset.toObject();
+
+    const fullDataset = {
+      ...plainDataset,
+      _id: plainDataset._id.toString(),
+      user: users[index],
+    };
+
+    return fullDataset as DatasetInfo;
+  });
 
   const categories = (
     await connection.model("categories", categoriesSchema).find()
