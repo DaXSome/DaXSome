@@ -168,7 +168,11 @@ export async function createDataset(
       },
     );
   } else {
-    await DatasetModel.create({ ...dsFormData, user_id });
+    await DatasetModel.create({
+      ...dsFormData,
+      user_id,
+      status: dsFormData.publish ? "published" : "pending",
+    });
   }
 
   await createEntry({
@@ -222,11 +226,13 @@ export const createEntry = async ({
     database,
   });
 
-  if (exists) {
+  if (exists && !exists.collections.includes(sample_collection)) {
     await EntriesModel.findOneAndUpdate(exists._id, {
       collections: [...exists.collections, sample_collection],
     });
-  } else {
+  }
+
+  if (!exists) {
     await EntriesModel.create({
       user_id,
       database,
@@ -261,5 +267,5 @@ export const getDatasetInfo = async ({
     sample_collection: collection,
   });
 
-  return { ...info.toJSON(), _id: info._id.toString() };
+  return info ? { ...info.toJSON(), _id: info._id.toString() } : null;
 };
