@@ -1,4 +1,3 @@
-import { getUser } from "@/app/actions/user";
 import { parseDatasetSlug } from "@/utils";
 import {
   Card,

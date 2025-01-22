@@ -10,3 +10,5 @@ export type DatasetInfo = Dataset & {
   total: number;
   status: "published" | "pending";
 } & { user: Awaited<ReturnType<typeof getUser>> };
+
+export type ColumnType = "string" | "number" | "boolean" | "date" | "array";

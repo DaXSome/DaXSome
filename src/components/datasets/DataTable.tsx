@@ -16,6 +16,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import useDataTable from "@/hooks/Datatable";
+import { ColumnType } from "@/types";
 
 type Data = Record<string, unknown>;
 

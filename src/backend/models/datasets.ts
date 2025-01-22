@@ -1,4 +1,3 @@
-import { DatasetInfo } from "@/types";
 import mongoose from "mongoose";
 
 export const datasetsSchema = new mongoose.Schema({

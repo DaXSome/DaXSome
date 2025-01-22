@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { ColumnType } from "@/types";
+import { useState } from "react";
 
 type Data = Record<string, unknown>;
-type ColumnType = "string" | "number" | "boolean" | "date" | "array";
 
 interface Column {
   name: string;

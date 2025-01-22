@@ -14,7 +14,12 @@ const Page = async ({ searchParams }: Props) => {
     collections = [...collections, collection];
   }
 
-  let { data, count } = await getData(database, collection || collections[0]);
+  const { count, data: initialData } = await getData(
+    database,
+    collection || collections[0],
+  );
+
+  let data = initialData;
 
   if (data.length === 0) {
     data = [{ "Column 1": "" }];

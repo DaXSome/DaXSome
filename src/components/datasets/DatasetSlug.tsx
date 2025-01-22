@@ -30,7 +30,7 @@ interface Props {
 export function DatasetView({ dataset }: Props) {
   const headers = Object.keys(dataset.sample[0]);
 
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
 
   const handleDownload = () => {
     sendGAEvent({ event: "download", value: dataset.name });
