@@ -25,10 +25,13 @@ const DatasetManager = ({ collections, data, count }: Props) => {
   const params = useSearchParams();
 
   const database = params.get("database");
+  const currentPage = parseInt(params.get("page") || "0");
 
   if (!database) return redirect("/datasets/my");
 
   const collection = params.get("collection") || collections[0];
+
+  const totalPages = Math.ceil(count / 10);
 
   const handleSaveData = async () => {
     if (tableData.length === 0) {
@@ -42,6 +45,10 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     setIsLoading(false);
 
     window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}`;
+  };
+
+  const handlePageChange = (newPage: number) => {
+    window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}&page=${newPage}`;
   };
 
   useEffect(() => {
@@ -80,12 +87,30 @@ const DatasetManager = ({ collections, data, count }: Props) => {
         {collection && (
           <div className="flex flex-col gap-2">
             <DataTable
-              key={`${database}-${collection}-${count}`}
-              data={tableData}
+              key={`${database}-${collection}-${currentPage}`}
+              data={data}
               setData={setTableData}
             />
 
-            <span className="mt-4 mb-4 text-gray-600">{count} Documents </span>
+            <div className="flex justify-between items-center mt-4">
+              <span className="text-gray-600">
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  disabled={currentPage === 0}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Previous
+                </Button>
+                <Button
+                  disabled={currentPage + 1 === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
 
             <Button disabled={isLoading} onClick={handleSaveData}>
               Save Data

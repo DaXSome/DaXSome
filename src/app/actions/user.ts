@@ -58,7 +58,11 @@ export const getCollections = async (db: string) => {
  *  - `data`: An array of documents from the collection, each with its `_id` field converted to a string.
  *  - `count`: The total number of documents in the collection.
  */
-export const getData = async (databaseName: string, collectionName: string) => {
+export const getData = async (
+  databaseName: string,
+  collectionName: string,
+  page: string,
+) => {
   const connection = await connectToDb(databaseName);
 
   if (!connection.db) {
@@ -68,7 +72,11 @@ export const getData = async (databaseName: string, collectionName: string) => {
   const collection = connection.db.collection(collectionName);
 
   const [data, count] = await Promise.all([
-    collection.find().limit(10).toArray(),
+    collection
+      .find()
+      .limit(10)
+      .skip(parseInt(page) * 10)
+      .toArray(),
     collection.countDocuments(),
   ]);
 

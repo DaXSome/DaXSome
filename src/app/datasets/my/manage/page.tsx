@@ -2,11 +2,11 @@ import { getCollections, getData } from "@/app/actions/user";
 import DatasetManager from "@/components/datasets/DatasetManager";
 
 interface Props {
-  searchParams: Promise<{ database: string; collection: string }>;
+  searchParams: Promise<{ database: string; collection: string; page: string }>;
 }
 
 const Page = async ({ searchParams }: Props) => {
-  const { database, collection } = await searchParams;
+  const { database, collection, page } = await searchParams;
 
   let collections = await getCollections(database);
 
@@ -17,6 +17,7 @@ const Page = async ({ searchParams }: Props) => {
   const { count, data: initialData } = await getData(
     database,
     collection || collections[0],
+    page
   );
 
   let data = initialData;
