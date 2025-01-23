@@ -269,3 +269,29 @@ export const getDatasetInfo = async ({
 
   return info ? { ...info.toJSON(), _id: info._id.toString() } : null;
 };
+
+/**
+ * Delete collection row
+ *
+ * @param database - the current database
+ * @param collection - the current collection
+ * @param id - the current document id
+ *
+ */
+export const deleteDocument = async ({
+  database,
+  collection,
+  id,
+}: {
+  database: string;
+  collection: string;
+  id: string;
+}) => {
+  const conn = await connectToDb(database);
+
+  if (!conn.db) throw new Error("Database connection failed");
+
+  await conn.db
+    .collection(collection)
+    .deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+};

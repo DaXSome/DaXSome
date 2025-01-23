@@ -1,3 +1,4 @@
+import { deleteDocument } from "@/app/actions/datasets";
 import { ColumnType } from "@/types";
 import { useState } from "react";
 
@@ -9,9 +10,13 @@ interface Column {
 }
 const useDataTable = ({
   data,
+  database,
+  collection,
   setData,
 }: {
   data: Data[];
+  database: string;
+  collection: string;
   setData: (data: Data[]) => void;
 }) => {
   const [columns, setColumns] = useState<Column[]>(
@@ -79,8 +84,19 @@ const useDataTable = ({
     setData([...data, newRow]);
   };
 
-  const removeRow = (index: number) => {
+  const removeRow = async (index: number) => {
     const newRows = data.filter((_, i) => i !== index);
+
+    const currentRowId = data[index]._id;
+
+    if (currentRowId) {
+      await deleteDocument({
+        database,
+        collection,
+        id: currentRowId as string,
+      });
+    }
+
     setData(newRows);
   };
 

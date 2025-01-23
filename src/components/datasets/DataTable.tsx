@@ -22,9 +22,13 @@ type Data = Record<string, unknown>;
 
 export function DataTable({
   data,
+  database,
+  collection,
   setData,
 }: {
   data: Data[];
+  database: string;
+  collection: string;
   setData: (data: Data[]) => void;
 }) {
   const {
@@ -37,7 +41,7 @@ export function DataTable({
     removeColumn,
     addColumn,
     removeRow,
-  } = useDataTable({ data, setData });
+  } = useDataTable({ data, setData, collection, database });
 
   return (
     <div className="space-y-4">
