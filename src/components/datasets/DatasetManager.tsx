@@ -8,6 +8,15 @@ import { redirect, useSearchParams } from "next/navigation";
 import { getDatasetInfo, saveData } from "@/app/actions/datasets";
 import DatasetInfoBtn from "./DatasetInfoBtn";
 import { DatasetInfo } from "@/types";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type Data = Record<string, unknown>;
 
@@ -47,8 +56,8 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}`;
   };
 
-  const handlePageChange = (newPage: number) => {
-    window.location.href = `/datasets/my/manage?database=${database}&collection=${collection}&page=${newPage}`;
+  const generatePaginationLink = (page: number) => {
+    return `/datasets/my/manage?database=${database}&collection=${collection}&page=${page}`;
   };
 
   useEffect(() => {
@@ -93,23 +102,65 @@ const DatasetManager = ({ collections, data, count }: Props) => {
             />
 
             <div className="flex justify-between items-center mt-4">
-              <span className="text-gray-600">
-                Page {currentPage + 1} of {totalPages}
-              </span>
-              <div className="flex gap-2">
-                <Button
-                  disabled={currentPage === 0}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  Previous
-                </Button>
-                <Button
-                  disabled={currentPage + 1 === totalPages}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  Next
-                </Button>
-              </div>
+              <Pagination>
+                <PaginationContent>
+                  {currentPage > 1 && (
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href={generatePaginationLink(currentPage - 1)}
+                      />
+                    </PaginationItem>
+                  )}
+
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1,
+                  ).map((page) => {
+                    // Show pages within a range around the current page
+                    const isWithinRange =
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 2;
+
+                    if (isWithinRange) {
+                      return (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            href={generatePaginationLink(page)}
+                            className={
+                              page === currentPage
+                                ? "font-bold text-blue-500"
+                                : ""
+                            }
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    }
+
+                    // Handle ellipsis for skipped pages
+                    const isEllipsis = Math.abs(page - currentPage) === 3;
+                    if (isEllipsis) {
+                      return (
+                        <PaginationItem key={`ellipsis-${page}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+
+                    return null;
+                  })}
+
+                  {currentPage < totalPages && (
+                    <PaginationItem>
+                      <PaginationNext
+                        href={generatePaginationLink(currentPage + 1)}
+                      />
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
             </div>
 
             <Button disabled={isLoading} onClick={handleSaveData}>
