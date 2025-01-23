@@ -1,6 +1,6 @@
 "use server";
 
-import mongoose from "mongoose";
+import mongoose, { InsertManyResult, UpdateResult } from "mongoose";
 import connectToDb from "@/backend/config/connectDb";
 import { datasetsSchema } from "@/backend/models/datasets";
 import { categoriesSchema } from "@/backend/models/categories";
@@ -191,16 +191,47 @@ export async function createDataset(
  * @param collection - The name of the collection from which to fetch documents.
  * @param data - the data to save
  */
-export const saveData = async (
-  db: string,
-  collection: string,
-  data: Record<string, unknown>[],
-) => {
+export const saveData = async ({
+  db,
+  collection,
+  inserts,
+  updates,
+}: {
+  db: string;
+  collection: string;
+  inserts: Record<string, unknown>[];
+  updates: Record<string, unknown>[];
+}) => {
   const conn = await connectToDb(db);
 
   if (!conn.db) throw new Error("Database connection failed");
 
-  await conn.db.collection(collection).insertMany(data);
+  const dbCollection = conn.db.collection(collection);
+
+  let queue: Array<
+    Promise<InsertManyResult<(typeof inserts)[number]> | UpdateResult>
+  > = [];
+
+  if (inserts.length > 0) {
+    queue.push(dbCollection.insertMany(inserts));
+  }
+
+  for (let doc of updates) {
+    const _id = doc._id as string;
+
+    const newData = { ...doc };
+
+    delete newData._id;
+
+    queue.push(
+      dbCollection.updateOne(
+        { _id: new mongoose.Types.ObjectId(_id) },
+        { $set: newData },
+      ),
+    );
+  }
+
+  await Promise.all(queue);
 };
 
 /**

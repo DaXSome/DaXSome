@@ -49,7 +49,26 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
     setIsLoading(true);
 
-    await saveData(database, collection, tableData);
+    const inserts: typeof tableData = [];
+    const updates: typeof tableData = [];
+
+    for (let currentData of tableData) {
+      if (!currentData._id) {
+        const fmttedData = { ...currentData };
+
+        delete fmttedData._id;
+
+        inserts.push(fmttedData);
+      } else {
+        const originalData = data.find((d) => d._id === currentData._id);
+
+        if (JSON.stringify(originalData) != JSON.stringify(currentData)) {
+          updates.push(currentData);
+        }
+      }
+    }
+
+    await saveData({ db: database, collection, inserts, updates });
 
     setIsLoading(false);
 
