@@ -97,7 +97,7 @@ const DatasetManager = ({ collections, data, count }: Props) => {
           <div className="flex flex-col gap-2">
             <DataTable
               key={`${database}-${collection}-${currentPage}`}
-              data={data}
+              data={tableData}
               setData={setTableData}
             />
 
