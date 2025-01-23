@@ -33,10 +33,8 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
   const params = useSearchParams();
 
-  const database = params.get("database");
+  const database = params.get("database") as string;
   const currentPage = parseInt(params.get("page") || "0");
-
-  if (!database) return redirect("/datasets/my");
 
   const collection = params.get("collection") || collections[0];
 
@@ -52,7 +50,7 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     const inserts: typeof tableData = [];
     const updates: typeof tableData = [];
 
-    for (let currentData of tableData) {
+    for (const currentData of tableData) {
       if (!currentData._id) {
         const fmttedData = { ...currentData };
 
@@ -89,6 +87,10 @@ const DatasetManager = ({ collections, data, count }: Props) => {
       setIsLoading(false);
     })();
   }, []);
+
+  if (!database) {
+    redirect("/datasets/my");
+  }
 
   return (
     <div className="container mx-auto p-4">

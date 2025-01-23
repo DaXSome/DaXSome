@@ -208,7 +208,7 @@ export const saveData = async ({
 
   const dbCollection = conn.db.collection(collection);
 
-  let queue: Array<
+  const queue: Array<
     Promise<InsertManyResult<(typeof inserts)[number]> | UpdateResult>
   > = [];
 
@@ -216,7 +216,7 @@ export const saveData = async ({
     queue.push(dbCollection.insertMany(inserts));
   }
 
-  for (let doc of updates) {
+  for (const doc of updates) {
     const _id = doc._id as string;
 
     const newData = { ...doc };
