@@ -138,10 +138,10 @@ const DatasetManager = ({ collections, data, count }: Props) => {
           <DropdownMenuContent className="w-56">
             <DropdownMenuGroup className="text-red-400">
               <DropdownMenuItem onClick={() => dropActions("database")}>
-                Drop '{database}' database
+                Drop &apos;{database}&apos; database
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => dropActions("collection")}>
-                Drop '{collection}' collection
+                Drop &apos;{collection}&apos; collection
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
