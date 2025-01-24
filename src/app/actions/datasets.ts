@@ -326,3 +326,100 @@ export const deleteDocument = async ({
     .collection(collection)
     .deleteOne({ _id: new mongoose.Types.ObjectId(id) });
 };
+
+/**
+ * Deletes dataset information for a specific database and collection.
+ *
+ * @param params.database - The name of the database.
+ * @param params.collection - The name of the collection.
+ *
+ * @returns A promise that resolves when the dataset is deleted.
+ */
+export const deleteDataset = async ({
+  database,
+  collection,
+}: {
+  database: string;
+  collection: string;
+}) => {
+  const info = await getDatasetInfo({ database, collection });
+
+  if (info) {
+    const datasetsConnection = await connectToDb("datasets");
+
+    const DatasetModel =
+      datasetsConnection.models.datasets ||
+      datasetsConnection.model("datasets", datasetsSchema);
+
+    await DatasetModel.deleteOne({ _id: info._id });
+  }
+};
+
+/**
+ * Deletes a collection from a specific database.
+ *
+ * @param params - The parameters for the operation.
+ * @param params.database - The name of the database.
+ * @param params.collection - The name of the collection.
+ *
+ * @returns A promise that resolves when the collection is deleted.
+ */
+export const deleteCollection = async ({
+  database,
+  collection,
+}: {
+  database: string;
+  collection: string;
+}) => {
+  const conn = await connectToDb(database);
+
+  if (!conn.db) throw new Error("Database connection failed");
+
+  await Promise.all([
+    deleteDataset({ database, collection }),
+    conn.db.collection(collection).drop(),
+  ]);
+};
+
+/**
+ * Deletes an entire database along with associated metadata and collections.
+ *
+ * @param params - The parameters for the operation.
+ * @param params.database - The name of the database.
+ * @param params.collection - The name of the collection.
+ * @param params.user_id - The ID of the user owning the database.
+ *
+ * @returns A promise that resolves when the database and associated resources are deleted.
+ *
+ */
+export const deleteDatabase = async ({
+  database,
+  collection,
+  user_id,
+}: {
+  user_id: string;
+  database: string;
+  collection: string;
+}) => {
+  const [mainDbConnection, entriesConnection] = await Promise.all([
+    connectToDb(database),
+    connectToDb("databases"),
+  ]);
+
+  if (!mainDbConnection.db || !entriesConnection.db)
+    throw new Error("Database connection failed");
+
+  const EntriesModel =
+    entriesConnection.models.entries ||
+    entriesConnection.model("entries", entriesSchema);
+
+  await Promise.all([
+    deleteDataset({ database, collection }),
+    deleteCollection({ database, collection }),
+    mainDbConnection.db.dropDatabase(),
+    EntriesModel.findOneAndDelete({
+      user_id,
+      database,
+    }),
+  ]);
+};

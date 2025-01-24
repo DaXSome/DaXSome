@@ -33,12 +33,14 @@ import { createDataset } from "@/app/actions/datasets";
 import { DatasetFormData, datasetSchema } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { DatasetInfo } from "@/types";
+import { Trash } from "lucide-react";
 
 interface DatasetInfoBtnProps {
   database: string;
   collection: string;
   info: DatasetInfo | null;
   isLoading: boolean;
+  deleteDataset: () => void
 }
 
 const DatasetInfoBtn = ({
@@ -46,6 +48,7 @@ const DatasetInfoBtn = ({
   collection,
   info,
   isLoading: initialLoading,
+  deleteDataset,
 }: DatasetInfoBtnProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(initialLoading);
@@ -100,7 +103,12 @@ const DatasetInfoBtn = ({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
               <AlertDialogHeader>
-                <AlertDialogTitle>Link Dataset</AlertDialogTitle>
+                <AlertDialogTitle className="flex gap-4 justify-between">
+                  Link Dataset
+                  <span>
+                    {info && <Trash onClick={deleteDataset} color="red" />}
+                  </span>
+                </AlertDialogTitle>
                 <AlertDialogDescription className="max-h-[30rem] overflow-auto">
                   <FormField
                     control={form.control}

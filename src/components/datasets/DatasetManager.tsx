@@ -5,7 +5,13 @@ import { CollectionSelector } from "@/components/datasets/CollectionSelector";
 import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
 import { redirect, useSearchParams } from "next/navigation";
-import { getDatasetInfo, saveData } from "@/app/actions/datasets";
+import {
+  deleteCollection,
+  deleteDatabase,
+  deleteDataset,
+  getDatasetInfo,
+  saveData,
+} from "@/app/actions/datasets";
 import DatasetInfoBtn from "./DatasetInfoBtn";
 import { DatasetInfo } from "@/types";
 import {
@@ -17,6 +23,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { EllipsisVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useUser } from "@clerk/nextjs";
 
 type Data = Record<string, unknown>;
 
@@ -32,6 +47,7 @@ const DatasetManager = ({ collections, data, count }: Props) => {
   const [datasetInfo, setDatasetInfo] = useState<DatasetInfo | null>(null);
 
   const params = useSearchParams();
+  const { user } = useUser();
 
   const database = params.get("database") as string;
   const currentPage = parseInt(params.get("page") || "0");
@@ -77,6 +93,24 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     return `/datasets/my/manage?database=${database}&collection=${collection}&page=${page}`;
   };
 
+  const dropActions = async (action: "database" | "collection" | "dataset") => {
+    if (!user || !confirm("This action can't be undone")) return;
+
+    switch (action) {
+      case "database":
+        await deleteDatabase({ user_id: user.id, database, collection });
+        break;
+      case "collection":
+        await deleteCollection({ database, collection });
+        break;
+      case "dataset":
+        await deleteDataset({ database, collection });
+        break;
+    }
+
+    window.location.href = generatePaginationLink(currentPage);
+  };
+
   useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -94,7 +128,25 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{database} Database</h1>
+      <div className="flex items-center mb-4">
+        <h1 className="text-2xl font-bold">{database} Database</h1>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <EllipsisVertical />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuGroup className="text-red-400">
+              <DropdownMenuItem onClick={() => dropActions("database")}>
+                Drop '{database}' database
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => dropActions("collection")}>
+                Drop '{collection}' collection
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <div className="space-y-4">
         {database && (
           <div className="flex items-center justify-between">
@@ -111,6 +163,7 @@ const DatasetManager = ({ collections, data, count }: Props) => {
               collection={collection}
               info={datasetInfo}
               isLoading={isLoading}
+              deleteDataset={() => dropActions("dataset")}
             />
           </div>
         )}
