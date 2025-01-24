@@ -47,7 +47,7 @@ export function DataTable({
     <div className="space-y-4">
       <div className="flex justify-between">
         <div>
-          <Input type="file" accept=".csv" onChange={handleFileUpload} />
+          <Input type="file" accept=".csv, .json" onChange={handleFileUpload} />
         </div>
       </div>
       <div className="overflow-x-auto">

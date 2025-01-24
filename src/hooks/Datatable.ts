@@ -134,27 +134,58 @@ const useDataTable = ({
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
+
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        const lines = content.split("\n");
-        const headers = lines[0].split(",");
-        const newColumns = headers.map((header) => ({
-          name: header.trim(),
-          type: "String" as ColumnType,
-        }));
-        setColumns(newColumns);
-        const newData = lines.slice(1).map((line) => {
-          const values = line.split(",");
-          return headers.reduce(
-            (acc, header, index) => ({
-              ...acc,
-              [header.trim()]: values[index]?.trim() || "",
-            }),
-            {},
-          );
-        });
-        setData(newData);
+
+        let headers: Array<string> = [];
+        let columns: Array<{ name: string; type: ColumnType }> = [];
+        let data: Array<Record<string, unknown>> = [];
+
+        const ext = file.name.split(".")[1];
+
+        switch (ext) {
+          case "json":
+            try {
+              data = JSON.parse(content);
+
+              if (Array.isArray(data)) {
+                headers = Object.keys(data[0]);
+                columns = headers.map((header) => ({
+                  name: header.trim(),
+                  type: typeof data[0][header] as ColumnType,
+                }));
+              }
+            } catch (error) {
+              //TODO:Alert user
+              console.error("Error parsing JSON file:", error);
+            }
+            break;
+
+          case "csv":
+            const lines = content.split("\n");
+            headers = lines[0].split(",");
+            columns = headers.map((header) => ({
+              name: header.trim(),
+              type: typeof header as ColumnType,
+            }));
+            data = lines.slice(1).map((line) => {
+              const values = line.split(",");
+              return headers.reduce(
+                (acc, header, index) => ({
+                  ...acc,
+                  [header.trim()]: values[index]?.trim() || "",
+                }),
+                {},
+              );
+            });
+            break;
+        }
+
+        setColumns(columns);
+        setData(data);
       };
+
       reader.readAsText(file);
     }
   };
