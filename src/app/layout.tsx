@@ -72,9 +72,9 @@ export default function RootLayout({
         >
           <NextTopLoader color="blue" />
 
-          <header className="sticky top-0 z-50 w-full border-b bg-white">
+          <header className="sticky top-0 z-50 w-full border-b bg-white flex justify-center">
             <div className="container flex h-16 items-center justify-between">
-              <div className="ml-2">
+              <div className="">
                 <Logo />
               </div>
               <nav className="hidden md:flex space-x-6 text-sm font-medium">
@@ -107,7 +107,7 @@ export default function RootLayout({
 
           <div className="flex flex-col">{children}</div>
 
-          <footer className="w-full py-6 bg-gray-100">
+          <footer className="w-full py-6 bg-gray-100 flex justify-center">
             <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
               <Logo />
               <p className="text-sm text-gray-600 mt-4 md:mt-0">
