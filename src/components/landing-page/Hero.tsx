@@ -28,7 +28,7 @@ export default function HeroSection() {
       className="relative min-h-screen py-20 flex items-center justify-center overflow-hidden text-white"
       style={gradientStyle}
     >
-      <div className="absolute inset-0 bg-[url('/data-viz-bg.svg')] opacity-10"></div>
+      <div className="absolute inset-0 opacity-10"></div>
       <div className="container mx-auto px-4 z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="lg:w-1/2 text-center lg:text-left">
