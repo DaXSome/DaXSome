@@ -11,6 +11,18 @@ import { entriesSchema } from "@/backend/models/databases";
 import { getUser } from "./user";
 import { DatasetInfo } from "@/types";
 
+function getModel({
+  connection,
+  name,
+  schema,
+}: {
+  connection: mongoose.Connection;
+  name: string;
+  schema: mongoose.Schema;
+}) {
+  return connection.models[name] || connection.model(name, schema);
+}
+
 /**
  * Retrieve all datasets, optionally filtered by a category.
  * @param category The category to filter by, or null/undefined for all datasets.
@@ -20,7 +32,11 @@ import { DatasetInfo } from "@/types";
 export async function getDatasets(category: string | null) {
   const connection = await connectToDb();
 
-  const query = connection.model("datasets", datasetsSchema);
+  const query = getModel({
+    connection,
+    name: "datasets",
+    schema: datasetsSchema,
+  });
 
   let datasets;
 
@@ -46,9 +62,15 @@ export async function getDatasets(category: string | null) {
     return fullDataset as DatasetInfo;
   });
 
-  const categories = (
-    await connection.model("categories", categoriesSchema).find()
-  ).map((category) => category.category);
+  const categoriesModel = getModel({
+    connection,
+    name: "categories",
+    schema: categoriesSchema,
+  });
+
+  const categories = (await categoriesModel.find()).map(
+    (category) => category.category,
+  );
 
   return { datasets, categories };
 }
@@ -61,9 +83,11 @@ export async function getDatasets(category: string | null) {
 export async function getDataset(name: string) {
   const datasetsConnection = await connectToDb();
 
-  const datasetModel =
-    datasetsConnection.models.datasets ||
-    datasetsConnection.model("datasets", datasetsSchema);
+  const datasetModel = getModel({
+    connection: datasetsConnection,
+    name: "datasets",
+    schema: datasetsSchema,
+  });
 
   const dataset = await datasetModel.findOne({ name });
 
@@ -85,15 +109,14 @@ export async function getDataset(name: string) {
       ),
     );
 
-  const sampleModel =
-    secondaryDataConn.models[dataset.sample_collection] ||
-    secondaryDataConn.model(
-      dataset.sample_collection,
-      new mongoose.Schema(
-        {},
-        { collection: dataset.sample_collection, strict: false },
-      ),
-    );
+  const sampleModel = getModel({
+    connection: secondaryDataConn,
+    name: dataset.sample_collection,
+    schema: new mongoose.Schema(
+      {},
+      { collection: dataset.sample_collection, strict: false },
+    ),
+  });
 
   const [metaData, sample, totalDocuments] = await Promise.all([
     await metaDataModel.findOne(),
@@ -123,9 +146,13 @@ export async function getDataset(name: string) {
 export async function getAltLink(id: string) {
   const connection = await connectToDb();
 
-  const link = (await connection
-    .model("links", linksSchema)
-    .findById(id)) as Link | null;
+  const linksModel = getModel({
+    connection,
+    name: "links",
+    schema: linksSchema,
+  });
+
+  const link = (await linksModel.findById(id)) as Link | null;
 
   return link;
 }
@@ -147,9 +174,11 @@ export async function createDataset(
 
   const datasetsConnection = await connectToDb();
 
-  const DatasetModel =
-    datasetsConnection.models.datasets ||
-    datasetsConnection.model("datasets", datasetsSchema);
+  const DatasetModel = getModel({
+    connection: datasetsConnection,
+    name: "datasets",
+    schema: datasetsSchema,
+  });
 
   const exists = await DatasetModel.findOne({ name, user_id }).collation({
     locale: "en",
@@ -248,9 +277,11 @@ export const createEntry = async ({
 }) => {
   const entriesConnection = await connectToDb("databases");
 
-  const EntriesModel =
-    entriesConnection.models.entries ||
-    entriesConnection.model("entries", entriesSchema);
+  const EntriesModel = getModel({
+    connection: entriesConnection,
+    name: "entries",
+    schema: entriesSchema,
+  });
 
   const exists = await EntriesModel.findOne({
     user_id,
@@ -289,9 +320,11 @@ export const getDatasetInfo = async ({
 }) => {
   const datasetsConnection = await connectToDb("datasets");
 
-  const DatasetModel =
-    datasetsConnection.models.datasets ||
-    datasetsConnection.model("datasets", datasetsSchema);
+  const DatasetModel = getModel({
+    connection: datasetsConnection,
+    name: "datasets",
+    schema: datasetsSchema,
+  });
 
   const info = await DatasetModel.findOne({
     database,
@@ -347,9 +380,11 @@ export const deleteDataset = async ({
   if (info) {
     const datasetsConnection = await connectToDb("datasets");
 
-    const DatasetModel =
-      datasetsConnection.models.datasets ||
-      datasetsConnection.model("datasets", datasetsSchema);
+    const DatasetModel = getModel({
+      connection: datasetsConnection,
+      name: "datasets",
+      schema: datasetsSchema,
+    });
 
     await DatasetModel.deleteOne({ _id: info._id });
   }
@@ -406,12 +441,15 @@ export const deleteDatabase = async ({
     connectToDb("databases"),
   ]);
 
-  if (!mainDbConnection.db || !entriesConnection.db)
+  if (!mainDbConnection.db || !entriesConnection.db) {
     throw new Error("Database connection failed");
+  }
 
-  const EntriesModel =
-    entriesConnection.models.entries ||
-    entriesConnection.model("entries", entriesSchema);
+  const EntriesModel = getModel({
+    connection: entriesConnection,
+    name: "entries",
+    schema: entriesSchema,
+  });
 
   await Promise.all([
     deleteDataset({ database, collection }),
