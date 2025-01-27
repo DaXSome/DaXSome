@@ -18,7 +18,11 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
   return (
     <Link
       key={dataset._id}
-      href={!isPublished ? "#" : `/datasets/${parseDatasetSlug(dataset.name)}`}
+      href={
+        !isPublished
+          ? "#"
+          : `/datasets/@${dataset.user.username}/${parseDatasetSlug(dataset.name)}`
+      }
       className="h-full"
     >
       <Card className="border-primary h-full flex flex-col">

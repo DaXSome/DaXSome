@@ -10,10 +10,8 @@ interface Props {
 
 export const revalidate = 86400; //A Day
 
-
 export const generateMetadata = async ({ params }: Props) => {
   const { slug } = await params;
-
 
   const normalizedSlug = normalizeDatasetSlug(slug);
 
@@ -27,7 +25,6 @@ export const generateMetadata = async ({ params }: Props) => {
 };
 
 export async function generateStaticParams() {
-
   const { datasets } = await getDatasets(null);
 
   const paths = (datasets as Dataset[]).map((dataset) => ({
@@ -39,7 +36,6 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-
 
   const normalizedSlug = normalizeDatasetSlug(slug);
 
