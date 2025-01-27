@@ -1,46 +1,11 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Logo from "@/components/Logo";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/layout/Footer";
-
-const navLinks = [
-  {
-    label: "About Us",
-    href: "/#about",
-  },
-  {
-    label: "Data Services",
-    href: "/#services",
-  },
-  {
-    label: "Clients",
-    href: "/#clients",
-  },
-  {
-    label: "Products",
-    href: "/#products",
-  },
-  {
-    label: "Datasets",
-    href: "/datasets",
-  },
-  {
-    label: "Visualizations",
-    href: "/viz",
-  },
-];
+import Navbar from "@/components/layout/Navbar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -73,41 +38,8 @@ export default function RootLayout({
         >
           <NextTopLoader color="blue" />
 
-          {/* Header */}
-          <header className="sticky top-0 z-50 w-full border-b bg-white flex justify-center">
-            <div className="container flex h-16 items-center justify-between">
-              <div>
-                <Logo />
-              </div>
-              <nav className="hidden md:flex space-x-6 text-sm font-medium">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    className="transition-colors hover:text-green-600"
-                    href={link.href}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
+          <Navbar />
 
-              <SignedOut>
-                <Button>
-                  <SignInButton />
-                </Button>
-              </SignedOut>
-              <SignedIn>
-                <div className="flex items-center justify-center gap-4">
-                  <UserButton />
-                  <Link href="/datasets/my">
-                    <Button className="text-white">My Datasets</Button>
-                  </Link>
-                </div>
-              </SignedIn>
-            </div>
-          </header>
-
-          {/* Main Content */}
           <main className="flex-1">{children}</main>
 
           <Footer />
