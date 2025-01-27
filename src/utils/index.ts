@@ -19,7 +19,7 @@ export const normalizeDatasetSlug = (slug: string) => {
 export const HOST_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : "https://daxsome.owbird.site";
+    : "https://daxsome.org";
 
 export const colors = [
   "#8884d8",
