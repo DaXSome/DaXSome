@@ -16,6 +16,7 @@ import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { parseDatasetSlug } from "@/utils";
 
 const CreateNewDataset = () => {
   const [databaseName, setDatabaseName] = useState("");
@@ -26,7 +27,9 @@ const CreateNewDataset = () => {
   const createNewDataset = () => {
     if (!databaseName || !collectionName) return;
 
-    router.push(`/datasets/my/manage?database=${databaseName}&collection=${collectionName}`);
+    router.push(
+      `/datasets/my/manage?database=${parseDatasetSlug(databaseName)}&collection=${parseDatasetSlug(collectionName)}`,
+    );
   };
 
   return (
