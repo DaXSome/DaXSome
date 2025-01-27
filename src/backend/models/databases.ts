@@ -23,6 +23,3 @@ export const entriesSchema = new mongoose.Schema(
 export type Entries = mongoose.InferSchemaType<typeof entriesSchema> & {
   toJSON: () => Record<string, unknown>;
 };
-
-export const EntriesModel =
-  mongoose.models.entries || mongoose.model("entries", entriesSchema);

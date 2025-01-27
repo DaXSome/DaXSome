@@ -59,6 +59,3 @@ export const datasetsSchema = new mongoose.Schema({
 });
 
 export type Dataset = mongoose.InferSchemaType<typeof datasetsSchema>;
-
-export const DatasetModel =
-  mongoose.models.datasets || mongoose.model("datasets", datasetsSchema);
