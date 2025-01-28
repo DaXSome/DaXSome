@@ -1,4 +1,3 @@
-import { getUserDbs } from "@/app/actions/user";
 import {
   Card,
   CardContent,
@@ -6,10 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Clock, Database, FolderOpen, } from "lucide-react";
+import { Clock, Database, FolderOpen } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CreateNewDataset from "@/components/datasets/CreateNewDataset";
+import { getUserDbs } from "@/app/actions/datasets";
 
 const Page = async () => {
   const databases = await getUserDbs();
@@ -25,14 +25,14 @@ const Page = async () => {
 
         {databases.map((database) => (
           <Link
-            key={database.database}
-            href={`/datasets/my/manage?database=${database.database}`}
+            key={database.name}
+            href={`/datasets/my/manage?database=${database.name}`}
             className="hover:no-underline"
           >
             <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="flex items-center justify-between pb-2">
                 <CardTitle className="text-xl font-bold text-gray-900">
-                  {database.database}
+                  {database.name}
                 </CardTitle>
                 <Database className="h-6 w-6 text-gray-500" />
               </CardHeader>
@@ -40,7 +40,6 @@ const Page = async () => {
               <CardContent className="text-gray-700">
                 <div className="flex items-center space-x-4 text-sm">
                   <FolderOpen className="h-5 w-5 text-gray-500" />
-                  <span>{database.collections.length} collections</span>
                 </div>
               </CardContent>
 

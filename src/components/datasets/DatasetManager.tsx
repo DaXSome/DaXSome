@@ -5,13 +5,7 @@ import { CollectionSelector } from "@/components/datasets/CollectionSelector";
 import { DataTable } from "./DataTable";
 import { Button } from "@/components/ui/button";
 import { redirect, useSearchParams } from "next/navigation";
-import {
-  deleteCollection,
-  deleteDatabase,
-  deleteDataset,
-  getDatasetInfo,
-  saveData,
-} from "@/app/actions/datasets";
+import { dropCollection, dropDatabase, saveData } from "@/app/actions/datasets";
 import DatasetInfoBtn from "./DatasetInfoBtn";
 import { DatasetInfo } from "@/types";
 import {
@@ -44,7 +38,7 @@ interface Props {
 const DatasetManager = ({ collections, data, count }: Props) => {
   const [tableData, setTableData] = useState<Data[]>(data);
   const [isLoading, setIsLoading] = useState(false);
-  const [datasetInfo, setDatasetInfo] = useState<DatasetInfo | null>(null);
+  const [datasetInfo, _] = useState<DatasetInfo | null>(null);
 
   const params = useSearchParams();
   const { user } = useUser();
@@ -98,13 +92,10 @@ const DatasetManager = ({ collections, data, count }: Props) => {
 
     switch (action) {
       case "database":
-        await deleteDatabase({ user_id: user.id, database, collection });
+        await dropDatabase(database);
         break;
       case "collection":
-        await deleteCollection({ database, collection });
-        break;
-      case "dataset":
-        await deleteDataset({ database, collection });
+        await dropCollection(collection);
         break;
     }
 
@@ -115,8 +106,8 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     (async () => {
       setIsLoading(true);
 
-      const info = await getDatasetInfo({ database, collection });
-      setDatasetInfo(info);
+      // const info = await getDatasetInfo({ database, collection });
+      // setDatasetInfo(info);
 
       setIsLoading(false);
     })();

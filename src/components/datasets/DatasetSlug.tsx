@@ -53,7 +53,8 @@ export function DatasetView({ dataset }: Props) {
           <h1 className="text-4xl font-bold mb-2">{dataset.name}</h1>
           {user && user.id === dataset.user_id && (
             <Link
-              href={`/datasets/my/manage?database=${dataset.database}&collection=${dataset.sample_collection}`}
+              href={``}
+              // href={`/datasets/my/manage?database=${dataset.database}&collection=${dataset.sample_collection}`}
             >
               <Button className="text-white">Edit</Button>
             </Link>

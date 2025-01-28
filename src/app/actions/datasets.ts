@@ -1,27 +1,15 @@
 "use server";
 
-import mongoose, { InsertManyResult, UpdateResult } from "mongoose";
+import mongoose from "mongoose";
 import connectToDb from "@/backend/config/connectDb";
-import { datasetsSchema } from "@/backend/models/datasets";
-import { categoriesSchema } from "@/backend/models/categories";
-import { Link, linksSchema } from "@/backend/models/links";
-import { parseDatasetSlug } from "@/utils";
-import { DatasetFormData } from "@/schema";
-import { entriesSchema } from "@/backend/models/databases";
+import { CategoriesModel } from "@/backend/models/categories";
+import { Link, LinkModel } from "@/backend/models/links";
 import { getUser } from "./user";
 import { DatasetInfo } from "@/types";
-
-function getModel({
-  connection,
-  name,
-  schema,
-}: {
-  connection: mongoose.Connection;
-  name: string;
-  schema: mongoose.Schema;
-}) {
-  return connection.models[name] || connection.model(name, schema);
-}
+import { CollectionModel } from "@/backend/models/collections";
+import { DocumentModel } from "@/backend/models/documents";
+import { currentUser } from "@clerk/nextjs/server";
+import { DatabaseModel } from "@/backend/models/databases";
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -30,20 +18,14 @@ function getModel({
  * and `categories`, an array of strings of all categories.
  */
 export async function getDatasets(category: string | null) {
-  const connection = await connectToDb();
-
-  const query = getModel({
-    connection,
-    name: "datasets",
-    schema: datasetsSchema,
-  });
+  await connectToDb();
 
   let datasets;
 
   if (category && category !== "All" && category !== "undefined") {
-    datasets = await query.find({ category });
+    datasets = await CollectionModel.find({ category });
   } else {
-    datasets = await query.find();
+    datasets = await CollectionModel.find();
   }
 
   const users = await Promise.all(
@@ -59,16 +41,10 @@ export async function getDatasets(category: string | null) {
       user: users[index],
     };
 
-    return fullDataset as DatasetInfo;
+    return fullDataset as unknown as DatasetInfo;
   });
 
-  const categoriesModel = getModel({
-    connection,
-    name: "categories",
-    schema: categoriesSchema,
-  });
-
-  const categories = (await categoriesModel.find()).map(
+  const categories = (await CategoriesModel.find()).map(
     (category) => category.category,
   );
 
@@ -80,55 +56,26 @@ export async function getDatasets(category: string | null) {
  * @param name The name of the dataset to retrieve.
  * @returns The dataset in the format of `DatasetInfo` or `null` if the dataset does not exist.
  */
-export async function getDataset(name: string) {
-  const datasetsConnection = await connectToDb();
+export async function getDataset(slug: string) {
+  await connectToDb();
 
-  const datasetModel = getModel({
-    connection: datasetsConnection,
-    name: "datasets",
-    schema: datasetsSchema,
-  });
-
-  const dataset = await datasetModel.findOne({ name });
+  const dataset = await CollectionModel.findOne({ slug });
 
   if (!dataset) return;
 
-  const secondaryDataConn = await connectToDb(dataset.database);
+  const [sample, totalDocuments] = await Promise.all([
+    DocumentModel.find({ collection: dataset._id })
+      .limit(20)
+      .select({ _id: 0 }),
 
-  const metaDataModel =
-    secondaryDataConn.models.meta_data ||
-    secondaryDataConn.model(
-      "meta_data",
-      new mongoose.Schema(
-        {
-          updated_at: {
-            type: String,
-          },
-        },
-        { collection: "meta_data" },
-      ),
-    );
-
-  const sampleModel = getModel({
-    connection: secondaryDataConn,
-    name: dataset.sample_collection,
-    schema: new mongoose.Schema(
-      {},
-      { collection: dataset.sample_collection, strict: false },
-    ),
-  });
-
-  const [metaData, sample, totalDocuments] = await Promise.all([
-    await metaDataModel.findOne(),
-    await sampleModel.find().limit(20).select({ _id: 0 }),
-    await sampleModel.countDocuments(),
+    DocumentModel.countDocuments({ collection: dataset._id }),
   ]);
 
   const fullDataset = {
     ...dataset.toJSON(),
+    sample,
     _id: dataset.id,
-    sample: sample.map((s) => s.toJSON()),
-    updated_at: metaData ? metaData.updated_at : "Unknown",
+    updated_at: dataset.updatedAt,
     format: ["CSV"],
     total: totalDocuments,
   };
@@ -144,15 +91,9 @@ export async function getDataset(name: string) {
  */
 
 export async function getAltLink(id: string) {
-  const connection = await connectToDb();
+  await connectToDb();
 
-  const linksModel = getModel({
-    connection,
-    name: "links",
-    schema: linksSchema,
-  });
-
-  const link = (await linksModel.findById(id)) as Link | null;
+  const link = (await LinkModel.findById(id)) as Link | null;
 
   return link;
 }
@@ -164,53 +105,8 @@ export async function getAltLink(id: string) {
  * @returns The slug version of the dataset name.
  * @throws If the dataset already exists.
  */
-export async function createDataset(
-  user_id: string,
-  dsFormData: DatasetFormData,
-) {
+export async function createDataset(user_id: string) {
   if (!user_id) return;
-
-  const { name } = dsFormData;
-
-  const datasetsConnection = await connectToDb();
-
-  const DatasetModel = getModel({
-    connection: datasetsConnection,
-    name: "datasets",
-    schema: datasetsSchema,
-  });
-
-  const exists = await DatasetModel.findOne({ name, user_id }).collation({
-    locale: "en",
-    strength: 2,
-  });
-
-  if (exists) {
-    await DatasetModel.updateOne(
-      { _id: exists._id },
-
-      {
-        $set: {
-          ...dsFormData,
-          status: dsFormData.publish ? "published" : "pending",
-        },
-      },
-    );
-  } else {
-    await DatasetModel.create({
-      ...dsFormData,
-      user_id,
-      status: dsFormData.publish ? "published" : "pending",
-    });
-  }
-
-  await createEntry({
-    user_id,
-    sample_collection: dsFormData.sample_collection,
-    database: dsFormData.database,
-  });
-
-  return parseDatasetSlug(name);
 }
 
 /**
@@ -231,107 +127,7 @@ export const saveData = async ({
   inserts: Record<string, unknown>[];
   updates: Record<string, unknown>[];
 }) => {
-  const conn = await connectToDb(db);
-
-  if (!conn.db) throw new Error("Database connection failed");
-
-  const dbCollection = conn.db.collection(collection);
-
-  const queue: Array<
-    Promise<InsertManyResult<(typeof inserts)[number]> | UpdateResult>
-  > = [];
-
-  if (inserts.length > 0) {
-    queue.push(dbCollection.insertMany(inserts));
-  }
-
-  for (const doc of updates) {
-    const _id = doc._id as string;
-
-    const newData = { ...doc };
-
-    delete newData._id;
-
-    queue.push(
-      dbCollection.updateOne(
-        { _id: new mongoose.Types.ObjectId(_id) },
-        { $set: newData },
-      ),
-    );
-  }
-
-  await Promise.all(queue);
-};
-
-/**
- * Adds or updates the database entries for the user
- *
- * @param entries - The entries object to be updated
- */
-export const createEntry = async ({
-  user_id,
-  database,
-  sample_collection,
-}: Pick<DatasetFormData, "database" | "sample_collection"> & {
-  user_id: string;
-}) => {
-  const entriesConnection = await connectToDb("databases");
-
-  const EntriesModel = getModel({
-    connection: entriesConnection,
-    name: "entries",
-    schema: entriesSchema,
-  });
-
-  const exists = await EntriesModel.findOne({
-    user_id,
-    database,
-  });
-
-  if (exists && !exists.collections.includes(sample_collection)) {
-    await EntriesModel.findOneAndUpdate(exists._id, {
-      collections: [...exists.collections, sample_collection],
-    });
-  }
-
-  if (!exists) {
-    await EntriesModel.create({
-      user_id,
-      database,
-      collections: [sample_collection],
-    });
-  }
-};
-
-/**
- * Get dataset info from the collection and database
- *
- * @param database - the current database
- * @param collection - the current collection
- *
- * @returns The dataset info
- */
-export const getDatasetInfo = async ({
-  database,
-  collection,
-}: {
-  database: string;
-  collection: string;
-}) => {
-  const datasetsConnection = await connectToDb("datasets");
-
-  const DatasetModel = getModel({
-    connection: datasetsConnection,
-    name: "datasets",
-    schema: datasetsSchema,
-  });
-
-  const info = await DatasetModel.findOne({
-    database,
-    sample_collection: collection,
-  });
-
-  return info ? { ...info.toJSON(), _id: info._id.toString() } : null;
+  await connectToDb();
 };
 
 /**
@@ -342,22 +138,12 @@ export const getDatasetInfo = async ({
  * @param id - the current document id
  *
  */
-export const deleteDocument = async ({
-  database,
-  collection,
-  id,
-}: {
-  database: string;
-  collection: string;
-  id: string;
-}) => {
-  const conn = await connectToDb(database);
+export const deleteDocument = async (id: string) => {
+  await connectToDb();
 
-  if (!conn.db) throw new Error("Database connection failed");
-
-  await conn.db
-    .collection(collection)
-    .deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+  await DocumentModel.findOneAndDelete({
+    _id: new mongoose.Types.ObjectId(id),
+  });
 };
 
 /**
@@ -368,26 +154,8 @@ export const deleteDocument = async ({
  *
  * @returns A promise that resolves when the dataset is deleted.
  */
-export const deleteDataset = async ({
-  database,
-  collection,
-}: {
-  database: string;
-  collection: string;
-}) => {
-  const info = await getDatasetInfo({ database, collection });
-
-  if (info) {
-    const datasetsConnection = await connectToDb("datasets");
-
-    const DatasetModel = getModel({
-      connection: datasetsConnection,
-      name: "datasets",
-      schema: datasetsSchema,
-    });
-
-    await DatasetModel.deleteOne({ _id: info._id });
-  }
+export const dropDatabase = async (db: string) => {
+  await connectToDb();
 };
 
 /**
@@ -399,65 +167,68 @@ export const deleteDataset = async ({
  *
  * @returns A promise that resolves when the collection is deleted.
  */
-export const deleteCollection = async ({
-  database,
-  collection,
-}: {
-  database: string;
-  collection: string;
-}) => {
-  const conn = await connectToDb(database);
-
-  if (!conn.db) throw new Error("Database connection failed");
-
-  await Promise.all([
-    deleteDataset({ database, collection }),
-    conn.db.collection(collection).drop(),
-  ]);
+export const dropCollection = async (collection: string) => {
+  await connectToDb();
 };
 
 /**
- * Deletes an entire database along with associated metadata and collections.
- *
- * @param params - The parameters for the operation.
- * @param params.database - The name of the database.
- * @param params.collection - The name of the collection.
- * @param params.user_id - The ID of the user owning the database.
- *
- * @returns A promise that resolves when the database and associated resources are deleted.
- *
+ * Given a Clerk user ID, returns a list of databases that belong to that user.
+ * @returns An array of objects with `user_id` and `database` properties.
  */
-export const deleteDatabase = async ({
-  database,
-  collection,
-  user_id,
-}: {
-  user_id: string;
-  database: string;
-  collection: string;
-}) => {
-  const [mainDbConnection, entriesConnection] = await Promise.all([
-    connectToDb(database),
-    connectToDb("databases"),
+export async function getUserDbs() {
+  await connectToDb();
+
+  const user = await currentUser();
+
+  if (!user) return;
+
+  const databases = await DatabaseModel.find({ user_id: user.id });
+
+  return databases;
+}
+
+/**
+ * Returns an array of strings representing the names of all collections
+ * in a given MongoDB database.
+ * @param db The name of the database.
+ * @returns An array of strings.
+ */
+export const getCollections = async (db: string) => {
+  await connectToDb();
+
+  const collections = await CollectionModel.find({ database: db });
+
+  return collections;
+};
+
+/**
+ * Retrieves a limited set of documents from a specified collection within a MongoDB database.
+ *
+ * @param db - The name of the database to connect to.
+ * @param collection - The name of the collection from which to fetch documents.
+ * @returns An object containing:
+ *  - `data`: An array of documents from the collection, each with its `_id` field converted to a string.
+ *  - `count`: The total number of documents in the collection.
+ */
+export const getData = async (
+  database: string,
+  collection: string,
+  page: string,
+) => {
+  await connectToDb();
+
+  const [data, count] = await Promise.all([
+    DocumentModel.find({ database, collection })
+      .limit(10)
+      .skip(parseInt(page) * 10),
+    DocumentModel.countDocuments({ database, collection }),
   ]);
 
-  if (!mainDbConnection.db || !entriesConnection.db) {
-    throw new Error("Database connection failed");
-  }
-
-  const EntriesModel = getModel({
-    connection: entriesConnection,
-    name: "entries",
-    schema: entriesSchema,
-  });
-
-  await Promise.all([
-    deleteDataset({ database, collection }),
-    deleteCollection({ database, collection }),
-    mainDbConnection.db.dropDatabase(),
-    EntriesModel.findOneAndDelete({
-      user_id,
-      database,
-    }),
-  ]);
+  return {
+    data: data.map((document) => ({
+      ...document,
+      _id: document._id.toString(),
+    })) as Record<string, unknown>[],
+    count,
+  };
 };

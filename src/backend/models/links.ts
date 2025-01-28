@@ -11,3 +11,6 @@ export const linksSchema = new mongoose.Schema({
 });
 
 export type Link = mongoose.InferSchemaType<typeof linksSchema>;
+
+export const LinkModel =
+  mongoose.models.Link || mongoose.model("Link", linksSchema);

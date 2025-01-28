@@ -10,13 +10,9 @@ interface Column {
 }
 const useDataTable = ({
   data,
-  database,
-  collection,
   setData,
 }: {
   data: Data[];
-  database: string;
-  collection: string;
   setData: (data: Data[]) => void;
 }) => {
   const [columns, setColumns] = useState<Column[]>(
@@ -90,11 +86,7 @@ const useDataTable = ({
     const currentRowId = data[index]._id;
 
     if (currentRowId) {
-      await deleteDocument({
-        database,
-        collection,
-        id: currentRowId as string,
-      });
+      await deleteDocument(currentRowId as string);
     }
 
     setData(newRows);

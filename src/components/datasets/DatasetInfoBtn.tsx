@@ -40,7 +40,7 @@ interface DatasetInfoBtnProps {
   collection: string;
   info: DatasetInfo | null;
   isLoading: boolean;
-  deleteDataset: () => void
+  deleteDataset: () => void;
 }
 
 const DatasetInfoBtn = ({
@@ -62,20 +62,18 @@ const DatasetInfoBtn = ({
       name: info?.name || "",
       category: info?.category || "",
       description: info?.description || "",
-      full_description: info?.full_description || "",
-      use_cases: info?.use_cases.join(",") || "",
       tags: info?.tags.join(",") || "",
       access_type: info?.access_type || "Free",
       publish: info?.status === "published",
     },
   });
 
-  const handleSubmit = async (data: DatasetFormData) => {
+  const handleSubmit = async (_: DatasetFormData) => {
     if (!user) return;
 
     setIsLoading(true);
 
-    await createDataset(user.id, data);
+    await createDataset(user.id);
 
     setIsLoading(false);
     setOpen(false);
