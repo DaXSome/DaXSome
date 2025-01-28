@@ -1,34 +1,13 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { CollectionSelector } from "@/components/datasets/CollectionSelector";
-import { DataTable } from "./DataTable";
-import { Button } from "@/components/ui/button";
-import { redirect, useSearchParams } from "next/navigation";
+import { useState , useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { dropCollection, dropDatabase, saveData } from "@/app/actions/datasets";
-import DatasetInfoBtn from "./DatasetInfoBtn";
+
 import { DatasetInfo } from "@/types";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { EllipsisVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useUser } from "@clerk/nextjs";
-import { Sidebar } from "../ui/sidebar";
+
 import { AppSidebar } from "@/app/datasets/my/manage/SideBar";
 import DashboardView from "./DashboardView";
+import { useUser } from "@clerk/nextjs";
 
 type Data = Record<string, unknown>;
 
