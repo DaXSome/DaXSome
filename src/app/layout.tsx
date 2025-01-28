@@ -36,18 +36,12 @@ export default function RootLayout({
         <body
           className={`min-h-screen h-full ${geistSans.variable} ${geistMono.variable} antialiased flex flex-col bg-slate-100`}
         >
-          {/* <NextTopLoader color="blue" /> */}
-
-          {/* <Navbar />
-
-          <main className="flex-1 bg-red-300 w-full h-full border-2 flex">
-            <div className="w-full h-full bg-blue-200 flex-1">{children}</div>
-          </main>
-
-          <Footer /> */}
+          <NextTopLoader color="blue" />
           <Navbar />
 
-          <main className="flex-grow relative">{children}</main>
+          <main className="flex-grow bg-white flex h-full w-full">
+            {children}
+          </main>
 
           <Footer />
         </body>

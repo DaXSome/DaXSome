@@ -113,9 +113,9 @@ const DatasetManager = ({ collections, data, count }: Props) => {
     })();
   }, []);
 
-  if (!database) {
-    redirect("/datasets/my");
-  }
+  // if (!database) {
+  //   redirect("/datasets/my");
+  // }
 
   return (
     <div className="container mx-auto p-4">
