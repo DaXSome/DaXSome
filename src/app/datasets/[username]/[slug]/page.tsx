@@ -1,7 +1,7 @@
-import { getDataset, getDatasets } from "@/app/actions/datasets";
-import { Dataset } from "@/backend/models/datasets";
+import { getDataset } from "@/app/actions/datasets";
 import { DatasetView } from "@/components/datasets/DatasetSlug";
-import { HOST_URL, normalizeDatasetSlug, parseDatasetSlug } from "@/utils";
+import { DatasetInfo } from "@/types";
+import { HOST_URL, normalizeDatasetSlug } from "@/utils";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -19,20 +19,10 @@ export const generateMetadata = async ({ params }: Props) => {
 
   return {
     metadataBase: new URL(HOST_URL),
-    title: dataset.name,
-    description: dataset.description,
+    title: dataset?.name,
+    description: dataset?.metadata?.description,
   };
 };
-
-export async function generateStaticParams() {
-  const { datasets } = await getDatasets(null);
-
-  const paths = (datasets as Dataset[]).map((dataset) => ({
-    slug: parseDatasetSlug(dataset.name),
-  }));
-
-  return paths;
-}
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
@@ -41,9 +31,9 @@ export default async function Page({ params }: Props) {
 
   const dataset = await getDataset(normalizedSlug);
 
-  if (!dataset || dataset.status === "pending") {
+  if (!dataset) {
     return notFound();
   }
 
-  return <DatasetView dataset={dataset} />;
+  return <DatasetView dataset={dataset as unknown as DatasetInfo} />;
 }

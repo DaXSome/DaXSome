@@ -1,25 +1,30 @@
 import mongoose from "mongoose";
 
-export const entriesSchema = new mongoose.Schema(
+const databaseSchema = new mongoose.Schema(
   {
     user_id: {
       type: String,
       required: true,
     },
 
-    database: {
+    name: {
       type: String,
       required: true,
     },
 
-    collections: {
-      type: [String],
-      default: [],
+    metadata: {
+      description: {
+        type: String,
+        default: "",
+      },
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-export type Entries = mongoose.InferSchemaType<typeof entriesSchema> & {
-  toJSON: () => Record<string, unknown>;
-};
+export type Database = mongoose.InferSchemaType<typeof databaseSchema>;
+
+export const DatabaseModel =
+  mongoose.models.Database || mongoose.model("Database", databaseSchema);

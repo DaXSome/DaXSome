@@ -1,4 +1,4 @@
-import { getCollections, getData } from "@/app/actions/user";
+import { getCollections, getData } from "@/app/actions/datasets";
 import DatasetManager from "@/components/datasets/DatasetManager";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 const Page = async ({ searchParams }: Props) => {
   const { database, collection, page } = await searchParams;
 
-  let collections = await getCollections(database);
+  let collections = (await getCollections(database)).map((c) => c.name);
 
   if (!collections.includes(collection)) {
     collections = [...collections, collection];
@@ -17,7 +17,7 @@ const Page = async ({ searchParams }: Props) => {
   const { count, data: initialData } = await getData(
     database,
     collection || collections[0],
-    page
+    page,
   );
 
   let data = initialData;

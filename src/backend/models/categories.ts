@@ -10,6 +10,5 @@ export const categoriesSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export type Category = mongoose.InferSchemaType<typeof categoriesSchema> & {
-  _id: string;
-};
+export const CategoriesModel =
+  mongoose.models.Categories || mongoose.model("Categories", categoriesSchema);
