@@ -34,13 +34,14 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+          className={`min-h-screen h-full ${geistSans.variable} ${geistMono.variable} antialiased flex flex-col bg-slate-100`}
         >
           <NextTopLoader color="blue" />
-
           <Navbar />
 
-          <main className="flex-1">{children}</main>
+          <main className="flex-grow bg-white flex h-full w-full">
+            {children}
+          </main>
 
           <Footer />
         </body>

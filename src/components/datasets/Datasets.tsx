@@ -43,11 +43,11 @@ export default function Datasets({ datasets, categories }: Props) {
   const filteredDatasets = datasets.filter(
     (dataset) =>
       dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedAccessType === "" || dataset.access_type === selectedAccessType),
+      (selectedAccessType === "" || dataset.access_type === selectedAccessType)
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 ">
       <header className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Explore Our Datasets</h1>
         <p className="text-xl text-muted-foreground">
