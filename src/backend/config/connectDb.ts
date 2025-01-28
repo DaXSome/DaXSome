@@ -1,26 +1,20 @@
-import { MongoClient, Db } from "mongodb";
+import mongoose from "mongoose";
 
-let client: MongoClient | null = null;
-let db: Db | null = null;
+let cached = global.mongoose;
 
-const connectToDb = async (): Promise<Db> => {
-  if (db) {
-    console.log("Reusing existing database connection.");
-    return db;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+export default async function connectToDb() {
+  if (cached.conn) {
+    return cached.conn;
   }
-
-  try {
-    console.log("Connecting to MongoDB...");
-    client = new MongoClient(process.env.DB_URI as string);
-    await client.connect();
-
-    db = client.db("entries");
-    console.log("Successfully connected to MongoDB.");
-    return db;
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.DB_URI as string, {
+      dbName: "entries",
+    });
   }
-};
-
-export default connectToDb;
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
