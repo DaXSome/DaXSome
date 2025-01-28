@@ -1,14 +1,19 @@
 "use client"
+import { createDatabase } from '@/app/actions/datasets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useUser } from '@clerk/nextjs';
 import { Database } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 
 const CreateForm = ()=> {
     const [dbName, setDbName] = useState("")
     const [isDisabled, setIsDisabled] = useState(false)
+    const { user } = useUser()
+
+    const router = useRouter()
 
     const handleOnchange 
     = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +30,21 @@ const CreateForm = ()=> {
 
     const formatDbName = () => {
         setDbName(prevDbName => prevDbName.replace(/\s+/g, '_'));
+    }
+
+    const handleCreate = async () => {
+        if (!user) return
+
+        await createDatabase({
+            user_id: user.id, 
+            name:dbName,
+            metadata: {description:""}
+        })
+
+
+        router.push("/datasets/my/manage/")
+
+
     }
 
     useEffect(()=> {
@@ -49,9 +69,7 @@ const CreateForm = ()=> {
 
                 <div className='z-50 w-full max-w-[300px]'>
 
-                <Link href={"/datasets/my/manage"}>
-                    <Button className='font-bold px-8 w-full' disabled = {isDisabled}>Create</Button>
-                </Link>
+                    <Button className='font-bold px-8 w-full' disabled = {isDisabled} onClick={handleCreate}>Create</Button>
                 </div>
 
             </div>

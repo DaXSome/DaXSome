@@ -9,7 +9,7 @@ import { DatasetInfo } from "@/types";
 import { CollectionModel } from "@/backend/models/collections";
 import { DocumentModel } from "@/backend/models/documents";
 import { currentUser } from "@clerk/nextjs/server";
-import { DatabaseModel } from "@/backend/models/databases";
+import { Database, DatabaseModel } from "@/backend/models/databases";
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -89,7 +89,6 @@ export async function getDataset(slug: string) {
  * @param id - The ID of the link to retrieve.
  * @returns A Promise that resolves to a Link object if found, or null if not found.
  */
-
 export async function getAltLink(id: string) {
   await connectToDb();
 
@@ -99,14 +98,13 @@ export async function getAltLink(id: string) {
 }
 
 /**
- * Create a new dataset. If the dataset already exists, throw an error.
+ * Create a new database
  *
- * @param name The name of the dataset to create.
+ * @param user_id The ID of the user.
  * @returns The slug version of the dataset name.
- * @throws If the dataset already exists.
  */
-export async function createDataset(user_id: string) {
-  if (!user_id) return;
+export async function createDatabase(data: Pick< Database, "user_id" | "name" |"metadata">) {
+  await DatabaseModel.create(data);
 }
 
 /**

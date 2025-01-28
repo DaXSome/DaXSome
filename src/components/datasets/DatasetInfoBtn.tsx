@@ -29,7 +29,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
-import { createDataset } from "@/app/actions/datasets";
 import { DatasetFormData, datasetSchema } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { DatasetInfo } from "@/types";
@@ -73,7 +72,7 @@ const DatasetInfoBtn = ({
 
     setIsLoading(true);
 
-    await createDataset(user.id);
+    // await createDataset(user.id);
 
     setIsLoading(false);
     setOpen(false);
