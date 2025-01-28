@@ -43,7 +43,7 @@ export default function Datasets({ datasets, categories }: Props) {
   const filteredDatasets = datasets.filter(
     (dataset) =>
       dataset.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedAccessType === "" || dataset.access_type === selectedAccessType),
+      (selectedAccessType === "" || dataset.access_type === selectedAccessType)
   );
 
   return (

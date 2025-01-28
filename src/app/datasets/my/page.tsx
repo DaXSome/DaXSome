@@ -10,6 +10,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import CreateNewDataset from "@/components/datasets/CreateNewDataset";
 import { getUserDbs } from "@/app/actions/datasets";
+import CreateDatabaseButton from "@/components/reusables/CreateDatabaseButton";
+import DatabasesGrid from "@/components/datasets/DatabasesGrid";
 
 const Page = async () => {
   const databases = await getUserDbs();
@@ -17,12 +19,14 @@ const Page = async () => {
   if (!databases) return notFound();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="mx-auto px-4 py-8 bg-white flex-1 flex h-full">
       <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Databases</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl px-4">
-        <CreateNewDataset />
+      {/*
+        (databases && databases.length == 0) && <CreateNewDataset/>
+      */}
 
+      {/* <div className="w-full grid grid-cols-1 md:grid-cols-2 place-items-center items-center gap-6 max-w-5xl px-4 py-4">
         {databases.map((database) => (
           <Link
             key={database.name}
@@ -55,7 +59,21 @@ const Page = async () => {
             </Card>
           </Link>
         ))}
-      </div>
+      </div> */}
+
+      {/* <div className="w-full max-w-7xl h-full bg-white rounded-md flex place-items-center justify-center">
+        {databases && databases.length == 0 ? (
+          <div className="w-full flex flex-col place-items-center justify-center gap-3">
+            <div className="flex flex-col gap-2 justify-center place-items-center">
+              <Database size={90} className="text-slate-200" />
+              <h4 className="text-slate-400">No databases found</h4>
+            </div>
+            <CreateDatabaseButton />
+          </div>
+        ) : (
+          <DatabasesGrid />
+        )}
+      </div> */}
     </div>
   );
 };
