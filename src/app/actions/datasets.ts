@@ -100,7 +100,7 @@ export async function getAltLink(id: string) {
 /**
  * Create a new database
  *
- * @param user_id The ID of the user.
+ * @param data Which contains the user_id, name and metaData from the Database model
  * @returns The slug version of the dataset name.
  */
 export async function createDatabase(data: Pick< Database, "user_id" | "name" |"metadata">) {
@@ -180,9 +180,15 @@ export async function getUserDbs() {
 
   if (!user) return;
 
-  const databases = await DatabaseModel.find({ user_id: user.id });
+  const databases = await DatabaseModel.find<Database>({user_id:user.id});
 
-  return databases;
+  return  databases.map((db) => ({
+    id: db.id,
+    name: db.name,
+    createdAt:db.createdAt,
+    metadata: db.metadata
+  }))
+
 }
 
 /**

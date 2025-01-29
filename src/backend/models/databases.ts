@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 const databaseSchema = new mongoose.Schema(
   {
@@ -24,7 +24,7 @@ const databaseSchema = new mongoose.Schema(
   },
 );
 
-export type Database = mongoose.InferSchemaType<typeof databaseSchema>;
+export type Database = mongoose.InferSchemaType<typeof databaseSchema> & Document
 
 export const DatabaseModel =
   mongoose.models.Database || mongoose.model("Database", databaseSchema);
