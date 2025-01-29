@@ -6,7 +6,7 @@ import { CategoriesModel } from "@/backend/models/categories";
 import { Link, LinkModel } from "@/backend/models/links";
 import { getUser } from "./user";
 import { DatasetInfo } from "@/types";
-import { CollectionModel } from "@/backend/models/collections";
+import { Collection, CollectionModel } from "@/backend/models/collections";
 import { DocumentModel } from "@/backend/models/documents";
 import { currentUser } from "@clerk/nextjs/server";
 import { Database, DatabaseModel } from "@/backend/models/databases";
@@ -182,12 +182,15 @@ export async function getUserDbs() {
 
   const databases = await DatabaseModel.find<Database>({user_id:user.id});
 
-  return  databases.map((db) => ({
+  const fmttedDbs = await Promise.all( databases.map(async (db) => ({
     id: db.id,
     name: db.name,
     createdAt:db.createdAt,
-    metadata: db.metadata
-  }))
+    metadata: db.metadata,
+    collections: (await getCollections(db.id)).map((collection) => collection.name)
+  })))
+
+  return fmttedDbs
 
 }
 
@@ -200,7 +203,7 @@ export async function getUserDbs() {
 export const getCollections = async (db: string) => {
   await connectToDb();
 
-  const collections = await CollectionModel.find({ database: db });
+  const collections = await CollectionModel.find<Collection>({ database: db });
 
   return collections;
 };
