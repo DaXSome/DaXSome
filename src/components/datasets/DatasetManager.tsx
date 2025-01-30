@@ -5,9 +5,9 @@ import { dropCollection, dropDatabase, saveData } from "@/app/actions/datasets";
 
 import { DatasetInfo } from "@/types";
 
-import { AppSidebar } from "@/app/datasets/my/manage/SideBar";
 import DashboardView from "./DashboardView";
 import { useUser } from "@clerk/nextjs";
+import { AppSidebar } from "@/app/datasets/my/[id]/SideBar";
 
 type Data = Record<string, unknown>;
 
