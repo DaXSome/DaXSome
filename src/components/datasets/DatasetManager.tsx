@@ -1,30 +1,12 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { CollectionSelector } from "@/components/datasets/CollectionSelector";
-import { DataTable } from "./DataTable";
-import { Button } from "@/components/ui/button";
-import { redirect, useSearchParams } from "next/navigation";
+import { useState , useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { dropCollection, dropDatabase, saveData } from "@/app/actions/datasets";
-import DatasetInfoBtn from "./DatasetInfoBtn";
+
 import { DatasetInfo } from "@/types";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { EllipsisVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
+import { AppSidebar } from "@/app/datasets/my/manage/SideBar";
+import DashboardView from "./DashboardView";
 import { useUser } from "@clerk/nextjs";
 
 type Data = Record<string, unknown>;
@@ -118,123 +100,12 @@ const DatasetManager = ({ collections, data, count }: Props) => {
   // }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center mb-4">
-        <h1 className="text-2xl font-bold">{database} Database</h1>
+    <div className="container mx-auto py-4">
+      <div className="flex items-center mb-4 w-full h-full gap-5">
+        <AppSidebar/>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <EllipsisVertical />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuGroup className="text-red-400">
-              <DropdownMenuItem onClick={() => dropActions("database")}>
-                Drop &apos;{database}&apos; database
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => dropActions("collection")}>
-                Drop &apos;{collection}&apos; collection
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="space-y-4">
-        {database && (
-          <div className="flex items-center justify-between">
-            <CollectionSelector
-              key={database}
-              selectedCollection={collection!}
-              collections={collections}
-              database={database}
-            />
+        <DashboardView/>
 
-            <DatasetInfoBtn
-              key={datasetInfo?._id}
-              database={database}
-              collection={collection}
-              info={datasetInfo}
-              isLoading={isLoading}
-              deleteDataset={() => dropActions("dataset")}
-            />
-          </div>
-        )}
-        {collection && (
-          <div className="flex flex-col gap-2">
-            <DataTable
-              key={`${database}-${collection}-${currentPage}`}
-              database={database}
-              collection={collection}
-              data={tableData}
-              setData={setTableData}
-            />
-
-            <div className="flex justify-between items-center mt-4">
-              <Pagination>
-                <PaginationContent>
-                  {currentPage > 1 && (
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href={generatePaginationLink(currentPage - 1)}
-                      />
-                    </PaginationItem>
-                  )}
-
-                  {Array.from(
-                    { length: totalPages },
-                    (_, index) => index + 1,
-                  ).map((page) => {
-                    // Show pages within a range around the current page
-                    const isWithinRange =
-                      page === 1 ||
-                      page === totalPages ||
-                      Math.abs(page - currentPage) <= 2;
-
-                    if (isWithinRange) {
-                      return (
-                        <PaginationItem key={page}>
-                          <PaginationLink
-                            href={generatePaginationLink(page)}
-                            className={
-                              page === currentPage
-                                ? "font-bold text-blue-500"
-                                : ""
-                            }
-                          >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    }
-
-                    // Handle ellipsis for skipped pages
-                    const isEllipsis = Math.abs(page - currentPage) === 3;
-                    if (isEllipsis) {
-                      return (
-                        <PaginationItem key={`ellipsis-${page}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      );
-                    }
-
-                    return null;
-                  })}
-
-                  {currentPage < totalPages && (
-                    <PaginationItem>
-                      <PaginationNext
-                        href={generatePaginationLink(currentPage + 1)}
-                      />
-                    </PaginationItem>
-                  )}
-                </PaginationContent>
-              </Pagination>
-            </div>
-
-            <Button disabled={isLoading} onClick={handleSaveData}>
-              Save Data
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
