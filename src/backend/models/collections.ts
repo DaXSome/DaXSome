@@ -61,5 +61,7 @@ const collectionSchema = new mongoose.Schema(
   },
 );
 
+export type Collection = mongoose.InferSchemaType<typeof collectionSchema>
+
 export const CollectionModel =
   mongoose.models.Collection || mongoose.model("Collection", collectionSchema);

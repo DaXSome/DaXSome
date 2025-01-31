@@ -33,7 +33,7 @@ const Page = async () => {
                                 <CreateDatabaseButton />
                             </div>
                         ) : (
-                            <DatabasesGrid />
+                            <DatabasesGrid  databases={databases} />
                         )}
                     </div>
                 </div>
