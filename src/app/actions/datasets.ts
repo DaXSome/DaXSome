@@ -202,11 +202,25 @@ export async function getUserDbs() {
  * @returns An array of strings.
  */
 export const getCollections = async (db: string) => {
-  await connectToDb();
+    await connectToDb();
 
-  const collections = await CollectionModel.find<Collection>({ database: db });
+    const collections = await CollectionModel.find<Collection>({
+        database: db,
+    });
 
-  return collections;
+    const fmttedCols = collections.map((col, index) => {
+        const plainObj = col.toObject();
+
+        delete plainObj.database;
+
+        return {
+            ...plainObj,
+            _id: plainObj._id.toString(),
+            name: plainObj.name || `Untitled ${index + 1}`,
+        };
+    });
+
+    return fmttedCols as Collection[];
 };
 
 /**

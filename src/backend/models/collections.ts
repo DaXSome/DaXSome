@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 const collectionSchema = new mongoose.Schema(
   {
@@ -15,7 +15,7 @@ const collectionSchema = new mongoose.Schema(
 
     name: {
       type: String,
-      default: "",
+      default: "Untitled",
     },
 
     slug: {
@@ -61,7 +61,7 @@ const collectionSchema = new mongoose.Schema(
   },
 );
 
-export type Collection = mongoose.InferSchemaType<typeof collectionSchema>
+export type Collection = mongoose.InferSchemaType<typeof collectionSchema> & Document
 
 export const CollectionModel =
   mongoose.models.Collection || mongoose.model("Collection", collectionSchema);
