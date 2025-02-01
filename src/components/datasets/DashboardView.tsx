@@ -9,7 +9,7 @@ const DashboardView = () => {
 
     return (
         <div className="flex-1 w-full h-full bg-gray-50 rounded-md p-4">
-            <AddCollectionModal/>
+            <AddCollectionModal />
             {collections.length <= 0 ? (
                 <div className="w-full h-full flex flex-col gap-1 justify-center place-items-center">
                     <div className="font-semibold text-slate-500">

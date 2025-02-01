@@ -239,3 +239,35 @@ export const getData = async (
     count,
   };
 };
+
+
+/**
+ * Returns an array of strings representing the names of all collections
+ * in a given MongoDB database.
+ * @param db The name of the database.
+ * @returns An array of strings.
+ */
+export const createDatabaseSchema= async (db: string) => {
+  await connectToDb();
+
+  const collections = await CollectionModel.find<Collection>({ database: db });
+
+  return collections;
+};
+
+
+/**
+ * Returns an array of strings representing the names of all collections
+ * in a given MongoDB database.
+ * @param db The name of the database.
+ * @returns An array of strings.
+ */
+export const createCollecion = async (data: Partial< Collection>) => {
+  await connectToDb();
+
+  const collection = await CollectionModel.create(data)
+  
+  return collection.id
+};
+
+

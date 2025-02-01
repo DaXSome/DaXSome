@@ -17,10 +17,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname, useParams } from 'next/navigation';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { createCollecion } from '@/app/actions/datasets';
+import { useUser } from '@clerk/nextjs';
+import mongoose from 'mongoose';
 
 interface FieldType {
     name: string;
@@ -31,6 +34,8 @@ const AddCollectionModal = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+    const {id} = useParams()
+    const {user} = useUser()
     const openModalParam = searchParams.get('openCollectionsModal');
 
     const [addedFields, setAddedFields] = useState<FieldType[]>([]);
@@ -65,7 +70,14 @@ const AddCollectionModal = () => {
         );
     };
 
-    console.log(addedFields);
+    const createSchema = async () => {
+        if (!user) return
+
+
+        const collection = await createCollecion({database:id, user_id: user.id})
+
+        console.log(collection)
+    }
 
     return (
         <Dialog open={openModalParam === 'True'} onOpenChange={closeModal}>
@@ -140,8 +152,8 @@ const AddCollectionModal = () => {
                     </Button>
                     <Button
                         className="text-slate-50 font-semibold"
-                        type="submit"
                         disabled= {addedFields.length == 0}
+                        onClick={createSchema}
                     >
                         Create
                     </Button>

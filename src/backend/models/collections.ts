@@ -5,22 +5,22 @@ const collectionSchema = new mongoose.Schema(
     database: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Database",
-      required: true,
+      default: "",
     },
 
     user_id: {
       type: String,
-      required: true,
+      default: "",
     },
 
     name: {
       type: String,
-      required: true,
+      default: "",
     },
 
     slug: {
       type: String,
-      required: true,
+      default:""
     },
 
     metadata: {
@@ -52,7 +52,7 @@ const collectionSchema = new mongoose.Schema(
 
       status: {
         type: String,
-        required: true,
+        default: "",
       },
     },
   },
