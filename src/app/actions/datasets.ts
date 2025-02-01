@@ -10,6 +10,7 @@ import { Collection, CollectionModel } from "@/backend/models/collections";
 import { DocumentModel } from "@/backend/models/documents";
 import { currentUser } from "@clerk/nextjs/server";
 import { Database, DatabaseModel } from "@/backend/models/databases";
+import { DocumentSchema, DocumentSchemaModel } from "@/backend/models/schema";
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -241,20 +242,38 @@ export const getData = async (
 };
 
 
+interface CreateDocumentSchemaData
+    extends Omit<
+        DocumentSchema,
+        'updatedAt' | 'createdAt' | 'database' | 'schema'
+    > {
+    database: string;
+    schema: {
+        name: string;
+        type: DocumentSchema['schema'][number]['type'];
+    }[];
+}
+
+
 /**
  * Returns an array of strings representing the names of all collections
  * in a given MongoDB database.
  * @param db The name of the database.
  * @returns An array of strings.
  */
-export const createDatabaseSchema= async (db: string) => {
-  await connectToDb();
+export const createDocumentSchema = async (
+    data: CreateDocumentSchemaData
+) => {
+    await connectToDb();
 
-  const collections = await CollectionModel.find<Collection>({ database: db });
+    await DocumentSchemaModel.create(data);
 
-  return collections;
 };
 
+interface CreateCollectionData extends Partial<Omit<Collection, 'database'>> {
+    database: string;
+}
+
 
 /**
  * Returns an array of strings representing the names of all collections
@@ -262,12 +281,12 @@ export const createDatabaseSchema= async (db: string) => {
  * @param db The name of the database.
  * @returns An array of strings.
  */
-export const createCollecion = async (data: Partial< Collection>) => {
-  await connectToDb();
+export const createCollecion = async (data: CreateCollectionData) => {
+    await connectToDb();
 
-  const collection = await CollectionModel.create(data)
-  
-  return collection.id
+    const collection = await CollectionModel.create(data);
+
+    return collection.id;
 };
 
 

@@ -21,13 +21,13 @@ import { useSearchParams, useRouter, usePathname, useParams } from 'next/navigat
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { createCollecion } from '@/app/actions/datasets';
+import { createCollecion, createDocumentSchema } from '@/app/actions/datasets';
 import { useUser } from '@clerk/nextjs';
-import mongoose from 'mongoose';
+import { DocumentSchema } from '@/backend/models/schema';
 
 interface FieldType {
     name: string;
-    type: 'String' | 'Boolean' | 'JSON';
+    type: DocumentSchema["schema"][number]["type"]
 }
 
 const AddCollectionModal = () => {
@@ -51,7 +51,7 @@ const AddCollectionModal = () => {
             ...pre,
             {
                 name: '',
-                type: 'String',
+                type: 'string',
             },
         ]);
     };
@@ -71,13 +71,22 @@ const AddCollectionModal = () => {
     };
 
     const createSchema = async () => {
-        if (!user) return
+        if (!user) return;
 
+        const collection = await createCollecion({
+            database: id as string,
+            user_id: user.id,
+        });
 
-        const collection = await createCollecion({database:id, user_id: user.id})
+        await createDocumentSchema({
+            collection,
+            user_id: user.id,
+            database: id as string,
+            schema: addedFields,
+        });
 
-        console.log(collection)
-    }
+        closeModal()
+    };
 
     return (
         <Dialog open={openModalParam === 'True'} onOpenChange={closeModal}>
@@ -104,18 +113,18 @@ const AddCollectionModal = () => {
                                     <Input value={addedFields[index].name} placeholder={`column name`} onChange={(e) => handleOnChange(index, 'name', e.target.value)} />
                                 </div>
                                 <div className="flex-1">
-                                    <Select defaultValue="String" value={addedFields[index].type} onValueChange={(e) => handleOnChange(index, 'type', e)}>
+                                    <Select defaultValue="string" value={addedFields[index].type} onValueChange={(e) => handleOnChange(index, 'type', e)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="String" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="String">
+                                            <SelectItem value="string">
                                                 String
                                             </SelectItem>
-                                            <SelectItem value="Boolean">
+                                            <SelectItem value="boolean">
                                                 Boolean
                                             </SelectItem>
-                                            <SelectItem value="JSON">
+                                            <SelectItem value="json">
                                                 Json
                                             </SelectItem>
                                         </SelectContent>
