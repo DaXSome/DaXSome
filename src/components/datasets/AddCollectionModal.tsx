@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Dialog,
@@ -21,7 +21,7 @@ import { useSearchParams, useRouter, usePathname, useParams } from 'next/navigat
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { createCollecion, createDocumentSchema } from '@/app/actions/datasets';
+import { createCollecion, createDocumentSchema, getDocumentSchema } from '@/app/actions/datasets';
 import { useUser } from '@clerk/nextjs';
 import { DocumentSchema } from '@/backend/models/schema';
 
@@ -37,6 +37,8 @@ const AddCollectionModal = () => {
     const {id} = useParams()
     const {user} = useUser()
     const openModalParam = searchParams.get('openCollectionsModal');
+    const collection = searchParams.get('col')
+
 
     const [addedFields, setAddedFields] = useState<FieldType[]>([]);
 
@@ -73,20 +75,39 @@ const AddCollectionModal = () => {
     const createSchema = async () => {
         if (!user) return;
 
-        const collection = await createCollecion({
-            database: id as string,
-            user_id: user.id,
-        });
+        const colId =
+            collection ||
+            (await createCollecion({
+                database: id as string,
+                user_id: user.id,
+            }));
+
 
         await createDocumentSchema({
-            collection,
+            collection: colId,
             user_id: user.id,
             database: id as string,
             schema: addedFields,
         });
 
-        closeModal()
+        closeModal();
     };
+
+    useEffect(() => {
+        (async () => {
+            if (!collection) return;
+
+            const schema = await getDocumentSchema({
+                database: id as string,
+                collection,
+            });
+
+            if (schema) {
+                setAddedFields(schema);
+            }
+        })();
+    }, [collection]);
+
 
     return (
         <Dialog open={openModalParam === 'True'} onOpenChange={closeModal}>

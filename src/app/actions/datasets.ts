@@ -274,13 +274,21 @@ interface CreateDocumentSchemaData
  * @param db The name of the database.
  * @returns An array of strings.
  */
-export const createDocumentSchema = async (
-    data: CreateDocumentSchemaData
-) => {
+export const createDocumentSchema = async (data: CreateDocumentSchemaData) => {
     await connectToDb();
 
-    await DocumentSchemaModel.create(data);
+    const exists = await DocumentSchemaModel.exists({
+        collection: new mongoose.Types.ObjectId(data.collection),
+    });
 
+    if (!exists) {
+        await DocumentSchemaModel.create(data);
+    } else {
+        await DocumentSchemaModel.updateOne(
+            { _id: exists._id },
+            { $set: data }
+        );
+    }
 };
 
 interface CreateCollectionData extends Partial<Omit<Collection, 'database'>> {
