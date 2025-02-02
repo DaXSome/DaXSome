@@ -2,6 +2,7 @@
 import { Collection } from '@/backend/models/collections';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -39,16 +40,17 @@ export function AppSidebar({ collections }:Props) {
                 </div>
             </div>
 
-            <ul className="mt-4 space-y-2">
+            <div className="mt-4 space-y-2 flex flex-col">
                 {collections.map((collection) => (
-                    <li
+                    <Link
                         key={collection._id as string}
+                        href={`?col=${collection._id}`}
                         className="p-2 bg-white rounded-md shadow-sm hover:bg-gray-100 cursor-pointer"
                     >
                         {collection.name}
-                    </li>
+                    </Link>
                 ))}
-            </ul>
+            </div>
         </nav>
     );
 }

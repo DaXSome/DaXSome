@@ -187,8 +187,7 @@ export async function getUserDbs() {
     id: db.id,
     name: db.name,
     createdAt:db.createdAt,
-    metadata: db.metadata,
-    collections: (await getCollections(db.id)).map((collection) => collection.name)
+    collections: (await getCollections(db.id)).map((collection) => collection._id as string)
   })))
 
   return fmttedDbs
@@ -303,4 +302,30 @@ export const createCollecion = async (data: CreateCollectionData) => {
     return collection.id;
 };
 
+/**
+ * Retrieves the schema of a specific collection
+ *
+ * @param {Object} params - The parameters for retrieving the schema.
+ * @param {string} params.database - The name of the database.
+ * @param {string} params.collection - The name of the collection.
+ * @returns {Array<{ name: string, type: string }> | undefined} An array of schema field definitions or `undefined` if not found.
+ */
+export const getDocumentSchema = async ({
+    database,
+    collection,
+}: {
+    database: string;
+    collection: string;
+}) => {
 
+    await connectToDb();
+
+    const schema = await DocumentSchemaModel.findOne<DocumentSchema>({
+        database,
+        collection,
+    });
+
+    if (schema) {
+        return schema.schema.map(({ name, type }) => ({ name, type }));
+    }
+};

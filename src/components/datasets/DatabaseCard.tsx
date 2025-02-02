@@ -17,8 +17,15 @@ const DatabaseCard: React.FC<DatabaseCardProps> = ({
     description,
     collections,
 }) => {
+    const getDbLink = () => {
+        if (collections.length > 0) {
+            return `/datasets/my/${id}?col=${collections[0]}`;
+        }
+        return `/datasets/my/${id}`;
+    };
+
     return (
-        <Link href={`/datasets/my/${id}`}>
+        <Link href={getDbLink()}>
             <div className="bg-white shadow-sm border border-slate-200 rounded-lg p-6 m-4 max-w-md">
                 <h2 className="text-2xl font-bold mb-2">{name}</h2>
                 <p className="text-gray-600 mb-4">
