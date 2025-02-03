@@ -43,9 +43,12 @@ export function DataTable() {
                     {' '}
                     <Import /> import
                 </Button>
-                <Button className="font-semibold text-slate-50">
+                <Button
+                    className="font-semibold text-slate-50"
+                    onClick={addRow}
+                >
                     {' '}
-                    <Plus /> Add document
+                    <Plus /> Add row
                 </Button>
                 <Button
                     className="font-semibold text-slate-50"

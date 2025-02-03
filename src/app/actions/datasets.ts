@@ -132,10 +132,10 @@ export const saveData = async ({
 
     if (!user) return;
 
-    await Promise.all(
+    const res = await Promise.all(
         data.map((d) =>
             DocumentModel.findOneAndUpdate(
-                { _id: d._id },
+                {_id: d._id || new mongoose.Types.ObjectId() },
                 {
                     database,
                     collection,
@@ -146,6 +146,9 @@ export const saveData = async ({
             )
         )
     );
+
+
+    console.log(res)
 };
 
 /**
@@ -262,7 +265,7 @@ export const getData = async (
 
     const [data, count,] = await Promise.all([
         DocumentModel.find({ database, collection })
-            .limit(10)
+            .limit(15)
             .skip(parseInt(page) * 10),
         DocumentModel.countDocuments({ database, collection }),
     ]);
