@@ -5,6 +5,7 @@ import DatasetViewTable from './DatasetViewTable';
 import { Button } from '../ui/button';
 import { Import, Plus } from 'lucide-react';
 import AddCollectionModal from './AddCollectionModal';
+import { DataTable } from './DataTable';
 
 interface Props {
     collections: Collection[];
@@ -20,17 +21,7 @@ const DatasetManager = ({ collections }: Props) => {
                     <div className="flex-1 w-full h-full bg-gray-50 rounded-md p-4">
                         <AddCollectionModal />
                         <div>
-                            <div className="w-full flex justify-end gap-3">
-                                <Button variant={'outline'}>
-                                    {' '}
-                                    <Import /> import
-                                </Button>
-                                <Button className="font-semibold text-slate-50">
-                                    {' '}
-                                    <Plus /> Add document
-                                </Button>
-                            </div>
-                            <DatasetViewTable />
+                            <DataTable />
                         </div>
                     </div>
                 )}
