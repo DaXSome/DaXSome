@@ -135,14 +135,14 @@ export const saveData = async ({
     await Promise.all(
         data.map((d) =>
             DocumentModel.findOneAndUpdate(
-                d,
+                { _id: d._id },
                 {
                     database,
                     collection,
                     user_id: user.id,
                     data: d,
                 },
-                { upsert: true }
+                { upsert: true, strict: false }
             )
         )
     );
