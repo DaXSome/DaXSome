@@ -260,7 +260,7 @@ export const getData = async (
 ) => {
     await connectToDb();
 
-    const [data, count] = await Promise.all([
+    const [data, count,] = await Promise.all([
         DocumentModel.find({ database, collection })
             .limit(10)
             .skip(parseInt(page) * 10),
@@ -269,8 +269,11 @@ export const getData = async (
 
     return {
         data: data.map((document) => ({
-            ...document,
+            database: document.database.toString(),
+            collection: document.database.toString(),
+            user_id: document.user_id,
             _id: document._id.toString(),
+            ...document.data,
         })) as Record<string, unknown>[],
         count,
     };

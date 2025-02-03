@@ -1,5 +1,6 @@
 import {
     deleteDocument,
+    getData,
     getDocumentSchema,
     saveData,
 } from '@/app/actions/datasets';
@@ -134,25 +135,35 @@ const useDataTable = () => {
     };
 
     const save = async () => {
-
         await saveData({
             database: databaseId as string,
             collection,
             data,
         });
 
-        alert("saved");
+        alert('saved');
     };
 
     useEffect(() => {
         (async () => {
-            const schema = await getDocumentSchema({
-                database: databaseId as string,
-                collection,
-            });
+            const [schema, documents] = await Promise.all([
+                getDocumentSchema({
+                    database: databaseId as string,
+                    collection,
+                }),
+
+
+                getData(
+                    databaseId as string,
+                    collection,
+                    "0"
+                )
+            ]);
 
             if (schema) {
                 setColumns(schema);
+
+                setData(documents.data)
             }
         })();
     }, [databaseId, collection]);
