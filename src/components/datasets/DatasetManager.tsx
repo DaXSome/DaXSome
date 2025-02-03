@@ -1,9 +1,6 @@
 'use client';
 import { AppSidebar } from '@/app/datasets/my/[id]/SideBar';
 import { Collection } from '@/backend/models/collections';
-import DatasetViewTable from './DatasetViewTable';
-import { Button } from '../ui/button';
-import { Import, Plus } from 'lucide-react';
 import AddCollectionModal from './AddCollectionModal';
 import { DataTable } from './DataTable';
 
