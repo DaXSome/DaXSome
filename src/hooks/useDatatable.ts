@@ -1,4 +1,8 @@
-import { deleteDocument, getDocumentSchema } from '@/app/actions/datasets';
+import {
+    deleteDocument,
+    getDocumentSchema,
+    saveData,
+} from '@/app/actions/datasets';
 import { ColumnType } from '@/types';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -129,6 +133,17 @@ const useDataTable = () => {
         }
     };
 
+    const save = async () => {
+
+        await saveData({
+            database: databaseId as string,
+            collection,
+            data,
+        });
+
+        alert("saved");
+    };
+
     useEffect(() => {
         (async () => {
             const schema = await getDocumentSchema({
@@ -149,6 +164,7 @@ const useDataTable = () => {
         addRow,
         updateCell,
         handleFileUpload,
+        save,
     };
 };
 

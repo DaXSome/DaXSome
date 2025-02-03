@@ -10,12 +10,19 @@ import {
 } from '@/components/ui/context-menu';
 import useDataTable from '@/hooks/useDatatable';
 import { Button } from '../ui/button';
-import { Import, Plus } from 'lucide-react';
+import { Import, Plus, Save } from 'lucide-react';
 import { useRef } from 'react';
 
 export function DataTable() {
-    const { data,columns, handleFileUpload, updateCell, addRow, removeRow } =
-        useDataTable();
+    const {
+        data,
+        columns,
+        handleFileUpload,
+        updateCell,
+        addRow,
+        removeRow,
+        save,
+    } = useDataTable();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +46,14 @@ export function DataTable() {
                 <Button className="font-semibold text-slate-50">
                     {' '}
                     <Plus /> Add document
+                </Button>
+                <Button
+                    className="font-semibold text-slate-50"
+                    variant={'secondary'}
+                    onClick={save}
+                >
+                    {' '}
+                    <Save /> Save
                 </Button>
             </div>
 
