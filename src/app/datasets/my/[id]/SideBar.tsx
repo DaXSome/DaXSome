@@ -21,6 +21,8 @@ export function AppSidebar({ collections }: Props) {
         const currentUrl = new URL(window.location.href);
         const searchParams = currentUrl.searchParams;
 
+        searchParams.delete("col")
+
         if (searchParams.has('openCollectionsModal')) {
             searchParams.delete('openCollectionsModal');
         } else {
