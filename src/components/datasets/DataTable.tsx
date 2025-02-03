@@ -8,7 +8,7 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import useDataTable from '@/hooks/Datatable';
+import useDataTable from '@/hooks/useDatatable';
 import { Button } from '../ui/button';
 import { Import, Plus } from 'lucide-react';
 import { useRef } from 'react';
