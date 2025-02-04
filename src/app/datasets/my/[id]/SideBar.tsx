@@ -1,7 +1,7 @@
 'use client';
 import { Collection } from '@/backend/models/collections';
 import { Button } from '@/components/ui/button';
-import { Plus, MoreVertical } from 'lucide-react';
+import { Plus, MoreVertical, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -10,20 +10,24 @@ import {
     PopoverContent,
 } from '@/components/ui/popover';
 import { dropCollection, getDatabase } from '@/app/actions/datasets';
+import { useState } from 'react';
+import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
 
 interface Props {
     collections: Collection[];
-    database: Awaited<ReturnType<typeof getDatabase>>
+    database: Awaited<ReturnType<typeof getDatabase>>;
 }
 
 export function AppSidebar({ collections, database }: Props) {
     const router = useRouter();
 
+    const [editDb, setEditDb] = useState(false);
+
     const handleAddCollectionModal = () => {
         const currentUrl = new URL(window.location.href);
         const searchParams = currentUrl.searchParams;
 
-        searchParams.delete("col")
+        searchParams.delete('col');
 
         if (searchParams.has('openCollectionsModal')) {
             searchParams.delete('openCollectionsModal');
@@ -37,15 +41,31 @@ export function AppSidebar({ collections, database }: Props) {
     const handleDrop = async (id: string) => {
         if (confirm('Are you sure?')) {
             await dropCollection(id);
-            router.refresh()
+            handleDbEdit();
+            router.refresh();
         }
+    };
+
+    const handleDbEdit = () => {
+        setEditDb(!editDb);
     };
 
     return (
         <nav className="w-full h-full bg-gray-50 max-w-[300px] flex flex-col rounded-md overflow-hidden">
-            <h1 className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100">
-                {database?.name}
+            <h1 className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100 flex gap-4 items-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <span className="truncate">{database?.name}</span>
+                <span>
+                    <Pencil onClick={handleDbEdit} />
+                </span>
             </h1>
+
+            <EditDatabaseModal
+                open={editDb}
+                name={database?.name as string}
+                id={database?._id}
+                closeModal={handleDbEdit}
+            />
+
             <div className="w-full px-4">
                 <div className="flex justify-between pt-3 items-center">
                     <h4 className="font-semibold text-slate-800">
@@ -56,7 +76,7 @@ export function AppSidebar({ collections, database }: Props) {
                     </Button>
                 </div>
             </div>
-            <div className="mt-4 space-y-2 flex flex-col">
+            <div className="mt-4 px-2 space-y-2 flex flex-col">
                 {collections.map((collection) => (
                     <div
                         key={collection._id as string}
@@ -81,7 +101,9 @@ export function AppSidebar({ collections, database }: Props) {
                                 </Link>
                                 <Button
                                     className="block w-full text-left px-4 py-2 hover:bg-red-200 bg-red-400 text-white"
-                                    onClick={() => handleDrop(collection._id as string)}
+                                    onClick={() =>
+                                        handleDrop(collection._id as string)
+                                    }
                                 >
                                     Drop
                                 </Button>

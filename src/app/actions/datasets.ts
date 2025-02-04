@@ -110,6 +110,11 @@ export async function createDatabase(
     await DatabaseModel.create(data);
 }
 
+
+export async function updateDatabaseName(id: string, name: string) {
+    await DatabaseModel.findOneAndUpdate({ _id: id }, { name });
+}
+
 /**
  * Saves the created data to the specified database and column
  *
@@ -378,6 +383,6 @@ export const getDatabase = async (id: string) => {
     const db = await DatabaseModel.findById<Database>(id);
 
     if (db) {
-        return { name: db.name };
+        return { name: db.name, _id: db.id };
     }
 };
