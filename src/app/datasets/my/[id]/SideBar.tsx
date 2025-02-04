@@ -9,7 +9,7 @@ import {
     PopoverTrigger,
     PopoverContent,
 } from '@/components/ui/popover';
-import { getDatabase } from '@/app/actions/datasets';
+import { dropCollection, getDatabase } from '@/app/actions/datasets';
 
 interface Props {
     collections: Collection[];
