@@ -110,14 +110,17 @@ export function DataTable() {
                                             </ContextMenuContent>
                                             <ContextMenuTrigger>
                                                 <Textarea
-                                                    className={clsx(
-                                                        'relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden ',
-                                                        getCellColor(
-                                                            data[rowIndex]
-                                                                ._id as string,
-                                                            column.name
-                                                        )
-                                                    )}
+                                                    style={{
+                                                        borderColor:
+                                                            getCellColor(
+                                                                data[rowIndex]
+                                                                    ._id as string,
+                                                                column.name
+                                                            ),
+                                                    }}
+                                                    className={
+                                                        'relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden '
+                                                    }
                                                     value={
                                                         (row[
                                                             column.name

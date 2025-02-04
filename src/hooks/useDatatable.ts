@@ -155,11 +155,11 @@ const useDataTable = () => {
         const originalDoc = originalData.find((d) => d._id === id);
         const currentDoc = data.find((d) => d._id === id);
 
-        if (!originalDoc || !currentDoc) return `bg-red-700`;
+        if (!originalDoc || !currentDoc) return "red"
 
 
         if (currentDoc[key] != originalDoc[key]) {
-            return `border-4 border-yellow-300`;
+            return "yellow"
         }
     };
 
