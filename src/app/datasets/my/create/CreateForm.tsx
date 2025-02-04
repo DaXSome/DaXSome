@@ -35,16 +35,13 @@ const CreateForm = ()=> {
     const handleCreate = async () => {
         if (!user) return
 
-        await createDatabase({
+        const id = await createDatabase({
             user_id: user.id, 
             name:dbName,
             metadata: {description:""}
         })
 
-
-        router.push("/datasets/my/manage/")
-
-
+        router.push(`/datasets/my/${id}`)
     }
 
     useEffect(()=> {

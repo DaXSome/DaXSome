@@ -28,7 +28,7 @@ const CreateNewDataset = () => {
     if (!databaseName || !collectionName) return;
 
     router.push(
-      `/datasets/my/manage?database=${parseDatasetSlug(databaseName)}&collection=${parseDatasetSlug(collectionName)}`,
+      `/datasets/my/`,
     );
   };
 

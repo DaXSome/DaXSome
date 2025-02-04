@@ -107,7 +107,9 @@ export async function getAltLink(id: string) {
 export async function createDatabase(
     data: Pick<Database, 'user_id' | 'name' | 'metadata'>
 ) {
-    await DatabaseModel.create(data);
+    const db = await DatabaseModel.create(data);
+
+    return db.id
 }
 
 
