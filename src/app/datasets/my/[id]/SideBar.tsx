@@ -34,6 +34,13 @@ export function AppSidebar({ collections, database }: Props) {
         router.push(`${currentUrl.pathname}?${searchParams.toString()}`);
     };
 
+    const handleDrop = async (id: string) => {
+        if (confirm('Are you sure?')) {
+            await dropCollection(id);
+            router.refresh()
+        }
+    };
+
     return (
         <nav className="w-full h-full bg-gray-50 max-w-[300px] flex flex-col rounded-md overflow-hidden">
             <h1 className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100">
@@ -72,6 +79,12 @@ export function AppSidebar({ collections, database }: Props) {
                                 >
                                     Edit
                                 </Link>
+                                <Button
+                                    className="block w-full text-left px-4 py-2 hover:bg-red-200 bg-red-400 text-white"
+                                    onClick={() => handleDrop(collection._id as string)}
+                                >
+                                    Drop
+                                </Button>
                             </PopoverContent>
                         </Popover>
                     </div>

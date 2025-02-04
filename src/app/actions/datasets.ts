@@ -182,14 +182,18 @@ export const dropDatabase = async (db: string) => {
 /**
  * Deletes a collection from a specific database.
  *
- * @param params - The parameters for the operation.
- * @param params.database - The name of the database.
- * @param params.collection - The name of the collection.
+ * @param {String} id - The id of the collection
  *
  * @returns A promise that resolves when the collection is deleted.
  */
-export const dropCollection = async (collection: string) => {
+export const dropCollection = async (id: string) => {
     await connectToDb();
+
+    await Promise.all([
+        DocumentModel.deleteMany({ collection: id }),
+
+        CollectionModel.findByIdAndDelete(id),
+    ]);
 };
 
 /**

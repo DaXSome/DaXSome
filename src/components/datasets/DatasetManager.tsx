@@ -16,9 +16,10 @@ const DatasetManager = ({ collections, database }: Props) => {
             <div className="flex items-center mb-4 w-full h-full gap-5">
                 <AppSidebar collections={collections} database={database} />
 
+                <AddCollectionModal />
+
                 {collections.length > 0 && (
                     <div className="flex-1 w-full h-full bg-gray-50 rounded-md p-4">
-                        <AddCollectionModal />
                         <div>
                             <DataTable />
                         </div>
