@@ -12,7 +12,7 @@ import {
 import { Trash } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { updateDatabaseName } from '@/app/actions/datasets';
+import { dropDatabase, updateDatabaseName } from '@/app/actions/datasets';
 
 interface Props {
     open: boolean;
@@ -26,7 +26,12 @@ const EditDatabaseModal = ({ open, name, id, closeModal }: Props) => {
 
     const save = async () => {
         await updateDatabaseName(id, newDbName);
-        closeModal()
+        closeModal();
+    };
+
+    const handleDrop = async () => {
+        await dropDatabase(id);
+        closeModal();
     };
 
     return (
@@ -47,7 +52,7 @@ const EditDatabaseModal = ({ open, name, id, closeModal }: Props) => {
                     />
                     <div
                         className="w-full bg-red-100 h-11 rounded-sm flex gap-6 place-items-center pl-2 cursor-pointer hover:bg-slate-200 transition-all .01s ease-linear"
-                        onClick={save}
+                        onClick={handleDrop}
                     >
                         <div className="w-6 h-6 bg-red-300 rounded-full flex place-items-center justify-center">
                             <Trash size={16} className="text-red-800" />

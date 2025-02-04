@@ -175,13 +175,19 @@ export const deleteDocument = async (id: string) => {
 /**
  * Deletes dataset information for a specific database and collection.
  *
- * @param params.database - The name of the database.
+ * @param {String} id - The id of the database.
  * @param params.collection - The name of the collection.
  *
- * @returns A promise that resolves when the dataset is deleted.
  */
-export const dropDatabase = async (db: string) => {
+export const dropDatabase = async (id: string) => {
     await connectToDb();
+
+    await Promise.all([
+        DocumentModel.deleteMany({ database: id }),
+        CollectionModel.deleteMany({ database: id }),
+
+        DatabaseModel.findByIdAndDelete(id),
+    ]);
 };
 
 /**
