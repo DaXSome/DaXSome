@@ -9,12 +9,14 @@ import {
     PopoverTrigger,
     PopoverContent,
 } from '@/components/ui/popover';
+import { getDatabase } from '@/app/actions/datasets';
 
 interface Props {
     collections: Collection[];
+    database: Awaited<ReturnType<typeof getDatabase>>
 }
 
-export function AppSidebar({ collections }: Props) {
+export function AppSidebar({ collections, database }: Props) {
     const router = useRouter();
 
     const handleAddCollectionModal = () => {
@@ -35,7 +37,7 @@ export function AppSidebar({ collections }: Props) {
     return (
         <nav className="w-full h-full bg-gray-50 max-w-[300px] flex flex-col rounded-md overflow-hidden">
             <h1 className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100">
-                Database Manager
+                {database?.name}
             </h1>
             <div className="w-full px-4">
                 <div className="flex justify-between pt-3 items-center">

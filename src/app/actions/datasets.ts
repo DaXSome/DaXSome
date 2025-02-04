@@ -361,3 +361,19 @@ export const getDocumentSchema = async ({
         return schema.schema.map(({ name, type }) => ({ name, type }));
     }
 };
+
+/**
+ * Returns a database based on the id
+ *
+ * @param {string} id - the id of the database
+ * @returns {{name:string}} The database object
+ */
+export const getDatabase = async (id: string) => {
+    await connectToDb();
+
+    const db = await DatabaseModel.findById<Database>(id);
+
+    if (db) {
+        return { name: db.name };
+    }
+};
