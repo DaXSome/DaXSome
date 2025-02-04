@@ -12,6 +12,7 @@ import useDataTable from '@/hooks/useDatatable';
 import { Button } from '../ui/button';
 import { Import, Plus, Save } from 'lucide-react';
 import { useRef } from 'react';
+import clsx from 'clsx';
 
 export function DataTable() {
     const {
@@ -22,6 +23,7 @@ export function DataTable() {
         addRow,
         removeRow,
         save,
+        getCellColor,
     } = useDataTable();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,10 +110,14 @@ export function DataTable() {
                                             </ContextMenuContent>
                                             <ContextMenuTrigger>
                                                 <Textarea
-                                                    disabled={
-                                                        column.name === '_id'
-                                                    }
-                                                    className="relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden"
+                                                    className={clsx(
+                                                        'relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden ',
+                                                        getCellColor(
+                                                            data[rowIndex]
+                                                                ._id as string,
+                                                            column.name
+                                                        )
+                                                    )}
                                                     value={
                                                         (row[
                                                             column.name

@@ -21,6 +21,7 @@ const useDataTable = () => {
     >([]);
 
     const [data, setData] = useState<Data[]>([]);
+    const [originalData, setOriginalData] = useState<Data[]>([]);
 
     const addRow = () => {
         if (!columns) return;
@@ -141,7 +142,25 @@ const useDataTable = () => {
             data,
         });
 
+        setOriginalData(data)
+
         alert('saved');
+    };
+
+
+    
+    const getCellColor = (id: string, key: string) => {
+        if (!id) return;
+
+        const originalDoc = originalData.find((d) => d._id === id);
+        const currentDoc = data.find((d) => d._id === id);
+
+        if (!originalDoc || !currentDoc) return `bg-red-700`;
+
+
+        if (currentDoc[key] != originalDoc[key]) {
+            return `border-4 border-yellow-300`;
+        }
     };
 
     useEffect(() => {
@@ -164,6 +183,7 @@ const useDataTable = () => {
                 setColumns(schema);
 
                 setData(documents.data)
+                setOriginalData(documents.data)
             }
         })();
     }, [databaseId, collection]);
@@ -174,6 +194,7 @@ const useDataTable = () => {
         removeRow,
         addRow,
         updateCell,
+        getCellColor,
         handleFileUpload,
         save,
     };
