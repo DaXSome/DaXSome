@@ -1,32 +1,19 @@
-import { getCollections, getData } from "@/app/actions/datasets";
-import DatasetManager from "@/components/datasets/DatasetManager";
+import { getCollections, getDatabase } from '@/app/actions/datasets';
+import DatasetManager from '@/components/datasets/DatasetManager';
 
 interface Props {
-  searchParams: Promise<{ database: string; collection: string; page: string }>;
+    params: Promise<{ id: string }>;
 }
 
-const Page = async ({ searchParams }: Props) => {
-  const { database, collection, page } = await searchParams;
+const Page = async ({ params }: Props) => {
+    const { id: databaseId } = await params;
 
-  let collections = (await getCollections(database)).map((c) => c.name);
+    const [collections, database] = await Promise.all([
+        getCollections(databaseId),
+        getDatabase(databaseId),
+    ]);
 
-  if (!collections.includes(collection)) {
-    collections = [...collections, collection];
-  }
-
-  const { count, data: initialData } = await getData(
-    database,
-    collection || collections[0],
-    page,
-  );
-
-  let data = initialData;
-
-  if (data.length === 0) {
-    data = [{ "Column 1": "" }];
-  }
-
-  return <DatasetManager collections={collections} data={data} count={count} />;
+    return <DatasetManager collections={collections} database={database} />;
 };
 
 export default Page;
