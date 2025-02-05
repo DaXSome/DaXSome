@@ -15,13 +15,13 @@ import { DatasetInfo } from '@/types';
 const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
     const metadata = dataset.metadata!;
 
-    const isPublished = metadata?.status === 'published';
+    const isPending = metadata?.status === 'Pending';
 
     return (
         <Link
             key={dataset._id}
             href={
-                !isPublished
+                isPending
                     ? '#'
                     : `/datasets/@${dataset.user.username}/${parseDatasetSlug(dataset.name)}`
             }
@@ -45,7 +45,7 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between mt-auto">
-                    {!isPublished && (
+                    {isPending && (
                         <Badge variant={'destructive'}>Coming Soon</Badge>
                     )}
 

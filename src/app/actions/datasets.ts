@@ -24,9 +24,14 @@ export async function getDatasets(category: string | null) {
     let datasets;
 
     if (category && category !== 'All' && category !== 'undefined') {
-        datasets = await CollectionModel.find({ category });
+        datasets = await CollectionModel.find({
+            category,
+            'metadata.status': 'Published' ,
+        });
     } else {
-        datasets = await CollectionModel.find();
+        datasets = await CollectionModel.find({
+           'metadata.status': 'Published' ,
+        });
     }
 
     const users = await Promise.all(
@@ -35,6 +40,9 @@ export async function getDatasets(category: string | null) {
 
     datasets = datasets.map((dataset, index) => {
         const plainDataset = dataset.toObject();
+        
+        delete plainDataset.database
+        delete plainDataset.metadata._id
 
         const fullDataset = {
             ...plainDataset,
@@ -109,9 +117,8 @@ export async function createDatabase(
 ) {
     const db = await DatabaseModel.create(data);
 
-    return db.id
+    return db.id;
 }
-
 
 export async function updateDatabaseName(id: string, name: string) {
     await DatabaseModel.findOneAndUpdate({ _id: id }, { name });
@@ -142,7 +149,7 @@ export const saveData = async ({
     const res = await Promise.all(
         data.map((d) =>
             DocumentModel.findOneAndUpdate(
-                {_id: d._id || new mongoose.Types.ObjectId() },
+                { _id: d._id || new mongoose.Types.ObjectId() },
                 {
                     database,
                     collection,
@@ -154,8 +161,7 @@ export const saveData = async ({
         )
     );
 
-
-    console.log(res)
+    console.log(res);
 };
 
 /**
@@ -227,9 +233,9 @@ export async function getUserDbs() {
             id: db.id,
             name: db.name,
             createdAt: db.createdAt,
-            collections: (await getCollections(db.id)).map(
-                (collection) => collection._id as string
-            ),
+            collections: (
+                await getCollections(db.id)
+            ).map((collection) => collection._id as string),
         }))
     );
 
@@ -281,7 +287,7 @@ export const getData = async (
 ) => {
     await connectToDb();
 
-    const [data, count,] = await Promise.all([
+    const [data, count] = await Promise.all([
         DocumentModel.find({ database, collection })
             .limit(15)
             .skip(parseInt(page) * 10),
@@ -405,7 +411,6 @@ export const getDatabase = async (id: string) => {
     }
 };
 
-
 /**
  * Return a collection based on the ID
  * @param db The name of the database.
@@ -428,4 +433,3 @@ export const getCollection = async (id: string) => {
         _id: plainObj._id.toString(),
     };
 };
-
