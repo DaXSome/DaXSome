@@ -394,3 +394,27 @@ export const getDatabase = async (id: string) => {
         return { name: db.name, _id: db.id };
     }
 };
+
+
+/**
+ * Return a collection based on the ID
+ * @param db The name of the database.
+ * @returns An array of strings.
+ */
+export const getCollection = async (id: string) => {
+    await connectToDb();
+
+    const collection = await CollectionModel.findById<Collection>(id);
+
+    if (!collection) return;
+
+    const plainObj = collection.toObject();
+
+    delete plainObj.database;
+
+    return {
+        ...plainObj,
+        _id: plainObj._id.toString(),
+    };
+};
+
