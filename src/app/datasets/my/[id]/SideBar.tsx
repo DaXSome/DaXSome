@@ -3,7 +3,7 @@ import { Collection } from '@/backend/models/collections';
 import { Button } from '@/components/ui/button';
 import { Plus, MoreVertical, Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
     Popover,
     PopoverTrigger,
@@ -12,6 +12,7 @@ import {
 import { dropCollection, getDatabase } from '@/app/actions/datasets';
 import { useState } from 'react';
 import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
+import clsx from 'clsx';
 
 interface Props {
     collections: Collection[];
@@ -21,17 +22,22 @@ interface Props {
 
 export function AppSidebar({ collections, database, toggleModal }: Props) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
 
     const [editDb, setEditDb] = useState(false);
 
+
     const handleAddCollectionModal = () => {
-        const currentUrl = new URL(window.location.href);
-        const searchParams = currentUrl.searchParams;
+        const currentParams = new URLSearchParams(
+            Array.from(searchParams.entries())
+        );
 
-        searchParams.delete('col');
+        currentParams.delete('col');
 
-        toggleModal()
+        router.replace(`${pathname}?${currentParams.toString()}`);
 
+        toggleModal();
     };
 
     const handleDrop = async (id: string) => {
@@ -74,16 +80,12 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
             </div>
             <div className="mt-4 px-2 space-y-2 flex flex-col">
                 {collections.map((collection) => (
-                    <div
+                    <Link
                         key={collection._id as string}
-                        className="flex items-center justify-between p-2 bg-white rounded-md shadow-sm hover:bg-gray-100 cursor-pointer"
-                    >
-                        <Link
                             href={`?col=${collection._id}`}
-                            className="flex-1"
-                        >
+                            className={clsx("flex items-center justify-between p-2  rounded-md shadow-sm hover:bg-gray-100 cursor-pointer", searchParams.get("col") === collection._id && "bg-primary text-white" )}
+                    >
                             {collection.name}
-                        </Link>
                         <Popover>
                             <PopoverTrigger>
                                 <MoreVertical className="w-5 h-5 text-gray-600" />
@@ -105,7 +107,7 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
                                 </Button>
                             </PopoverContent>
                         </Popover>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </nav>
