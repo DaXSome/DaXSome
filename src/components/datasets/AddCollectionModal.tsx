@@ -121,13 +121,14 @@ const AddCollectionModal = () => {
 
         delete data.metadata.currentTag;
 
-        const colId =
-            collection ||
-            (await createCollecion({
+        const colId = await createCollecion(
+            {
                 database: id as string,
                 user_id: user.id,
                 metadata: data.metadata,
-            }));
+            },
+            collection
+        );
 
         await createDocumentSchema({
             collection: colId,

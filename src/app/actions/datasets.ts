@@ -344,12 +344,21 @@ interface CreateCollectionData extends Partial<Omit<Collection, 'database'>> {
  * @param db The name of the database.
  * @returns An array of strings.
  */
-export const createCollecion = async (data: CreateCollectionData) => {
+export const createCollecion = async (
+    data: CreateCollectionData,
+    colId?: string | null
+) => {
     await connectToDb();
 
-    const collection = await CollectionModel.create(data);
+    if (!colId) {
+        const collection = await CollectionModel.create(data);
 
-    return collection.id;
+        return collection.id;
+    } else {
+        await CollectionModel.updateOne({ _id: colId }, { $set: data });
+
+        return colId;
+    }
 };
 
 /**
