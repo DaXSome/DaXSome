@@ -16,9 +16,10 @@ import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
 interface Props {
     collections: Collection[];
     database: Awaited<ReturnType<typeof getDatabase>>;
+    toggleModal: () => void;
 }
 
-export function AppSidebar({ collections, database }: Props) {
+export function AppSidebar({ collections, database, toggleModal }: Props) {
     const router = useRouter();
 
     const [editDb, setEditDb] = useState(false);
@@ -29,13 +30,8 @@ export function AppSidebar({ collections, database }: Props) {
 
         searchParams.delete('col');
 
-        if (searchParams.has('openCollectionsModal')) {
-            searchParams.delete('openCollectionsModal');
-        } else {
-            searchParams.set('openCollectionsModal', 'True');
-        }
+        toggleModal()
 
-        router.push(`${currentUrl.pathname}?${searchParams.toString()}`);
     };
 
     const handleDrop = async (id: string) => {
@@ -92,13 +88,13 @@ export function AppSidebar({ collections, database }: Props) {
                             <PopoverTrigger>
                                 <MoreVertical className="w-5 h-5 text-gray-600" />
                             </PopoverTrigger>
-                            <PopoverContent className="w-40">
-                                <Link
-                                    href={`?col=${collection._id}&openCollectionsModal=True`}
+                            <PopoverContent className="flex gap-4 w-40">
+                                <Button
+                                    onClick={toggleModal}
                                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                                 >
                                     Edit
-                                </Link>
+                                </Button>
                                 <Button
                                     className="block w-full text-left px-4 py-2 hover:bg-red-200 bg-red-400 text-white"
                                     onClick={() =>

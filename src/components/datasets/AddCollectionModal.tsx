@@ -17,12 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-    useSearchParams,
-    useRouter,
-    usePathname,
-    useParams,
-} from 'next/navigation';
+import { useSearchParams, useParams } from 'next/navigation';
 import { Plus, Trash2, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -49,13 +44,15 @@ interface FormValues {
     };
 }
 
-const AddCollectionModal = () => {
+interface Props {
+    open: boolean;
+    closeModal: () => void
+}
+
+const AddCollectionModal = ({ open, closeModal }: Props) => {
     const searchParams = useSearchParams();
-    const router = useRouter();
-    const pathname = usePathname();
     const { id } = useParams();
     const { user } = useUser();
-    const openModalParam = searchParams.get('openCollectionsModal');
     const collection = searchParams.get('col');
 
     const { register, control, handleSubmit, setValue, watch } =
@@ -82,12 +79,6 @@ const AddCollectionModal = () => {
 
     const tags = watch('metadata.tags');
     const currentTag = watch('metadata.currentTag');
-
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    const closeModal = () => {
-        newSearchParams.delete('openCollectionsModal');
-        router.push(`${pathname}?${newSearchParams.toString()}`);
-    };
 
     const createEmptyField = () => {
         append({ name: '', type: 'string' });
@@ -163,7 +154,7 @@ const AddCollectionModal = () => {
     }, [collection, setValue, id]);
 
     return (
-        <Dialog open={openModalParam === 'True'} onOpenChange={closeModal}>
+        <Dialog open={open} onOpenChange={closeModal}>
             <DialogContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Tabs defaultValue="schema" className="w-[400px]">
