@@ -253,6 +253,7 @@ export const getCollections = async (db: string) => {
         const plainObj = col.toObject();
 
         delete plainObj.database;
+        delete plainObj.metadata._id;
 
         return {
             ...plainObj,
