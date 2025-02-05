@@ -420,6 +420,7 @@ export const getCollection = async (id: string) => {
     const plainObj = collection.toObject();
 
     delete plainObj.database;
+    delete plainObj.metadata._id;
 
     return {
         ...plainObj,
