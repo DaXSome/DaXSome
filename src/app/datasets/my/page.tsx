@@ -1,4 +1,3 @@
-
 import { Database } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getUserDbs } from '@/app/actions/datasets';
@@ -33,50 +32,14 @@ const Page = async () => {
                                 <CreateDatabaseButton />
                             </div>
                         ) : (
-                            <DatabasesGrid  databases={databases} />
+                            <div className="flex gap-4 items-center" >
+                                <CreateDatabaseButton />
+                                <DatabasesGrid databases={databases} />
+                            </div>
                         )}
                     </div>
                 </div>
             </div>
-
-            {/*
-        (databases && databases.length == 0) && <CreateNewDataset/>
-      */}
-
-            {/* <div className="w-full grid grid-cols-1 md:grid-cols-2 place-items-center items-center gap-6 max-w-5xl px-4 py-4">
-        {databases.map((database) => (
-          <Link
-            key={database.name}
-            href={`/datasets/my/manage?database=${database.name}`}
-            className="hover:no-underline"
-          >
-            <Card className="hover:shadow-lg transition-shadow duration-300">
-              <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-xl font-bold text-gray-900">
-                  {database.name}
-                </CardTitle>
-                <Database className="h-6 w-6 text-gray-500" />
-              </CardHeader>
-
-              <CardContent className="text-gray-700">
-                <div className="flex items-center space-x-4 text-sm">
-                  <FolderOpen className="h-5 w-5 text-gray-500" />
-                </div>
-              </CardContent>
-
-              <CardFooter>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>
-                    Last updated:{" "}
-                    {new Date(database.updatedAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </CardFooter>
-            </Card>
-          </Link>
-        ))}
-      </div> */}
         </div>
     );
 };
