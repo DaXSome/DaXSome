@@ -18,26 +18,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DatasetInfo } from "@/types";
 import { sendGAEvent } from "@next/third-parties/google";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { getDataset } from "@/app/actions/datasets";
 
 interface Props {
-  dataset: DatasetInfo;
+  dataset: Awaited<ReturnType<typeof getDataset>>;
 }
 
 export function DatasetView({ dataset }: Props) {
-  const headers = Object.keys(dataset.sample[0]);
+  const headers = dataset?.schema?.map((s) => s.name)
 
   const { user } = useUser();
 
   const handleDownload = () => {
-    sendGAEvent({ event: "download", value: dataset.name });
+    sendGAEvent({ event: "download", value: dataset?.name });
 
     const a = document.createElement("a");
 
-    a.href = dataset.asset_url;
+    // a.href = dataset?.asset_url;
 
     document.body.appendChild(a);
 
@@ -50,37 +50,36 @@ export function DatasetView({ dataset }: Props) {
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
         <div className="flex gap-2 justify-between">
-          <h1 className="text-4xl font-bold mb-2">{dataset.name}</h1>
-          {user && user.id === dataset.user_id && (
+          <h1 className="text-4xl font-bold mb-2">{dataset?.name}</h1>
+          {user && user.id === dataset?.user_id && (
             <Link
-              href={``}
-              // href={`/datasets/my/manage?database=${dataset.database}&collection=${dataset.sample_collection}`}
+              href={`/datasets/my/${dataset.database}?col=${dataset._id}`}
             >
               <Button className="text-white">Edit</Button>
             </Link>
           )}
         </div>
         <p className="text-xl text-muted-foreground mb-4">
-          {dataset.description}
+          {dataset?.metadata.description}
         </p>
         <Card>
           <CardContent className="p-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
                 <h2 className="text-sm font-semibold">Format</h2>
-                <p>{dataset.format.join(", ")}</p>
+                <p>{dataset?.format.join(", ")}</p>
               </div>
               <div>
                 <h2 className="text-sm font-semibold">Last Updated</h2>
-                <p>{new Date(dataset.updated_at).toLocaleDateString()}</p>
+                <p>{dataset?.updated_at.toLocaleDateString()}</p>
               </div>
               <div>
                 <h2 className="text-sm font-semibold">Tags</h2>
-                <p>{dataset.tags.join(", ")}</p>
+                <p>{dataset?.metadata.tags.join(", ")}</p>
               </div>
               <div>
                 <h2 className="text-sm font-semibold">Category</h2>
-                <p>{dataset.category}</p>
+                <p>{dataset?.metadata.category}</p>
               </div>
             </div>
           </CardContent>
@@ -94,15 +93,15 @@ export function DatasetView({ dataset }: Props) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  {headers.map((header) => (
+                  {headers?.map((header) => (
                     <TableHead key={header}>{header.toUpperCase()}</TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {dataset.sample.map((row, rowIndex) => (
+                {dataset?.sample.map((row, rowIndex) => (
                   <TableRow key={rowIndex} className="border-b">
-                    {headers.map((header) => (
+                    {headers?.map((header) => (
                       <TableCell
                         key={header}
                         className="px-4 py-2 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
@@ -116,7 +115,7 @@ export function DatasetView({ dataset }: Props) {
             </Table>
             <div className="flex justify-between items-center mt-4">
               <span className="text-sm text-muted-foreground">
-                Showing {dataset.sample.length} of {dataset.total}
+                Showing {dataset?.sample.length} of {dataset?.total}
               </span>
             </div>
           </CardContent>

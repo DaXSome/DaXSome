@@ -26,11 +26,11 @@ export async function getDatasets(category: string | null) {
     if (category && category !== 'All' && category !== 'undefined') {
         datasets = await CollectionModel.find({
             category,
-            'metadata.status': 'Published' ,
+            'metadata.status': 'Published',
         });
     } else {
         datasets = await CollectionModel.find({
-           'metadata.status': 'Published' ,
+            'metadata.status': 'Published',
         });
     }
 
@@ -40,9 +40,8 @@ export async function getDatasets(category: string | null) {
 
     datasets = datasets.map((dataset, index) => {
         const plainDataset = dataset.toObject();
-        
-        delete plainDataset.database
-        delete plainDataset.metadata._id
+
+        delete plainDataset.metadata._id;
 
         const fullDataset = {
             ...plainDataset,
@@ -68,7 +67,7 @@ export async function getDatasets(category: string | null) {
 export async function getDataset(slug: string) {
     await connectToDb();
 
-    const dataset = await CollectionModel.findOne({ slug });
+    const dataset = await CollectionModel.findOne<Collection>({ slug });
 
     if (!dataset) return;
 
@@ -81,13 +80,21 @@ export async function getDataset(slug: string) {
     ]);
 
     const fullDataset = {
-        ...dataset.toJSON(),
-        sample,
+        ...(dataset.toJSON() as Collection),
+        sample:sample.map((s) => s.data),
+        database: dataset.database.toString(),
         _id: dataset.id,
         updated_at: dataset.updatedAt,
         format: ['CSV'],
         total: totalDocuments,
-    };
+        schema: await getDocumentSchema({
+            database: dataset.database as unknown as string,
+            collection: dataset.id as string,
+        }),
+    }
+
+    //@ts-ignore
+    delete fullDataset.metadata._id
 
     return fullDataset;
 }

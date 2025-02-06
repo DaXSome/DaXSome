@@ -1,6 +1,5 @@
 import { getDataset } from "@/app/actions/datasets";
 import { DatasetView } from "@/components/datasets/DatasetSlug";
-import { DatasetInfo } from "@/types";
 import { HOST_URL, normalizeDatasetSlug } from "@/utils";
 import { notFound } from "next/navigation";
 
@@ -35,5 +34,5 @@ export default async function Page({ params }: Props) {
     return notFound();
   }
 
-  return <DatasetView dataset={dataset as unknown as DatasetInfo} />;
+  return <DatasetView dataset={dataset} />;
 }

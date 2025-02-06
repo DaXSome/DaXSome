@@ -1,4 +1,3 @@
-import { parseDatasetSlug } from '@/utils';
 import {
     Card,
     CardHeader,
@@ -23,7 +22,7 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
             href={
                 isPending
                     ? '#'
-                    : `/datasets/@${dataset.user.username}/${parseDatasetSlug(dataset.name)}`
+                    : `/datasets/@${dataset.user.username}/${dataset.slug}`
             }
             className="h-full"
         >
