@@ -44,6 +44,7 @@ export async function getDatasets(category: string | null) {
 
         const fullDataset = {
             ...plainDataset,
+            database: plainDataset.database.toString(),
             _id: plainDataset._id.toString(),
             user: users[index],
         };
