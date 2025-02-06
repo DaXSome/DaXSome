@@ -31,6 +31,8 @@ import { useUser } from '@clerk/nextjs';
 import { DocumentSchema } from '@/backend/models/schema';
 import { Textarea } from '../ui/textarea';
 import { Collection } from '@/backend/models/collections';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 interface FieldType {
     name: string;
@@ -46,7 +48,7 @@ interface FormValues {
 
 interface Props {
     open: boolean;
-    closeModal: () => void
+    closeModal: () => void;
 }
 
 const AddCollectionModal = ({ open, closeModal }: Props) => {
@@ -54,6 +56,9 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
     const { id } = useParams();
     const { user } = useUser();
     const collection = searchParams.get('col');
+
+    const { toast } = useToast();
+    const router = useRouter()
 
     const { register, control, handleSubmit, setValue, watch } =
         useForm<FormValues>({
@@ -112,6 +117,8 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         delete data.metadata.currentTag;
 
+        toast({ title: 'Saving collection' });
+
         const colId = await createCollecion(
             {
                 database: id as string,
@@ -127,6 +134,10 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
             database: id as string,
             schema: data.fields,
         });
+
+        toast({ title: 'Saved collection' });
+
+        router.push(`?col=${colId}`)
 
         closeModal();
     };

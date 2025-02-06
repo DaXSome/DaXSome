@@ -2,6 +2,7 @@
 import { createDatabase } from '@/app/actions/datasets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@clerk/nextjs';
 import { Database } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,7 @@ const CreateForm = ()=> {
     const { user } = useUser()
 
     const router = useRouter()
+    const { toast } = useToast()
 
     const handleOnchange 
     = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,11 +37,19 @@ const CreateForm = ()=> {
     const handleCreate = async () => {
         if (!user) return
 
+        toast({
+            title: 'Creating database',
+        });
+
         const id = await createDatabase({
-            user_id: user.id, 
-            name:dbName,
-            metadata: {description:""}
-        })
+            user_id: user.id,
+            name: dbName,
+            metadata: { description: '' },
+        });
+
+        toast({
+            title: 'Database created',
+        });
 
         router.push(`/datasets/my/${id}`)
     }

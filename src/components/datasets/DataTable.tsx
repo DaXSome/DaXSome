@@ -12,7 +12,7 @@ import useDataTable from '@/hooks/useDatatable';
 import { Button } from '../ui/button';
 import { Import, Plus, Save } from 'lucide-react';
 import { useRef } from 'react';
-import clsx from 'clsx';
+import { useToast } from '@/hooks/use-toast';
 
 export function DataTable() {
     const {
@@ -26,7 +26,17 @@ export function DataTable() {
         getCellColor,
     } = useDataTable();
 
+    const { toast } = useToast();
+
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleSave = async () => {
+        toast({ title: 'Saving...' });
+
+        await save();
+
+        toast({ title: 'Saved' });
+    };
 
     return (
         <div className="space-y-4">
@@ -55,7 +65,7 @@ export function DataTable() {
                 <Button
                     className="font-semibold text-slate-50"
                     variant={'secondary'}
-                    onClick={save}
+                    onClick={handleSave}
                 >
                     {' '}
                     <Save /> Save

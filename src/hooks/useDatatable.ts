@@ -143,8 +143,6 @@ const useDataTable = () => {
         });
 
         setOriginalData(data)
-
-        alert('saved');
     };
 
 

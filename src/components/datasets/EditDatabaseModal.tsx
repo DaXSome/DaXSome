@@ -13,6 +13,8 @@ import { Trash } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { dropDatabase, updateDatabaseName } from '@/app/actions/datasets';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 interface Props {
     open: boolean;
@@ -22,16 +24,32 @@ interface Props {
 }
 
 const EditDatabaseModal = ({ open, name, id, closeModal }: Props) => {
+    const { toast } = useToast();
+
+    const router = useRouter();
+
     const [newDbName, setNewDbName] = useState(name);
 
     const save = async () => {
+        toast({ title: 'Saving...' });
+
         await updateDatabaseName(id, newDbName);
+
+        toast({ title: 'Saved' });
+
         closeModal();
     };
 
     const handleDrop = async () => {
+        toast({ title: 'Dropping database' });
+
         await dropDatabase(id);
+
+        toast({ title: 'Dropped' });
+
         closeModal();
+
+        router.push('/datasets/my');
     };
 
     return (

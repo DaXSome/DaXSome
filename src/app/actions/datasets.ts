@@ -12,6 +12,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
 import { parseDatasetSlug } from '@/utils';
+import { toast } from '@/hooks/use-toast';
 
 /**
  * Retrieve all datasets, optionally filtered by a category.

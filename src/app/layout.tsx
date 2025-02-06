@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,6 +43,8 @@ export default function RootLayout({
           <main className="flex-grow bg-white flex h-full w-full">
             {children}
           </main>
+
+          <Toaster />
 
           <Footer />
         </body>

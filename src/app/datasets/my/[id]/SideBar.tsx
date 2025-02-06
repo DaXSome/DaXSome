@@ -10,6 +10,7 @@ import {
     PopoverContent,
 } from '@/components/ui/popover';
 import { dropCollection, getDatabase } from '@/app/actions/datasets';
+import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
 import clsx from 'clsx';
@@ -25,8 +26,9 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
 
-    const [editDb, setEditDb] = useState(false);
+    const { toast } = useToast();
 
+    const [editDb, setEditDb] = useState(false);
 
     const handleAddCollectionModal = () => {
         const currentParams = new URLSearchParams(
@@ -42,8 +44,10 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
 
     const handleDrop = async (id: string) => {
         if (confirm('Are you sure?')) {
+            toast({ title: 'Dropping collection' });
             await dropCollection(id);
             handleDbEdit();
+            toast({ title: 'Dropped collection' });
             router.refresh();
         }
     };
@@ -82,10 +86,14 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
                 {collections.map((collection) => (
                     <Link
                         key={collection._id as string}
-                            href={`?col=${collection._id}`}
-                            className={clsx("flex items-center justify-between p-2  rounded-md shadow-sm hover:bg-gray-100 cursor-pointer", searchParams.get("col") === collection._id && "bg-primary text-white" )}
+                        href={`?col=${collection._id}`}
+                        className={clsx(
+                            'flex items-center justify-between p-2  rounded-md shadow-sm hover:bg-gray-100 cursor-pointer',
+                            searchParams.get('col') === collection._id &&
+                                'bg-primary text-white'
+                        )}
                     >
-                            {collection.name}
+                        {collection.name}
                         <Popover>
                             <PopoverTrigger>
                                 <MoreVertical className="w-5 h-5 text-gray-600" />
