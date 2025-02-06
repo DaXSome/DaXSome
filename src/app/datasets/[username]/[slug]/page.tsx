@@ -1,6 +1,6 @@
 import { getDataset } from "@/app/actions/datasets";
 import { DatasetView } from "@/components/datasets/DatasetSlug";
-import { HOST_URL, normalizeDatasetSlug } from "@/utils";
+import { HOST_URL, } from "@/utils";
 import { notFound } from "next/navigation";
 
 interface Props {

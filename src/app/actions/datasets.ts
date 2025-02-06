@@ -12,7 +12,6 @@ import { currentUser } from '@clerk/nextjs/server';
 import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
 import { parseDatasetSlug } from '@/utils';
-import { toast } from '@/hooks/use-toast';
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -42,8 +41,6 @@ export async function getDatasets(category: string | null) {
 
     datasets = datasets.map((dataset, index) => {
         const plainDataset = dataset.toObject();
-
-        delete plainDataset.metadata._id;
 
         const fullDataset = {
             ...plainDataset,
@@ -94,9 +91,6 @@ export async function getDataset(slug: string) {
             collection: dataset.id as string,
         }),
     }
-
-    //@ts-ignore
-    delete fullDataset.metadata._id
 
     return fullDataset;
 }
@@ -268,7 +262,6 @@ export const getCollections = async (db: string) => {
         const plainObj = col.toObject();
 
         delete plainObj.database;
-        delete plainObj.metadata._id;
 
         return {
             ...plainObj,
@@ -443,7 +436,6 @@ export const getCollection = async (id: string) => {
     const plainObj = collection.toObject();
 
     delete plainObj.database;
-    delete plainObj.metadata._id;
 
     return {
         ...plainObj,

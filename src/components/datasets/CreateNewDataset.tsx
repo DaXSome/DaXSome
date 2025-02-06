@@ -16,7 +16,6 @@ import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { parseDatasetSlug } from "@/utils";
 
 const CreateNewDataset = () => {
   const [databaseName, setDatabaseName] = useState("");

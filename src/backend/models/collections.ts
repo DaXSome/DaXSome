@@ -1,5 +1,22 @@
 import mongoose, { Document } from 'mongoose';
 
+const metadataSchema = new mongoose.Schema(
+    {
+        title: { type: String, default: '' },
+        description: { type: String, default: '' },
+        tags: { type: [String], default: [] },
+        category: { type: String, default: '' },
+        access_type: { type: String, enum: ['Free', 'Paid'], default: 'Free' },
+        full_description: { type: String, default: '' },
+        status: {
+            type: String,
+            enum: ['Pending', 'Unpublished', 'Published'],
+            default: 'Unpublished',
+        },
+    },
+    { _id: false }
+);
+
 const collectionSchema = new mongoose.Schema(
     {
         database: {
@@ -24,44 +41,7 @@ const collectionSchema = new mongoose.Schema(
         },
 
         metadata: {
-            type: {
-                title: {
-                    type: String,
-                    default: '',
-                },
-
-                description: {
-                    type: String,
-                    default: '',
-                },
-
-                tags: {
-                    type: [String],
-                    default: [],
-                },
-
-                category: {
-                    type: String,
-                    default: '',
-                },
-
-                access_type: {
-                    type: String,
-                    enum: ['Free', 'Paid'],
-                    default: 'Free',
-                },
-
-                full_description: {
-                    type: String,
-                    default: '',
-                },
-
-                status: {
-                    type: String,
-                    enum: ['Pending', 'Unpublished', 'Published'],
-                    default: 'Unpublished',
-                },
-            },
+            type: metadataSchema,
 
             default: {},
         },

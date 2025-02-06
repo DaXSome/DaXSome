@@ -4,7 +4,6 @@ import {
     getDocumentSchema,
     saveData,
 } from '@/app/actions/datasets';
-import { ColumnType } from '@/types';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -84,7 +83,6 @@ const useDataTable = () => {
                 const content = e.target?.result as string;
 
                 let headers: Array<string> = [];
-                let columns: Array<{ name: string; type: ColumnType }> = [];
                 let data: Array<Record<string, unknown>> = [];
 
                 const ext = file.name.split('.')[1];
@@ -96,10 +94,6 @@ const useDataTable = () => {
 
                             if (Array.isArray(data)) {
                                 headers = Object.keys(data[0]);
-                                columns = headers.map((header) => ({
-                                    name: header.trim(),
-                                    type: typeof data[0][header] as ColumnType,
-                                }));
                             }
                         } catch (error) {
                             //TODO:Alert user
@@ -110,10 +104,6 @@ const useDataTable = () => {
                     case 'csv':
                         const lines = content.split('\n');
                         headers = lines[0].split(',');
-                        columns = headers.map((header) => ({
-                            name: header.trim(),
-                            type: typeof header as ColumnType,
-                        }));
                         data = lines.slice(1).map((line) => {
                             const values = line.split(',');
                             return headers.reduce(

@@ -1,6 +1,7 @@
 import { getDatasets } from "@/app/actions/datasets";
 import DatasetCard from "../datasets/DatasetCard";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const FeaturedDatasets = async () => {
   const { datasets } = await getDatasets(null);
@@ -20,13 +21,13 @@ const FeaturedDatasets = async () => {
           </div>
 
           <div>
-            <a
+            <Link
               href="/datasets"
               className="flex items-center justify-center text-lg font-semibold text-blue-600 hover:text-blue-800"
             >
               View All Datasets
               <ArrowRight className="ml-2" />
-            </a>
+            </Link>
           </div>
         </div>
 

@@ -42,7 +42,7 @@ function DatasetViewTable() {
             <TableHeader>
                 <TableRow>
                     {schema?.map((schema) => (
-                        <TableHead className="w-[100px]">
+                        <TableHead key={`${schema.name}-${schema.type}`} className="w-[100px]">
                             {schema.name}
                         </TableHead>
                     ))}

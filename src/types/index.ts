@@ -8,3 +8,5 @@ export interface DatasetInfo extends Database {
     metadata: Collection['metadata'];
     user: Awaited<ReturnType<typeof getUser>>;
 }
+
+export type ColumnType = 'string' | 'number' | 'boolean' | 'date' | 'array';

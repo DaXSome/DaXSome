@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface Props {
   Icon?: ReactNode;
-  title?: String;
+  title?: string;
 }
 
 const CreateDatabaseButton = ({ title, Icon }: Props) => {

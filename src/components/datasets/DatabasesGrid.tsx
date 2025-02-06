@@ -18,7 +18,7 @@ const DatabasesGrid = ({ databases }: Props) => {
                     name={db.name}
                     collections={db.collections}
                     dateCreated={db.createdAt.toISOString()}
-                    description={db.metadata?.description || 'No description'}
+                    description={""}
                 />
             ))}
         </div>
