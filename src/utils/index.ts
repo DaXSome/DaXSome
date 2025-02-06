@@ -4,7 +4,7 @@
  * @returns The slug version of the dataset name.
  */
 export const parseDatasetSlug = (name: string) => {
-  return name.replaceAll(" ", "_");
+  return name.toLowerCase().replaceAll(" ", "_");
 };
 
 /**
@@ -13,7 +13,7 @@ export const parseDatasetSlug = (name: string) => {
  * @returns The normalized dataset slug.
  */
 export const normalizeDatasetSlug = (slug: string) => {
-  return slug.replaceAll("_", " ");
+  return slug.toLowerCase().replaceAll("_", " ");
 };
 
 export const HOST_URL =

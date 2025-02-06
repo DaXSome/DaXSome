@@ -11,6 +11,7 @@ import { DocumentModel } from '@/backend/models/documents';
 import { currentUser } from '@clerk/nextjs/server';
 import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
+import { parseDatasetSlug } from '@/utils';
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -362,14 +363,22 @@ export const createCollecion = async (
     data: CreateCollectionData,
     colId?: string | null
 ) => {
-    await connectToDb();
+    const [user] = await Promise.all([
+        getUser(data.user_id as string),
+        connectToDb(),
+    ]);
+
+    const slug = parseDatasetSlug(`${data.metadata?.title} ${user.username}`);
 
     if (!colId) {
-        const collection = await CollectionModel.create(data);
+        const collection = await CollectionModel.create({ ...data, slug });
 
         return collection.id;
     } else {
-        await CollectionModel.updateOne({ _id: colId }, { $set: data });
+        await CollectionModel.updateOne(
+            { _id: colId },
+            { $set: { ...data, slug } }
+        );
 
         return colId;
     }

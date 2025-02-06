@@ -12,9 +12,7 @@ export const revalidate = 86400; //A Day
 export const generateMetadata = async ({ params }: Props) => {
   const { slug } = await params;
 
-  const normalizedSlug = normalizeDatasetSlug(slug);
-
-  const dataset = await getDataset(normalizedSlug);
+  const dataset = await getDataset(slug);
 
   return {
     metadataBase: new URL(HOST_URL),
@@ -26,9 +24,7 @@ export const generateMetadata = async ({ params }: Props) => {
 export default async function Page({ params }: Props) {
   const { slug } = await params;
 
-  const normalizedSlug = normalizeDatasetSlug(slug);
-
-  const dataset = await getDataset(normalizedSlug);
+  const dataset = await getDataset(slug);
 
   if (!dataset) {
     return notFound();
