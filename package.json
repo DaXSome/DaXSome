@@ -8,7 +8,7 @@
     "build:prod": "dotenv -e .env.prod -- next build",
     "start": "next start",
     "lint": "next lint",
-    "server:deploy": "vercel deploy --prod --logs --force",
+    "server:deploy": "vercel deploy --logs --force",
     "postbuild": "next-sitemap"
   },
   "dependencies": {
