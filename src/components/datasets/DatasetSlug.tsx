@@ -50,7 +50,7 @@ export function DatasetView({ dataset }: Props) {
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
         <div className="flex gap-2 justify-between">
-          <h1 className="text-4xl font-bold mb-2">{dataset?.name}</h1>
+          <h1 className="text-4xl font-bold mb-2">{dataset?.metadata.title}</h1>
           {user && user.id === dataset?.user_id && (
             <Link
               href={`/datasets/my/${dataset.database}?col=${dataset._id}`}

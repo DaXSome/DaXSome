@@ -29,7 +29,7 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
             <Card className="border-primary h-full flex flex-col">
                 <CardHeader>
                     <CardTitle className="line-clamp-2">
-                        {dataset.name}
+                        {metadata.title}
                     </CardTitle>
                     <CardDescription>{metadata.category}</CardDescription>
                 </CardHeader>
