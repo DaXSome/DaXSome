@@ -22,6 +22,14 @@ const company: FooterLink[] = [
         label: 'About Us',
         href: '/about',
     },
+    {
+        label: 'Bug Reports',
+        href: 'https://github.com/DaXSome/DaXSome/issues/new',
+    },
+    {
+        label: 'Changelog',
+        href: '/changelog',
+    },
 ];
 
 const footerSections = { products, company };
@@ -90,30 +98,28 @@ export default function Footer() {
                         }
                     />
                 ))}
-                <div className='flex flex-col gap-1 place-items-center'>
+                <div className="flex flex-col gap-1 place-items-center">
                     <CardHeader>
                         <CardTitle className="text-white">Connect</CardTitle>
                     </CardHeader>
                     <SocialLinks />
                     <iframe
-                    src="https://github.com/sponsors/DaXSome/button"
-                    title="Sponsor DaXSome"
-                    height="32"
-                    width="114"
-                    style={{ border: 0, borderRadius: '6px' }}
-                ></iframe>
+                        src="https://github.com/sponsors/DaXSome/button"
+                        title="Sponsor DaXSome"
+                        height="32"
+                        width="114"
+                        style={{ border: 0, borderRadius: '6px' }}
+                    ></iframe>
                 </div>
             </div>
 
             <div className="w-[75%] h-[0.1px] bg-slate-50"></div>
 
-            <div className='flex flex-col place-items-center'>
+            <div className="flex flex-col place-items-center">
                 <p className="text-gray-500 text-center">
                     &copy; {new Date().getFullYear()} Daxsome. All rights
                     reserved.
                 </p>
-
-                
             </div>
 
             {/* <div>
