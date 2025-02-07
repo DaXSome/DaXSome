@@ -49,7 +49,7 @@ export default function RootLayout({
           <Footer />
         </body>
 
-        {process.env.NODE_ENV === "production" && (
+        { typeof window !== "undefined" && window.location.hostname === "daxsome.org"&& (
           <GoogleAnalytics gaId="G-BG5DCFML0B" />
         )}
       </html>
