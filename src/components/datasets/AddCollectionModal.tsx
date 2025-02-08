@@ -28,11 +28,12 @@ import {
     getDocumentSchema,
 } from '@/app/actions/datasets';
 import { useUser } from '@clerk/nextjs';
-import { DocumentSchema } from '@/backend/models/schema';
+import { DocumentSchema, } from '@/backend/models/schema';
 import { Textarea } from '../ui/textarea';
 import { Collection } from '@/backend/models/collections';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { supportedDataTypes } from '@/utils';
 
 interface FieldType {
     name: string;
@@ -51,6 +52,7 @@ interface Props {
     closeModal: () => void;
 }
 
+
 const AddCollectionModal = ({ open, closeModal }: Props) => {
     const searchParams = useSearchParams();
     const { id } = useParams();
@@ -58,7 +60,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
     const collection = searchParams.get('col');
 
     const { toast } = useToast();
-    const router = useRouter()
+    const router = useRouter();
 
     const { register, control, handleSubmit, setValue, watch } =
         useForm<FormValues>({
@@ -137,7 +139,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         toast({ title: 'Saved collection' });
 
-        router.push(`?col=${colId}`)
+        router.push(`?col=${colId}`);
 
         closeModal();
     };
@@ -219,18 +221,20 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                                 }
                                             >
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="String" />
+                                                    <SelectValue
+                                                        placeholder={
+                                                            supportedDataTypes[0]
+                                                        }
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="string">
-                                                        String
-                                                    </SelectItem>
-                                                    <SelectItem value="boolean">
-                                                        Boolean
-                                                    </SelectItem>
-                                                    <SelectItem value="json">
-                                                        Json
-                                                    </SelectItem>
+                                                    {supportedDataTypes.map(
+                                                        (type) => (
+                                                            <SelectItem value={type}>
+                                                                {type}
+                                                            </SelectItem>
+                                                        )
+                                                    )}
                                                 </SelectContent>
                                             </Select>
                                         </div>

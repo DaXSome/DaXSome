@@ -21,6 +21,8 @@ export const HOST_URL =
     ? "http://localhost:3000"
     : "https://daxsome.org";
 
+export const supportedDataTypes = ['string', 'number', 'boolean']
+
 export const colors = [
   "#8884d8",
   "#82ca9d",

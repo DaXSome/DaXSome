@@ -1,4 +1,7 @@
+import { supportedDataTypes } from '@/utils';
 import mongoose from 'mongoose';
+
+
 
 const documentSchema = new mongoose.Schema(
     {
@@ -27,7 +30,7 @@ const documentSchema = new mongoose.Schema(
                 },
                 type: {
                     type: String,
-                    enum: ['string', 'number', 'boolean'],
+                    enum: supportedDataTypes,
                     required: true,
                 },
             },
@@ -37,6 +40,7 @@ const documentSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
 
 export type DocumentSchema = mongoose.InferSchemaType<typeof documentSchema>;
 
