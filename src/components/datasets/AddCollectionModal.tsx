@@ -243,6 +243,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                                     {supportedDataTypes.map(
                                                         (type) => (
                                                             <SelectItem
+                                                                key={type}
                                                                 value={type}
                                                             >
                                                                 {type}
@@ -280,8 +281,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
                         <TabsContent
                             value="info"
-                              className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto p-4"
- 
+                            className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto p-4"
                         >
                             <div>
                                 <label className="text-sm font-medium">
