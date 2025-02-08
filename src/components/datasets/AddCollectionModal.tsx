@@ -28,7 +28,7 @@ import {
     getDocumentSchema,
 } from '@/app/actions/datasets';
 import { useUser } from '@clerk/nextjs';
-import { DocumentSchema, } from '@/backend/models/schema';
+import { DocumentSchema } from '@/backend/models/schema';
 import { Textarea } from '../ui/textarea';
 import { Collection } from '@/backend/models/collections';
 import { useToast } from '@/hooks/use-toast';
@@ -41,6 +41,7 @@ interface FieldType {
 }
 
 interface FormValues {
+    name: string;
     fields: FieldType[];
     metadata: Collection['metadata'] & {
         currentTag?: string;
@@ -51,7 +52,6 @@ interface Props {
     open: boolean;
     closeModal: () => void;
 }
-
 
 const AddCollectionModal = ({ open, closeModal }: Props) => {
     const searchParams = useSearchParams();
@@ -65,6 +65,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
     const { register, control, handleSubmit, setValue, watch } =
         useForm<FormValues>({
             defaultValues: {
+                name: '',
                 fields: [],
                 metadata: {
                     title: '',
@@ -123,6 +124,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         const colId = await createCollecion(
             {
+                name: data.name,
                 database: id as string,
                 user_id: user.id,
                 metadata: data.metadata,
@@ -162,6 +164,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                     ...collectionMeta.metadata,
                     currentTag: '',
                 });
+                setValue('name', collectionMeta.name);
             }
         })();
     }, [collection, setValue, id]);
@@ -170,7 +173,16 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
         <Dialog open={open} onOpenChange={closeModal}>
             <DialogContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Tabs defaultValue="schema" className="w-[400px]">
+                    <div className="mb-2">
+                        <Input
+                            placeholder="Name of collection"
+                            {...register(`name`, {
+                                required: 'collection name is required',
+                            })}
+                        />
+                    </div>
+
+                    <Tabs defaultValue="schema">
                         <TabsList>
                             <TabsTrigger value="schema">Schema</TabsTrigger>
                             <TabsTrigger value="info">
@@ -204,7 +216,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                                     `fields.${index}.name`,
                                                     {
                                                         required:
-                                                            'Field name is required',
+                                                            'field name is required',
                                                     }
                                                 )}
                                                 placeholder="column name"
@@ -230,7 +242,9 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                                 <SelectContent>
                                                     {supportedDataTypes.map(
                                                         (type) => (
-                                                            <SelectItem value={type}>
+                                                            <SelectItem
+                                                                value={type}
+                                                            >
                                                                 {type}
                                                             </SelectItem>
                                                         )
@@ -266,7 +280,8 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
                         <TabsContent
                             value="info"
-                            className="flex flex-col gap-4"
+                              className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto p-4"
+ 
                         >
                             <div>
                                 <label className="text-sm font-medium">
@@ -417,7 +432,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                             className="text-slate-50 font-semibold"
                             disabled={fields.length === 0}
                         >
-                            Create
+                            Save
                         </Button>
                     </DialogFooter>
                 </form>
