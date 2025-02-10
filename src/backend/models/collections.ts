@@ -45,6 +45,11 @@ const collectionSchema = new mongoose.Schema(
 
             default: {},
         },
+
+        asset_url: {
+            type: String,
+            default: '',
+        },
     },
     {
         timestamps: true,
