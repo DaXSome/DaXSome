@@ -33,11 +33,12 @@ export function DatasetView({ dataset }: Props) {
   const { user } = useUser();
 
   const handleDownload = () => {
-    sendGAEvent({ event: "download", value: dataset?.name });
+    sendGAEvent({ event: "download", value: dataset?.metadata.title});
 
     const a = document.createElement("a");
 
-    // a.href = dataset?.asset_url;
+    a.href = dataset?.asset_url!;
+    a.download = dataset?.metadata.title!
 
     document.body.appendChild(a);
 

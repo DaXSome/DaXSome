@@ -127,6 +127,7 @@ const useDataTable = () => {
 
     const save = async () => {
         await saveData({
+            hostname: window.location.hostname,
             database: databaseId as string,
             collection,
             data,

@@ -11,7 +11,8 @@ import { DocumentModel } from '@/backend/models/documents';
 import { currentUser } from '@clerk/nextjs/server';
 import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
-import { parseDatasetSlug } from '@/utils';
+import { jsonToCsv, parseDatasetSlug } from '@/utils';
+import { uploadFile } from './storage';
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -81,7 +82,7 @@ export async function getDataset(slug: string) {
 
     const fullDataset = {
         ...(dataset.toJSON() as Collection),
-        sample:sample.map((s) => s.data),
+        sample: sample.map((s) => s.data),
         database: dataset.database.toString(),
         _id: dataset.id,
         updated_at: dataset.updatedAt,
@@ -91,7 +92,7 @@ export async function getDataset(slug: string) {
             database: dataset.database as unknown as string,
             collection: dataset.id as string,
         }),
-    }
+    };
 
     return fullDataset;
 }
@@ -138,10 +139,12 @@ export async function updateDatabaseName(id: string, name: string) {
 export const saveData = async ({
     database,
     collection,
+    hostname,
     data,
 }: {
     database: string;
     collection: string;
+    hostname: string;
     data: Record<string, unknown>[];
 }) => {
     await connectToDb();
@@ -150,8 +153,14 @@ export const saveData = async ({
 
     if (!user) return;
 
-    const res = await Promise.all(
-        data.map((d) =>
+    const filename = `${hostname}/${user.id}/${database}/${collection}-${Date.now()}.csv`;
+
+    const sanitizedData = data.map(
+        ({ database, collection, user_id, _id, ...rest }) => rest
+    );
+
+    await Promise.all([
+        ...data.map((d) =>
             DocumentModel.findOneAndUpdate(
                 { _id: d._id || new mongoose.Types.ObjectId() },
                 {
@@ -162,10 +171,20 @@ export const saveData = async ({
                 },
                 { upsert: true, strict: false }
             )
-        )
-    );
-
-    console.log(res);
+        ),
+        uploadFile({
+            csv: jsonToCsv(sanitizedData),
+            filename,
+        }),
+        CollectionModel.updateOne(
+            { _id: collection },
+            {
+                $set: {
+                    asset_url: `https://daxsome.seveightech.com/${filename}`,
+                },
+            }
+        ),
+    ]);
 };
 
 /**
@@ -237,9 +256,9 @@ export async function getUserDbs() {
             id: db.id,
             name: db.name,
             createdAt: db.createdAt,
-            collections: (
-                await getCollections(db.id)
-            ).map((collection) => collection._id as string),
+            collections: (await getCollections(db.id)).map(
+                (collection) => collection._id as string
+            ),
         }))
     );
 
