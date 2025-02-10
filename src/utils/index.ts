@@ -16,6 +16,18 @@ export const normalizeDatasetSlug = (slug: string) => {
   return slug.toLowerCase().replaceAll("_", " ");
 };
 
+
+export const jsonToCsv = (json: any[]): string => {
+    if (!json.length) return '';
+
+    const headers = Object.keys(json[0]);
+    const csvRows = json.map((row) =>
+        headers.map((header) => JSON.stringify(row[header] ?? '')).join(',')
+    );
+
+    return [headers.join(','), ...csvRows].join('\n');
+};
+
 export const HOST_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"

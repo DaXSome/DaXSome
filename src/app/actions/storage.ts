@@ -1,9 +1,5 @@
 'use server';
-import {
-    PutObjectCommand,
-    S3Client,
-    DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({
     region: process.env.AWS_REGION!,
@@ -21,10 +17,6 @@ export const uploadFile = async ({
     filename: string;
 }) => {
     const bucketName = process.env.AWS_S3_BUCKET!;
-
-    await s3Client.send(
-        new DeleteObjectCommand({ Bucket: bucketName, Key: filename })
-    );
 
     const uploadCommand = new PutObjectCommand({
         Bucket: bucketName,
