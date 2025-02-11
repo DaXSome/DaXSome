@@ -37,8 +37,8 @@ export function DatasetView({ dataset }: Props) {
 
     const a = document.createElement("a");
 
-    a.href = dataset?.asset_url!;
-    a.download = dataset?.metadata.title!
+    a.href = dataset?.asset_url as string;
+    a.download = dataset?.metadata.title as string
 
     document.body.appendChild(a);
 
