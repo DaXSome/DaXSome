@@ -155,9 +155,10 @@ export const saveData = async ({
 
     const filename = `${hostname}/${user.id}/${database}/${collection}-${Date.now()}.csv`;
 
-    const sanitizedData = data.map(
-        ({ database, collection, user_id, _id, ...rest }) => rest
-    );
+const sanitizedData = data.map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ database, collection, user_id, _id, ...rest }) => rest
+);
 
     await Promise.all([
         ...data.map((d) =>

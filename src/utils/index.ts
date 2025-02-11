@@ -17,7 +17,7 @@ export const normalizeDatasetSlug = (slug: string) => {
 };
 
 
-export const jsonToCsv = (json: any[]): string => {
+export const jsonToCsv = (json: Record<string, unknown>[]): string => {
     if (!json.length) return '';
 
     const headers = Object.keys(json[0]);
