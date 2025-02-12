@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import {
     Dialog,
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSearchParams, useParams } from 'next/navigation';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Import, Plus, Trash2, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import {
@@ -33,7 +33,7 @@ import { Textarea } from '../ui/textarea';
 import { Collection } from '@/backend/models/collections';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { supportedDataTypes } from '@/utils';
+import { readFile, supportedDataTypes } from '@/utils';
 
 interface FieldType {
     name: string;
@@ -61,6 +61,8 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
     const { toast } = useToast();
     const router = useRouter();
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { register, control, handleSubmit, setValue, watch } =
         useForm<FormValues>({
@@ -146,6 +148,13 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
         closeModal();
     };
 
+    const handleFileImport = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        const { headers } = await readFile(file);
+
+        setValue('fields', headers);
+    };
+
     useEffect(() => {
         if (!collection) return;
 
@@ -192,7 +201,26 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
                         <TabsContent value="schema">
                             <DialogHeader>
-                                <DialogTitle>Add New Collection</DialogTitle>
+                                <DialogTitle>
+                                    <Input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileImport}
+                                        className="hidden"
+                                    />
+                                    <div className="w-full flex justify-between items-center gap-3">
+                                        <span>Add New Collection</span>
+                                        <Button
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                            variant={'outline'}
+                                        >
+                                            {' '}
+                                            <Import /> Infer
+                                        </Button>
+                                    </div>
+                                </DialogTitle>
                                 <DialogDescription>
                                     Please add fields to create a new
                                     collection.

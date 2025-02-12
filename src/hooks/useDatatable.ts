@@ -4,6 +4,7 @@ import {
     getDocumentSchema,
     saveData,
 } from '@/app/actions/datasets';
+import { readFile } from '@/utils';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -74,55 +75,11 @@ const useDataTable = () => {
         setData(newData);
     };
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
+        const { data } =await readFile(file)
 
-            reader.onload = (e) => {
-                const content = e.target?.result as string;
-
-                let headers: Array<string> = [];
-                let data: Array<Record<string, unknown>> = [];
-
-                const ext = file.name.split('.')[1];
-
-                switch (ext) {
-                    case 'json':
-                        try {
-                            data = JSON.parse(content);
-
-                            if (Array.isArray(data)) {
-                                headers = Object.keys(data[0]);
-                            }
-                        } catch (error) {
-                            //TODO:Alert user
-                            console.error('Error parsing JSON file:', error);
-                        }
-                        break;
-
-                    case 'csv':
-                        const lines = content.split('\n');
-                        headers = lines[0].split(',');
-                        data = lines.slice(1).map((line) => {
-                            const values = line.split(',');
-                            return headers.reduce(
-                                (acc, header, index) => ({
-                                    ...acc,
-                                    [header.trim()]:
-                                        values[index]?.trim() || '',
-                                }),
-                                {}
-                            );
-                        });
-                        break;
-                }
-
-                setData(data);
-            };
-
-            reader.readAsText(file);
-        }
+        setData(data)
     };
 
     const save = async () => {
