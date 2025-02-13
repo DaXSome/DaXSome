@@ -72,7 +72,7 @@ export default function Datasets({ datasets, categories }: Props) {
               />
             </div>
           </div>
-          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+          {/* <Select value={selectedCategory} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -87,7 +87,7 @@ export default function Datasets({ datasets, categories }: Props) {
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
 
           {user && isLoaded && (
             <Link href={"/datasets/my"}>
