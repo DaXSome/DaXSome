@@ -13,8 +13,9 @@ const Page = async () => {
         <div className="px-4 py-8 flex-1">
             <div className="w-full mx-auto px-24 flex flex-col justify-center place-items-center">
                 <div className="h-[450px] flex flex-col gap-3 w-full place-items-center">
-                    <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+                    <h1 className="flex text-3xl font-extrabold text-gray-800 mb-6 text-center items-center gap-4">
                         Databases
+                        <CreateDatabaseButton />
                     </h1>
 
                     <div className="w-full max-w-7xl h-full flex place-items-center justify-center p-8 px-16 rounded-md shadow-sm bg-gray-50">
@@ -32,8 +33,7 @@ const Page = async () => {
                                 <CreateDatabaseButton />
                             </div>
                         ) : (
-                            <div className="flex gap-4 items-center" >
-                                <CreateDatabaseButton />
+                            <div className="h-full gap-4 items-center">
                                 <DatabasesGrid databases={databases} />
                             </div>
                         )}

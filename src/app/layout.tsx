@@ -40,7 +40,7 @@ export default function RootLayout({
           <NextTopLoader color="blue" />
           <Navbar />
 
-          <main className="flex-grow bg-white flex h-full w-full">
+          <main className="flex-grow bg-white flex h-screen w-full">
             {children}
           </main>
 
