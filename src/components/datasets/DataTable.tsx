@@ -45,6 +45,7 @@ export function DataTable() {
                 ref={fileInputRef}
                 onChange={handleFileUpload}
                 className="hidden"
+                accept=".json, .csv"
             />
 
             <div className="w-full flex justify-end gap-3">

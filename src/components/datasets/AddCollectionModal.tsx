@@ -207,10 +207,12 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                         ref={fileInputRef}
                                         onChange={handleFileImport}
                                         className="hidden"
+                                        accept=".json, .csv"
                                     />
                                     <div className="w-full flex justify-between items-center gap-3">
                                         <span>Add New Collection</span>
                                         <Button
+                                            type="button"
                                             onClick={() =>
                                                 fileInputRef.current?.click()
                                             }
