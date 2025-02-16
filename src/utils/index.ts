@@ -1,3 +1,5 @@
+import Papa from 'papaparse';
+
 /**
  * Given a dataset name, return the slug version of the name. This is done by replacing all spaces with underscores.
  * @param name The dataset name to parse.
@@ -28,66 +30,58 @@ export const jsonToCsv = (json: Record<string, unknown>[]): string => {
 };
 
 export const readFile = (file: File | undefined) => {
-    let headers: Array<{ name: string; type: string }> = [];
-    let data: Array<Record<string, unknown>> = [];
+    if (!file) return Promise.reject('Missing file');
 
-    return new Promise<{ headers: typeof headers; data: typeof data }>(
-        (resolve, reject) => {
-            if (!file) reject('missing file');
+    return new Promise<{
+        headers: Array<{ name: string; type: string }>;
+        data: Array<Record<string, unknown>>;
+    }>((resolve, reject) => {
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        const reader = new FileReader();
 
-            const reader = new FileReader();
-
+        if (ext === 'json') {
             reader.onload = (e) => {
-                const content = e.target?.result as string;
+                try {
+                    const jsonData = JSON.parse(e.target?.result as string);
+                    if (!Array.isArray(jsonData))
+                        return reject('Invalid JSON format');
 
-                const ext = file?.name.split('.')[1];
+                    const headers = Object.keys(jsonData[0]).map((name) => ({
+                        name,
+                        type: typeof jsonData[0][name],
+                    }));
 
-                switch (ext) {
-                    case 'json':
-                        try {
-                            data = JSON.parse(content);
-
-                            if (Array.isArray(data)) {
-                                headers = Object.keys(data[0]).map((name) => ({
-                                    name,
-                                    type: typeof data[0][name],
-                                }));
-                            }
-
-                            resolve({ data, headers });
-                        } catch (error) {
-                            reject(error);
-                        }
-                        break;
-
-                    case 'csv':
-                        const lines = content.split('\n');
-                        const firstRow = lines[0].split(',');
-
-                        headers = firstRow.map((name, index) => ({
-                            name,
-                            type: typeof lines[1].split(',')[index],
-                        }));
-
-                        data = lines.slice(1).map((line) => {
-                            const values = line.split(',');
-                            return firstRow.reduce(
-                                (acc, header, index) => ({
-                                    ...acc,
-                                    [header.trim()]:
-                                        values[index]?.trim() || '',
-                                }),
-                                {}
-                            );
-                        });
-                        resolve({ data, headers });
-                        break;
+                    resolve({ data: jsonData, headers });
+                } catch (error) {
+                    reject(error);
                 }
             };
+            reader.readAsText(file);
+        } else if (ext === 'csv') {
+            let headers: Array<{ name: string; type: string }> = [];
+            const data: Array<Record<string, unknown>> = [];
 
-            reader.readAsText(file!);
+            Papa.parse<typeof data[number]>(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                step: (row) => {
+                    if (!headers.length) {
+                        headers = Object.keys(row.data).map((name) => ({
+                            name,
+                            type: typeof row.data[name],
+                        }));
+                    }
+                    data.push(row.data);
+                },
+                complete: () => resolve({ data, headers })
+                ,
+                error: (error) => reject(error.message),
+            });
+        } else {
+            reject('Unsupported file type');
         }
-    );
+    });
 };
 
 export const HOST_URL =
