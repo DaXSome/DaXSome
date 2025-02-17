@@ -3,17 +3,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { useRouter, useSearchParams } from "next/navigation";
+// import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import DatasetCard from "./DatasetCard";
@@ -25,20 +16,20 @@ interface Props {
   categories: string[];
 }
 
-export default function Datasets({ datasets, categories }: Props) {
-  const router = useRouter();
-  const params = useSearchParams();
+export default function Datasets({ datasets }: Props) {
+  // const router = useRouter();
+  // const params = useSearchParams();
 
-  const selectedCategory = params.get("category") || "All";
+  // const selectedCategory = params.get("category") || "All";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAccessType] = useState("");
 
   const { user, isLoaded } = useUser();
 
-  const handleCategoryChange = (category: string) => {
-    router.push(`?category=${category}`);
-  };
+  // const handleCategoryChange = (category: string) => {
+  //   router.push(`?category=${category}`);
+  // };
 
   const filteredDatasets = datasets.filter(
     (dataset) =>

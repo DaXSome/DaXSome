@@ -60,7 +60,7 @@ const useDataTable = (page: number) => {
             await deleteDocument(currentRowId as string);
         }
 
-        setData((_) => [...newRows]);
+        setData(() => [...newRows]);
     };
 
     const updateCell = (
@@ -147,7 +147,7 @@ const useDataTable = (page: number) => {
         type: 'string' | 'number';
     }
 
-    const EditableCell = memo(({ getValue, row, column, table }: any) => {
+    const EditableCell = memo(({ getValue, row, column, table }: unknown) => {
         const initialValue = getValue();
         const columnMeta = table.options.meta?.columnsDef.find(
             (col: ColumnDefinition) => col.name === column.id
@@ -196,7 +196,7 @@ const useDataTable = (page: number) => {
 
     EditableCell.displayName = 'EditableCell';
 
-    const tableColumns = useMemo<ColumnDef<Record<string, any>>[]>(
+    const tableColumns = useMemo<ColumnDef<Record<string, unknown>>[]>(
         () => [
             {
                 accessorKey: '#',
