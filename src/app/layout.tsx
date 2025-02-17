@@ -36,12 +36,12 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`min-h-screen h-full ${geistSans.variable} ${geistMono.variable} antialiased flex flex-col bg-slate-100`}
+          className={` h-full ${geistSans.variable} ${geistMono.variable} antialiased flex flex-col bg-slate-100`}
         >
           <NextTopLoader color="blue" />
           <Navbar />
 
-          <main className="flex-grow bg-white flex h-screen w-full">
+          <main className="flex-1 bg-white flex justify-between h-screen w-full">
             {children}
             <Loader />
           </main>
