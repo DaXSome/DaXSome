@@ -27,9 +27,9 @@ import { useSearchParams } from 'next/navigation';
 
 export function DataTable() {
     const searchParams = useSearchParams();
-    const currentPage = parseInt(searchParams.get('page') || '1', 10) - 1;
+    const currentPage = parseInt(searchParams.get('page') || '0')
 
-    const { data, table, columns, count, handleFileUpload, addRow, save } =
+    const { data, table, count, handleFileUpload, addRow, save } =
         useDataTable(currentPage);
 
     const { toast } = useToast();
@@ -156,9 +156,9 @@ export function DataTable() {
                             return (
                                 <PaginationItem key={page}>
                                     <PaginationLink
-                                        href={generatePaginationLink(page)}
+                                        href={generatePaginationLink(page-1)}
                                         className={
-                                            page === currentPage
+                                            page === currentPage + 1
                                                 ? 'font-bold text-blue-500'
                                                 : ''
                                         }
@@ -182,7 +182,7 @@ export function DataTable() {
                         return null;
                     })}
 
-                    {currentPage < totalPages && (
+                    {currentPage+1 < totalPages && (
                         <PaginationItem>
                             <PaginationNext
                                 href={generatePaginationLink(currentPage + 1)}
