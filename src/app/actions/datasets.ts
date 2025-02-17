@@ -306,14 +306,14 @@ export const getCollections = async (db: string) => {
 export const getData = async (
     database: string,
     collection: string,
-    page: string
+    page: number
 ) => {
     await connectToDb();
 
     const [data, count] = await Promise.all([
         DocumentModel.find({ database, collection })
-            .limit(15)
-            .skip(parseInt(page) * 10),
+            .limit(10)
+            .skip(page * 10),
         DocumentModel.countDocuments({ database, collection }),
     ]);
 

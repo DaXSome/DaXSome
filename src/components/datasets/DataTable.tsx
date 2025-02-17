@@ -1,34 +1,42 @@
 'use client';
-
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-    ContextMenu,
-    ContextMenuContent,
-    ContextMenuItem,
-    ContextMenuTrigger,
-} from '@/components/ui/context-menu';
-import useDataTable from '@/hooks/useDatatable';
-import { Button } from '../ui/button';
 import { Import, Plus, Save } from 'lucide-react';
 import { useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { flexRender } from '@tanstack/react-table';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import useDataTable from '@/hooks/useDatatable';
+import { useSearchParams } from 'next/navigation';
 
 export function DataTable() {
-    const {
-        data,
-        columns,
-        handleFileUpload,
-        updateCell,
-        addRow,
-        removeRow,
-        save,
-        getCellColor,
-    } = useDataTable();
+    const searchParams = useSearchParams();
+    const currentPage = parseInt(searchParams.get('page') || '1', 10) - 1;
+
+    const { data, table, columns, count, handleFileUpload, addRow, save } =
+        useDataTable(currentPage);
 
     const { toast } = useToast();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const totalPages = Math.ceil(count / 10);
 
     const handleSave = async () => {
         toast({ title: 'Saving...' });
@@ -38,8 +46,16 @@ export function DataTable() {
         toast({ title: 'Saved' });
     };
 
+    const generatePaginationLink = (page: number) => {
+        const url = new URL(window.location.href);
+
+        url.searchParams.set('page', page.toString());
+
+        return url.toString();
+    };
+
     return (
-        <div className="space-y-4">
+        <div>
             <Input
                 type="file"
                 ref={fileInputRef}
@@ -48,7 +64,7 @@ export function DataTable() {
                 accept=".json, .csv"
             />
 
-            <div className="w-full flex justify-end gap-3">
+            <div className="w-full flex justify-end gap-3 mb-4">
                 <Button
                     onClick={() => fileInputRef.current?.click()}
                     variant={'outline'}
@@ -73,87 +89,116 @@ export function DataTable() {
                 </Button>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr>
-                            {columns?.map((column, index) => (
-                                <th
-                                    key={index}
-                                    className="border border-gray-300 p-2"
-                                >
-                                    <Input
-                                        disabled
-                                        value={column.name}
-                                        className="mb-2"
-                                    />
-                                    <Input
-                                        disabled
-                                        value={column.type}
-                                        className="mb-2"
-                                    />
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                                {columns?.map((column, columnIndex) => (
-                                    <td
-                                        key={columnIndex}
-                                        className=" border border-gray-300 p-2"
-                                    >
-                                        <ContextMenu>
-                                            <ContextMenuContent>
-                                                <ContextMenuItem
-                                                    onClick={addRow}
-                                                >
-                                                    Add row
-                                                </ContextMenuItem>
-                                                <ContextMenuItem
-                                                    onClick={() =>
-                                                        removeRow(rowIndex)
-                                                    }
-                                                >
-                                                    Remove row
-                                                </ContextMenuItem>
-                                            </ContextMenuContent>
-                                            <ContextMenuTrigger>
-                                                <Textarea
-                                                    style={{
-                                                        borderColor:
-                                                            getCellColor(
-                                                                data[rowIndex]
-                                                                    ._id as string,
-                                                                column.name
-                                                            ),
-                                                    }}
-                                                    className={
-                                                        'relative focus:h-60 focus:w-60 w-50 h-50 transition-all resize-none overflow-hidden '
-                                                    }
-                                                    value={
-                                                        (row[
-                                                            column.name
-                                                        ] as string) || ''
-                                                    }
-                                                    onChange={(e) =>
-                                                        updateCell(
-                                                            rowIndex,
-                                                            column.name,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            </ContextMenuTrigger>
-                                        </ContextMenu>
-                                    </td>
+            <div className="rounded-md border">
+                <Table key={data.length}>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                    </TableHead>
                                 ))}
-                            </tr>
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && 'selected'
+                                    }
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns?.length! + 1}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
+            <Pagination>
+                <PaginationContent>
+                    {currentPage > 1 && (
+                        <PaginationItem>
+                            <PaginationPrevious
+                                href={generatePaginationLink(currentPage - 1)}
+                            />
+                        </PaginationItem>
+                    )}
+
+                    {Array.from(
+                        { length: totalPages },
+                        (_, index) => index + 1
+                    ).map((page) => {
+                        // Show pages within a range around the current page
+                        const isWithinRange =
+                            page === 1 ||
+                            page === totalPages ||
+                            Math.abs(page - currentPage) <= 2;
+
+                        if (isWithinRange) {
+                            return (
+                                <PaginationItem key={page}>
+                                    <PaginationLink
+                                        href={generatePaginationLink(page)}
+                                        className={
+                                            page === currentPage
+                                                ? 'font-bold text-blue-500'
+                                                : ''
+                                        }
+                                    >
+                                        {page}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            );
+                        }
+
+                        // Handle ellipsis for skipped pages
+                        const isEllipsis = Math.abs(page - currentPage) === 3;
+                        if (isEllipsis) {
+                            return (
+                                <PaginationItem key={`ellipsis-${page}`}>
+                                    <PaginationEllipsis />
+                                </PaginationItem>
+                            );
+                        }
+
+                        return null;
+                    })}
+
+                    {currentPage < totalPages && (
+                        <PaginationItem>
+                            <PaginationNext
+                                href={generatePaginationLink(currentPage + 1)}
+                            />
+                        </PaginationItem>
+                    )}
+                </PaginationContent>
+            </Pagination>
         </div>
     );
 }
