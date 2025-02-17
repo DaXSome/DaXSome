@@ -11,6 +11,7 @@ import {
     ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { Input } from '@/components/ui/input';
+import { useLoadingStore } from '@/states/app';
 import { readFile } from '@/utils';
 import {
     ColumnDef,
@@ -36,6 +37,8 @@ const useDataTable = (page: number) => {
     const [data, setData] = useState<Data[]>([]);
     const [originalData, setOriginalData] = useState<Data[]>([]);
     const [count, setCount] = useState(0);
+
+    const { toggleLoading } = useLoadingStore();
 
     const addRow = () => {
         if (!columns) return;
@@ -97,6 +100,8 @@ const useDataTable = (page: number) => {
         const file = event.target.files?.[0];
         const { data } = await readFile(file);
 
+        toggleLoading();
+
         await saveData({
             hostname: window.location.hostname,
             database: databaseId as string,
@@ -104,17 +109,22 @@ const useDataTable = (page: number) => {
             data,
         });
 
-        window.location.reload()
+        toggleLoading();
 
+        window.location.reload();
     };
 
     const save = async () => {
+        toggleLoading();
+
         await saveData({
             hostname: window.location.hostname,
             database: databaseId as string,
             collection,
             data,
         });
+
+        toggleLoading();
 
         setOriginalData(data);
     };
@@ -164,7 +174,8 @@ const useDataTable = (page: number) => {
                 <ContextMenuTrigger>
                     <Input
                         style={{
-                            borderColor: initialValue !== value ? 'yellow' : 'gray',
+                            borderColor:
+                                initialValue !== value ? 'yellow' : 'gray',
                             borderWidth: initialValue !== value ? '5px' : '1px',
                         }}
                         type={columnMeta?.type === 'number' ? 'number' : 'text'}
@@ -219,6 +230,8 @@ const useDataTable = (page: number) => {
 
     useEffect(() => {
         (async () => {
+            toggleLoading();
+
             const [schema, documents] = await Promise.all([
                 getDocumentSchema({
                     database: databaseId as string,
@@ -227,6 +240,8 @@ const useDataTable = (page: number) => {
 
                 getData(databaseId as string, collection, page),
             ]);
+
+            toggleLoading();
 
             if (schema) {
                 setColumns(schema);

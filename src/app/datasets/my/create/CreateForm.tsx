@@ -3,6 +3,7 @@ import { createDatabase } from '@/app/actions/datasets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useLoadingStore } from '@/states/app';
 import { useUser } from '@clerk/nextjs';
 import { Database } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -15,12 +16,13 @@ const CreateForm = ()=> {
     const { user } = useUser()
 
     const router = useRouter()
-    const { toast } = useToast()
+    const { toast } = useToast();
 
-    const handleOnchange 
-    = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { toggleLoading } = useLoadingStore();
+
+    const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDbName(e.target.value);
-    }
+    };
 
     const handleDisabled = () => {
         if(dbName.length <= 0) {
@@ -35,7 +37,9 @@ const CreateForm = ()=> {
     }
 
     const handleCreate = async () => {
-        if (!user) return
+        if (!user) return;
+
+        toggleLoading();
 
         toast({
             title: 'Creating database',
@@ -51,8 +55,10 @@ const CreateForm = ()=> {
             title: 'Database created',
         });
 
-        router.push(`/datasets/my/${id}`)
-    }
+        toggleLoading();
+
+        router.push(`/datasets/my/${id}`);
+    };
 
     useEffect(()=> {
         handleDisabled()

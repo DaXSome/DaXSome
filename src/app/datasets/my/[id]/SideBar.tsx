@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
 import clsx from 'clsx';
+import { useLoadingStore } from '@/states/app';
 
 interface Props {
     collections: Collection[];
@@ -30,6 +31,8 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
 
     const [editDb, setEditDb] = useState(false);
 
+    const { toggleLoading } = useLoadingStore();
+
     const handleAddCollectionModal = () => {
         const currentParams = new URLSearchParams(
             Array.from(searchParams.entries())
@@ -45,9 +48,14 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
     const handleDrop = async (id: string) => {
         if (confirm('Are you sure?')) {
             toast({ title: 'Dropping collection' });
+
+                        toggleLoading();  
+
             await dropCollection(id);
-            handleDbEdit();
             toast({ title: 'Dropped collection' });
+
+                                    toggleLoading();  
+
             router.refresh();
         }
     };

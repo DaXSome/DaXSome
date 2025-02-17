@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { Toaster } from "@/components/ui/toaster";
+import Loader from "@/components/Loader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,6 +43,7 @@ export default function RootLayout({
 
           <main className="flex-grow bg-white flex h-screen w-full">
             {children}
+            <Loader />
           </main>
 
           <Toaster />

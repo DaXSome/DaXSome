@@ -15,6 +15,7 @@ import { Input } from '../ui/input';
 import { dropDatabase, updateDatabaseName } from '@/app/actions/datasets';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useLoadingStore } from '@/states/app';
 
 interface Props {
     open: boolean;
@@ -28,28 +29,39 @@ const EditDatabaseModal = ({ open, name, id, closeModal }: Props) => {
 
     const router = useRouter();
 
+    const { toggleLoading } = useLoadingStore();
+
     const [newDbName, setNewDbName] = useState(name);
 
     const save = async () => {
         toast({ title: 'Saving...' });
 
+        closeModal();
+
+        toggleLoading();
+
         await updateDatabaseName(id, newDbName);
 
         toast({ title: 'Saved' });
 
-        closeModal();
+        toggleLoading();
     };
 
     const handleDrop = async () => {
-        toast({ title: 'Dropping database' });
+        if (confirm('Are you sure?')) {
+            toast({ title: 'Dropping database' });
 
-        await dropDatabase(id);
+            toggleLoading();
+            closeModal();
 
-        toast({ title: 'Dropped' });
+            await dropDatabase(id);
 
-        closeModal();
+            toast({ title: 'Dropped' });
 
-        router.push('/datasets/my');
+            toggleLoading();
+
+            router.push('/datasets/my');
+        }
     };
 
     return (

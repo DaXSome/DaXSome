@@ -34,6 +34,7 @@ import { Collection } from '@/backend/models/collections';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { readFile, supportedDataTypes } from '@/utils';
+import { useLoadingStore } from '@/states/app';
 
 interface FieldType {
     name: string;
@@ -61,6 +62,8 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
     const { toast } = useToast();
     const router = useRouter();
+ 
+    const { toggleLoading } = useLoadingStore();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,6 +123,10 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
     const onSubmit = async (data: FormValues) => {
         if (!user) return;
 
+        closeModal();
+
+        toggleLoading()
+
         delete data.metadata.currentTag;
 
         toast({ title: 'Saving collection' });
@@ -143,9 +150,10 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         toast({ title: 'Saved collection' });
 
+        toggleLoading()
+
         router.push(`?col=${colId}`);
 
-        closeModal();
     };
 
     const handleFileImport = async (event: ChangeEvent<HTMLInputElement>) => {
