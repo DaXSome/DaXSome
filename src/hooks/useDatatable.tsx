@@ -147,7 +147,8 @@ const useDataTable = (page: number) => {
         type: 'string' | 'number';
     }
 
-    const EditableCell = memo(({ getValue, row, column, table }: unknown) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const EditableCell = memo(({ getValue, row, column, table }: any) => {
         const initialValue = getValue();
         const columnMeta = table.options.meta?.columnsDef.find(
             (col: ColumnDefinition) => col.name === column.id
