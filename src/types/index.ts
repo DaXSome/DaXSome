@@ -1,16 +1,12 @@
-import { Dataset } from "@/backend/models/datasets";
+import { getUser } from '@/app/actions/user';
+import { Collection } from '@/backend/models/collections';
+import { Database } from '@/backend/models/databases';
 
-export type DatasetInfo = Dataset & {
-  updated_at: string;
-  id: string;
-  asset_url: string;
-  format: string[];
-  sample: { [key: string]: string | number }[];
-  total: number;
-  status: "published" | "pending";
-};
+export interface DatasetInfo extends Database {
+    _id: string;
+    slug: Collection['slug'];
+    metadata: Collection['metadata'];
+    user: Awaited<ReturnType<typeof getUser>>;
+}
 
-export type DatasetMeta = Omit<
-  DatasetInfo,
-  "size" | "format" | "sample"
->;
+export type ColumnType = 'string' | 'number' | 'boolean' | 'date' | 'array';

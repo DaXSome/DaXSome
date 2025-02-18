@@ -1,4 +1,4 @@
-import Datasets from "@/components/Datasets";
+import Datasets from "@/components/datasets/Datasets";
 import { HOST_URL } from "@/utils";
 import { Metadata } from "next";
 import { getDatasets } from "../actions/datasets";

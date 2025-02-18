@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import AppSkeleton from "@/components/AppSkeleton";
+import AppSkeleton from "@/components/viz/AppSkeleton";
 import { colors } from "@/utils";
 
 interface Dataset {
@@ -167,7 +167,7 @@ export default function KNUSTAdmissionPage() {
   if (years.length === 0) return <AppSkeleton />;
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className=" flex-1 container mx-auto p-4 space-y-8">
       <header className="text-center">
         <h1 className="text-3xl font-bold">KNUST Admission Analytics</h1>
         <p className="text-muted-foreground mt-2">
