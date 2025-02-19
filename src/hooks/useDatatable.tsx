@@ -1,9 +1,11 @@
 import {
     deleteDocument,
+    getCollection,
     getData,
     getDocumentSchema,
     saveData,
 } from '@/app/actions/datasets';
+import { Collection } from '@/backend/models/collections';
 import {
     ContextMenu,
     ContextMenuContent,
@@ -35,6 +37,7 @@ const useDataTable = (page: number) => {
     >([]);
 
     const [data, setData] = useState<Data[]>([]);
+    const [publishedState, setPublishedState] = useState<Collection["metadata"]["status"]>()
     const [originalData, setOriginalData] = useState<Data[]>([]);
     const [count, setCount] = useState(0);
 
@@ -233,11 +236,13 @@ const useDataTable = (page: number) => {
         (async () => {
             toggleLoading();
 
-            const [schema, documents] = await Promise.all([
+            const [schema,collectionData, documents] = await Promise.all([
                 getDocumentSchema({
                     database: databaseId as string,
                     collection,
                 }),
+
+                getCollection(collection),
 
                 getData(databaseId as string, collection, page),
             ]);
@@ -246,6 +251,8 @@ const useDataTable = (page: number) => {
 
             if (schema) {
                 setColumns(schema);
+
+                setPublishedState(collectionData.metadata.status);
 
                 setData(documents.data);
                 setOriginalData(documents.data);
@@ -257,6 +264,7 @@ const useDataTable = (page: number) => {
     return {
         table,
         data,
+        publishedState,
         count,
         columns,
         removeRow,

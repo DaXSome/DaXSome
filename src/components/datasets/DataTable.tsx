@@ -24,13 +24,22 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import useDataTable from '@/hooks/useDatatable';
 import { useSearchParams } from 'next/navigation';
+import { Badge } from '../ui/badge';
+import clsx from 'clsx';
 
 export function DataTable() {
     const searchParams = useSearchParams();
     const currentPage = parseInt(searchParams.get('page') || '0')
 
-    const { data, table, count, handleFileUpload, addRow, save } =
-        useDataTable(currentPage);
+    const {
+        data,
+        publishedState,
+        table,
+        count,
+        handleFileUpload,
+        addRow,
+        save,
+    } = useDataTable(currentPage);
 
     const { toast } = useToast();
 
@@ -65,6 +74,16 @@ export function DataTable() {
             />
 
             <div className="w-full flex justify-end gap-3 mb-4">
+                <Badge
+                    className={clsx(
+                        'text-white',
+                        publishedState === 'Unpublished' && 'bg-yellow-500',
+                        publishedState === 'Published' && 'bg-green-500',
+                        publishedState === 'Pending' && 'bg-gray-500'
+                    )}
+                >
+                    {publishedState}
+                </Badge>
                 <Button
                     onClick={() => fileInputRef.current?.click()}
                     variant={'outline'}
@@ -156,7 +175,7 @@ export function DataTable() {
                             return (
                                 <PaginationItem key={page}>
                                     <PaginationLink
-                                        href={generatePaginationLink(page-1)}
+                                        href={generatePaginationLink(page - 1)}
                                         className={
                                             page === currentPage + 1
                                                 ? 'font-bold text-blue-500'
@@ -182,7 +201,7 @@ export function DataTable() {
                         return null;
                     })}
 
-                    {currentPage+1 < totalPages && (
+                    {currentPage + 1 < totalPages && (
                         <PaginationItem>
                             <PaginationNext
                                 href={generatePaginationLink(currentPage + 1)}
