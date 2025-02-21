@@ -26,6 +26,7 @@ import useDataTable from '@/hooks/useDatatable';
 import { useSearchParams } from 'next/navigation';
 import { Badge } from '../ui/badge';
 import clsx from 'clsx';
+import { TOUR_STEP_IDS } from '@/lib/tour-constants';
 
 export function DataTable() {
     const searchParams = useSearchParams();
@@ -75,6 +76,7 @@ export function DataTable() {
 
             <div className="w-full flex justify-end gap-3 mb-4">
                 <Badge
+                    id={TOUR_STEP_IDS.PUBLISHED_STATE}
                     className={clsx(
                         'text-white',
                         publishedState === 'Unpublished' && 'bg-yellow-500',
@@ -85,6 +87,7 @@ export function DataTable() {
                     {publishedState}
                 </Badge>
                 <Button
+                    id={TOUR_STEP_IDS.IMPORT_FILE}
                     onClick={() => fileInputRef.current?.click()}
                     variant={'outline'}
                 >
@@ -99,6 +102,7 @@ export function DataTable() {
                     <Plus /> Add row
                 </Button>
                 <Button
+                    id={TOUR_STEP_IDS.SAVE_CHANGES}
                     className="font-semibold text-slate-50"
                     variant={'secondary'}
                     onClick={handleSave}

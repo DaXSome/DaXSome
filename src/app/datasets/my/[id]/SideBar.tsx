@@ -15,6 +15,7 @@ import { useState } from 'react';
 import EditDatabaseModal from '@/components/datasets/EditDatabaseModal';
 import clsx from 'clsx';
 import { useLoadingStore } from '@/states/app';
+import { TOUR_STEP_IDS } from '@/lib/tour-constants';
 
 interface Props {
     collections: Collection[];
@@ -49,12 +50,12 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
         if (confirm('Are you sure?')) {
             toast({ title: 'Dropping collection' });
 
-                        toggleLoading();  
+            toggleLoading();
 
             await dropCollection(id);
             toast({ title: 'Dropped collection' });
 
-                                    toggleLoading();  
+            toggleLoading();
 
             router.refresh();
         }
@@ -66,7 +67,10 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
 
     return (
         <nav className="w-full h-full bg-gray-50 max-w-[300px] flex flex-col rounded-md overflow-hidden">
-            <h1 className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100 flex gap-4 items-center overflow-hidden whitespace-nowrap text-ellipsis">
+            <h1
+                id={TOUR_STEP_IDS.DATABASE_EDITOR}
+                className="font-semibold text-2xl bg-slate-800 py-4 px-2 text-slate-100 flex gap-4 items-center overflow-hidden whitespace-nowrap text-ellipsis"
+            >
                 <span className="truncate">{database?.name}</span>
                 <span>
                     <Pencil onClick={handleDbEdit} />
@@ -85,7 +89,10 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
                     <h4 className="font-semibold text-slate-800">
                         {collections.length} Collections
                     </h4>
-                    <Button onClick={handleAddCollectionModal}>
+                    <Button
+                        id={TOUR_STEP_IDS.ADD_NEW_COLLECTION}
+                        onClick={handleAddCollectionModal}
+                    >
                         <Plus className="text-slate-50" />
                     </Button>
                 </div>
@@ -103,7 +110,7 @@ export function AppSidebar({ collections, database, toggleModal }: Props) {
                     >
                         {collection.name}
                         <Popover>
-                            <PopoverTrigger>
+                            <PopoverTrigger id={TOUR_STEP_IDS.COLLECTION_EDITOR}>
                                 <MoreVertical className="w-5 h-5 text-gray-600" />
                             </PopoverTrigger>
                             <PopoverContent className="flex gap-4 w-40">
