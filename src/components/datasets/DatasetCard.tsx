@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Card,
     CardHeader,
@@ -10,14 +12,20 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DatasetInfo } from '@/types';
+import { sendGAEvent } from '@next/third-parties/google';
 
 const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
     const metadata = dataset.metadata!;
 
     const isPending = metadata?.status === 'Pending';
 
+    const handleAnal = () => {
+        sendGAEvent({ event: 'ds_view', value: dataset?.metadata.title });
+    };
+
     return (
         <Link
+            onClick={handleAnal}
             key={dataset._id}
             href={
                 isPending
