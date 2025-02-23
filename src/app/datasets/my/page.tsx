@@ -18,7 +18,7 @@ const Page = async () => {
                         <CreateDatabaseButton />
                     </h1>
 
-                    <div className="w-full max-w-7xl h-full flex place-items-center justify-center p-8 px-16 rounded-md shadow-sm bg-gray-50">
+                    <div className="w-full max-w-7xl h-full flex place-items-center justify-center p-8 px-16">
                         {databases && databases.length == 0 ? (
                             <div className="w-full flex flex-col place-items-center justify-center gap-3">
                                 <div className="flex flex-col gap-2 justify-center place-items-center">
