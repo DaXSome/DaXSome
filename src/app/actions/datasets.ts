@@ -61,6 +61,42 @@ export async function getDatasets(category: string | null) {
 }
 
 /**
+ * Retrieve 4 recent datasets as featured datasets
+ * @returns An object with two properties: `datasets`, an array of `DatasetMeta`s,
+ */
+export async function getFeaturedDatasets() {
+    await connectToDb();
+
+    let datasets = await CollectionModel.find(
+        {
+            'metadata.status': 'Published',
+        },
+        {},
+        { limit: 4, sort: { updatedAt: -1 } }
+    );
+
+    const users = await Promise.all(
+        datasets.map((dataset) => getUser(dataset.user_id))
+    );
+
+    datasets = datasets.map((dataset, index) => {
+        const plainDataset = dataset.toObject();
+
+        const fullDataset = {
+            ...plainDataset,
+            database: plainDataset.database.toString(),
+            _id: plainDataset._id.toString(),
+            user: users[index],
+        };
+
+        return fullDataset as unknown as DatasetInfo;
+    });
+
+
+    return datasets
+}
+
+/**
  * Retrieve a dataset by its name.
  * @param name The name of the dataset to retrieve.
  * @returns The dataset in the format of `DatasetInfo` or `null` if the dataset does not exist.
@@ -155,10 +191,10 @@ export const saveData = async ({
 
     const filename = `${hostname}/${user.id}/${database}/${collection}-${Date.now()}.csv`;
 
-const sanitizedData = data.map(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ({ database, collection, user_id, _id, ...rest }) => rest
-);
+    const sanitizedData = data.map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ database, collection, user_id, _id, ...rest }) => rest
+    );
 
     await Promise.all([
         ...data.map((d) =>

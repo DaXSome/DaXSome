@@ -1,10 +1,10 @@
-import { getDatasets } from "@/app/actions/datasets";
+import { getFeaturedDatasets } from "@/app/actions/datasets";
 import DatasetCard from "../datasets/DatasetCard";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const FeaturedDatasets = async () => {
-  const { datasets } = await getDatasets(null);
+  const datasets = await getFeaturedDatasets()
 
   return (
     <section className="py-16 bg-white">
