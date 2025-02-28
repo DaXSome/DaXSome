@@ -1,5 +1,5 @@
 'use client';
-import { Import, Plus, Save } from 'lucide-react';
+import { Import, Plus, Save, TrashIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { flexRender } from '@tanstack/react-table';
@@ -39,6 +39,7 @@ export function DataTable() {
         count,
         handleFileUpload,
         addRow,
+        removeRow,
         save,
     } = useDataTable(currentPage);
 
@@ -101,15 +102,6 @@ export function DataTable() {
                     {' '}
                     <Plus /> Add row
                 </Button>
-                <Button
-                    id={TOUR_STEP_IDS.SAVE_CHANGES}
-                    className="font-semibold text-slate-50"
-                    variant={'secondary'}
-                    onClick={handleSave}
-                >
-                    {' '}
-                    <Save /> Save
-                </Button>
             </div>
 
             <div className="rounded-md border">
@@ -132,9 +124,9 @@ export function DataTable() {
                                 </TableRow>
                             ))}
                         </TableHeader>
-                        <TableBody>
+                        <TableBody key={data.length}>
                             {table.getRowModel().rows?.length &&
-                                table.getRowModel().rows.map((row) => (
+                                table.getRowModel().rows.map((row, index) => (
                                     <TableRow
                                         key={row.id}
                                         data-state={
@@ -149,12 +141,18 @@ export function DataTable() {
                                                 )}
                                             </TableCell>
                                         ))}
+
+                                                                                    <TableCell >
+                                            <TrashIcon onClick={() => removeRow(index)} className="text-red-500" />
+                                            </TableCell>
+
                                     </TableRow>
                                 ))}
                         </TableBody>
                     </Table>
                 )}
             </div>
+            <div className='flex mt-2'>
             <Pagination>
                 <PaginationContent>
                     {currentPage > 1 && (
@@ -211,9 +209,22 @@ export function DataTable() {
                                 href={generatePaginationLink(currentPage + 1)}
                             />
                         </PaginationItem>
+
                     )}
                 </PaginationContent>
             </Pagination>
+
+                            <Button
+                    id={TOUR_STEP_IDS.SAVE_CHANGES}
+                    className="font-semibold text-slate-50"
+                    variant={'secondary'}
+                    onClick={handleSave}
+                >
+                    {' '}
+                    <Save /> Save
+                </Button>
+
+        </div>
         </div>
     );
 }
