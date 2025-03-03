@@ -1,5 +1,18 @@
 [
     {
+        "version": "2.1.0",
+        "date": "2025-02-25",
+        "changes": [
+            "Rearrange datatable buttons to improve UX",
+            "Use recents datasets as on landing page",
+            "Fixed unnecessary gray background for created datasets",
+            "Add dataset view analytics",
+            "Add first time tour",
+            "Validate fields for collections",
+            "Added dataset published status"
+        ]
+    },
+    {
         "version": "2.0.0",
         "date": "2025-02-17",
         "changes": [

@@ -30,29 +30,22 @@ import {
 import { useUser } from '@clerk/nextjs';
 import { DocumentSchema } from '@/backend/models/schema';
 import { Textarea } from '../ui/textarea';
-import { Collection } from '@/backend/models/collections';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { readFile, supportedDataTypes } from '@/utils';
 import { useLoadingStore } from '@/states/app';
-
-interface FieldType {
-    name: string;
-    type: DocumentSchema['schema'][number]['type'];
-}
-
-interface FormValues {
-    name: string;
-    fields: FieldType[];
-    metadata: Collection['metadata'] & {
-        currentTag?: string;
-    };
-}
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface Props {
     open: boolean;
     closeModal: () => void;
 }
+
+const ErrorMessage = ({ message }: { message?: string }) => {
+    if (!message) return null;
+    return <p className="text-red-500 text-sm">{message}</p>;
+};
 
 const AddCollectionModal = ({ open, closeModal }: Props) => {
     const searchParams = useSearchParams();
@@ -62,28 +55,52 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
     const { toast } = useToast();
     const router = useRouter();
- 
+
     const { toggleLoading } = useLoadingStore();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const { register, control, handleSubmit, setValue, watch } =
-        useForm<FormValues>({
-            defaultValues: {
-                name: '',
-                fields: [],
-                metadata: {
-                    title: '',
-                    description: '',
-                    tags: [],
-                    currentTag: '',
-                    category: '',
-                    access_type: 'Free',
-                    full_description: '',
-                    status: 'Unpublished',
-                },
+    const formSchema = z.object({
+        name: z.string().min(1, 'Name is required'),
+        fields: z.array(z.any()),
+        metadata: z.object({
+            title: z.string().min(1, 'Title is required'),
+            description: z.string(),
+            tags: z.array(z.string()),
+            currentTag: z.string().optional(),
+            category: z.string().min(1, 'Category is required'),
+            access_type: z.enum(['Free', 'Paid']),
+            full_description: z.string(),
+            status: z.enum(['Unpublished', 'Published', 'Pending']),
+        }),
+    });
+
+    type FormValues = z.infer<typeof formSchema>;
+
+    const {
+        register,
+        control,
+        handleSubmit,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: '',
+            fields: [],
+            metadata: {
+                title: '',
+                description: '',
+                tags: [],
+                currentTag: '',
+                category: '',
+                access_type: 'Free',
+                full_description: '',
+                status: 'Unpublished',
             },
-        });
+        },
+    });
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -125,7 +142,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         closeModal();
 
-        toggleLoading()
+        toggleLoading();
 
         delete data.metadata.currentTag;
 
@@ -150,10 +167,9 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
 
         toast({ title: 'Saved collection' });
 
-        toggleLoading()
+        toggleLoading();
 
         router.push(`?col=${colId}`);
-
     };
 
     const handleFileImport = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -331,6 +347,9 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                     })}
                                     placeholder="Enter title (e.g., 2024 Births)"
                                 />
+                                <ErrorMessage
+                                    message={errors.metadata?.title?.message}
+                                />
                             </div>
 
                             <div>
@@ -338,8 +357,15 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                     Description
                                 </label>
                                 <Input
-                                    {...register('metadata.description')}
+                                    {...register('metadata.description', {
+                                        required: 'Description is required',
+                                    })}
                                     placeholder="Short description (e.g., Collection of e-commerce data)"
+                                />
+                                <ErrorMessage
+                                    message={
+                                        errors.metadata?.description?.message
+                                    }
                                 />
                             </div>
 
@@ -383,8 +409,13 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                     Category
                                 </label>
                                 <Input
-                                    {...register('metadata.category')}
+                                    {...register('metadata.category', {
+                                        required: 'Category is required',
+                                    })}
                                     placeholder="Enter category (e.g., Machine Learning)"
+                                />
+                                <ErrorMessage
+                                    message={errors.metadata?.category?.message}
                                 />
                             </div>
 
@@ -413,6 +444,11 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
+                                <ErrorMessage
+                                    message={
+                                        errors.metadata?.access_type?.message
+                                    }
+                                />
                             </div>
 
                             <div>
@@ -420,8 +456,17 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                     Full Description
                                 </label>
                                 <Textarea
-                                    {...register('metadata.full_description')}
+                                    {...register('metadata.full_description', {
+                                        required:
+                                            'Full description is required',
+                                    })}
                                     placeholder="Detailed description of the dataset or content."
+                                />
+                                <ErrorMessage
+                                    message={
+                                        errors.metadata?.full_description
+                                            ?.message
+                                    }
                                 />
                             </div>
 
@@ -453,6 +498,9 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
+                                <ErrorMessage
+                                    message={errors.metadata?.status?.message}
+                                />
                             </div>
                         </TabsContent>
                     </Tabs>

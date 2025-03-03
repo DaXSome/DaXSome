@@ -1,15 +1,11 @@
 import {
     deleteDocument,
+    getCollection,
     getData,
     getDocumentSchema,
     saveData,
 } from '@/app/actions/datasets';
-import {
-    ContextMenu,
-    ContextMenuContent,
-    ContextMenuItem,
-    ContextMenuTrigger,
-} from '@/components/ui/context-menu';
+import { Collection } from '@/backend/models/collections';
 import { Input } from '@/components/ui/input';
 import { useLoadingStore } from '@/states/app';
 import { readFile } from '@/utils';
@@ -35,6 +31,7 @@ const useDataTable = (page: number) => {
     >([]);
 
     const [data, setData] = useState<Data[]>([]);
+    const [publishedState, setPublishedState] = useState<Collection["metadata"]["status"]>()
     const [originalData, setOriginalData] = useState<Data[]>([]);
     const [count, setCount] = useState(0);
 
@@ -165,33 +162,22 @@ const useDataTable = (page: number) => {
         }, [initialValue]);
 
         return (
-            <ContextMenu>
-                <ContextMenuContent>
-                    <ContextMenuItem onClick={addRow}>Add row</ContextMenuItem>
-                    <ContextMenuItem onClick={() => removeRow(row.index)}>
-                        Remove row
-                    </ContextMenuItem>
-                </ContextMenuContent>
-                <ContextMenuTrigger>
-                    <Input
-                        style={{
-                            borderColor:
-                                initialValue !== value ? 'yellow' : 'gray',
-                            borderWidth: initialValue !== value ? '5px' : '1px',
-                        }}
-                        type={columnMeta?.type === 'number' ? 'number' : 'text'}
-                        value={value as string}
-                        onChange={(e) =>
-                            setValue(
-                                columnMeta?.type === 'number'
-                                    ? Number.parseFloat(e.target.value)
-                                    : e.target.value
-                            )
-                        }
-                        onBlur={onBlur}
-                    />
-                </ContextMenuTrigger>
-            </ContextMenu>
+            <Input
+                style={{
+                    borderColor: initialValue !== value ? 'yellow' : 'gray',
+                    borderWidth: initialValue !== value ? '5px' : '1px',
+                }}
+                type={columnMeta?.type === 'number' ? 'number' : 'text'}
+                value={value as string}
+                onChange={(e) =>
+                    setValue(
+                        columnMeta?.type === 'number'
+                            ? Number.parseFloat(e.target.value)
+                            : e.target.value
+                    )
+                }
+                onBlur={onBlur}
+            />
         );
     });
 
@@ -233,11 +219,13 @@ const useDataTable = (page: number) => {
         (async () => {
             toggleLoading();
 
-            const [schema, documents] = await Promise.all([
+            const [schema,collectionData, documents] = await Promise.all([
                 getDocumentSchema({
                     database: databaseId as string,
                     collection,
                 }),
+
+                getCollection(collection),
 
                 getData(databaseId as string, collection, page),
             ]);
@@ -246,6 +234,8 @@ const useDataTable = (page: number) => {
 
             if (schema) {
                 setColumns(schema);
+
+                setPublishedState(collectionData.metadata.status);
 
                 setData(documents.data);
                 setOriginalData(documents.data);
@@ -257,6 +247,7 @@ const useDataTable = (page: number) => {
     return {
         table,
         data,
+        publishedState,
         count,
         columns,
         removeRow,
