@@ -13,7 +13,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'embedding-001' });
 
 const embeddingSchema = new mongoose.Schema({
-    dataset_id: mongoose.Schema.Types.ObjectId,
+    collection: mongoose.Schema.Types.ObjectId,
     model: String,
     embedding: [Number],
     created_at: { type: Date, default: Date.now },
@@ -59,10 +59,12 @@ async function processDatasets() {
 
     for (const dataset of datasets) {
         if (!dataset.collection) continue;
-
+        
         const metadata = dataset.collection.metadata;
 
-        const exists = await Embedding.findOne({ dataset_id: dataset._id });
+        const exists = await Embedding.findOne({
+            collection: dataset.collection._id,
+        });
 
         if (exists) {
             console.log(
@@ -72,7 +74,6 @@ async function processDatasets() {
         }
 
         console.log(`🔹 Generating embedding for: ${metadata.title}`);
-
 
         const schemaSummary = dataset.schema
             .map((s) => `${s.name} (${s.type})`)
@@ -90,11 +91,11 @@ async function processDatasets() {
 
         if (embedding) {
             await Embedding.create({
-                dataset_id: dataset._id,
+                collection: dataset.collection._id,
                 model: 'gemini-embedding-001',
                 embedding,
             });
-            console.log(`✅ Saved embedding for '${dataset.title}'`);
+            console.log(`✅ Saved embedding for '${metadata.title}'`);
         }
     }
 
