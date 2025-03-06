@@ -16,6 +16,11 @@ import { uploadFile } from './storage';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { EmbeddingsModel } from '@/backend/models/embedding';
 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY!;
+
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'embedding-001' });
+
 /**
  * Retrieve all datasets, optionally filtered by a category.
  * @param category The category to filter by, or null/undefined for all datasets.
@@ -422,18 +427,35 @@ export const createCollecion = async (
 
     const slug = parseDatasetSlug(`${data.metadata?.title} ${user.username}`);
 
+    let finalColId: string;
+
     if (!colId) {
         const collection = await CollectionModel.create({ ...data, slug });
 
-        return collection.id;
+        finalColId = collection.id;
     } else {
         await CollectionModel.updateOne(
             { _id: colId },
             { $set: { ...data, slug } }
         );
 
-        return colId;
+        finalColId = colId;
     }
+
+    const metadata = data.metadata;
+
+    if (metadata) {
+        const textToEmbed = `
+            ${metadata.title}.
+            ${metadata.description || ''}.
+            ${metadata.full_description || ''}.
+            Tags: ${metadata.tags?.join(', ') || ''}.
+        `.trim();
+
+        await saveEmbedding({ collection: finalColId, text: textToEmbed });
+    }
+
+    return finalColId;
 };
 
 /**
@@ -499,6 +521,61 @@ export const getCollection = async (id: string) => {
         ...plainObj,
         _id: plainObj._id.toString(),
     };
+};
+
+/**
+ * Saves an embedding for the given text within a specified collection.
+ *
+ * This function retrieves the document schema for the collection, appends a schema
+ * summary to the text, generates an embedding using the model, and stores it in the
+ * EmbeddingsModel.
+ *
+ * @param {Object} params - The parameters for saving the embedding.
+ * @param {string} params.text - The text content to embed.
+ * @param {string} params.collection - The name of the collection associated with the embedding.
+ * @returns {Promise<void>} Resolves when the embedding is saved, or exits early if no schema is found.
+ */
+export const saveEmbedding = async ({
+    text,
+    collection,
+}: {
+    text: string;
+    collection: string;
+}) => {
+    const documentSchema = await DocumentSchemaModel.findOne<DocumentSchema>({
+        collection,
+    });
+
+    if (!documentSchema) return;
+
+    const schemaSummary = documentSchema.schema
+        .map((s) => `${s.name} (${s.type})`)
+        .join(', ');
+
+    text = `${text}
+            Schema: ${schemaSummary}.
+    `.trim();
+
+    const result = await model.embedContent({
+        content: {
+            role: 'user',
+            parts: [{ text }],
+        },
+    });
+
+    const embedding = result.embedding.values;
+
+    await EmbeddingsModel.findOneAndUpdate(
+        {
+            collection,
+        },
+        {
+            collection,
+            model: 'gemini-embedding-001',
+            embedding,
+        },
+        { upsert: true }
+    );
 };
 
 /**
