@@ -443,6 +443,7 @@ export const createCollecion = async (
         );
 
         finalColId = colId;
+        finalColId = colId;
     }
 
     await IndexForSearch(finalColId, data.metadata);
