@@ -13,6 +13,14 @@ import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
 import { jsonToCsv, parseDatasetSlug } from '@/utils';
 import { uploadFile } from './storage';
+import { algoliasearch } from 'algoliasearch';
+
+const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
+const ALGOLIA_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!;
+
+const algoliaIndex = 'datasets';
+
+const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY);
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -92,8 +100,7 @@ export async function getFeaturedDatasets() {
         return fullDataset as unknown as DatasetInfo;
     });
 
-
-    return datasets
+    return datasets;
 }
 
 /**
@@ -421,18 +428,27 @@ export const createCollecion = async (
 
     const slug = parseDatasetSlug(`${data.metadata?.title} ${user.username}`);
 
+    let finalColId: string;
+
     if (!colId) {
         const collection = await CollectionModel.create({ ...data, slug });
 
-        return collection.id;
+        finalColId = collection.id;
     } else {
         await CollectionModel.updateOne(
             { _id: colId },
             { $set: { ...data, slug } }
         );
 
-        return colId;
+        finalColId = colId;
+        finalColId = colId;
     }
+
+    if (data.metadata?.status === 'Published') {
+        await IndexForSearch(finalColId, data);
+    }
+
+    return finalColId;
 };
 
 /**
@@ -499,3 +515,25 @@ export const getCollection = async (id: string) => {
         _id: plainObj._id.toString(),
     };
 };
+
+/**
+ * Indexes data for search in Algolia.
+ *
+ * @param {string} id - The collection ID
+ * @param {CreateCollectionData} data - The metadata to index.
+ * @returns {Promise<void>} A promise that resolves when indexing is complete.
+ */
+const IndexForSearch = async (id: string, data: CreateCollectionData) => {
+    if (!data) return;
+
+    const { taskID } = await algoliaClient.saveObject({
+        indexName: algoliaIndex,
+        body: { ...data, objectID: id },
+    });
+
+    await algoliaClient.waitForTask({
+        indexName: algoliaIndex,
+        taskID,
+    });
+};
+

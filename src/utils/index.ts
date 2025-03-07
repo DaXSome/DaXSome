@@ -1,4 +1,12 @@
+import { algoliasearch } from 'algoliasearch';
 import Papa from 'papaparse';
+
+
+export const searchClient = algoliasearch(
+  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+  process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!,
+);
+
 
 /**
  * Given a dataset name, return the slug version of the name. This is done by replacing all spaces with underscores.
