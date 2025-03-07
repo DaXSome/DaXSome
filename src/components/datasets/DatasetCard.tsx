@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
     Card,
@@ -13,15 +13,39 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DatasetInfo } from '@/types';
 import { sendGAEvent } from '@next/third-parties/google';
+import { useEffect, useState } from 'react';
+import { getUser } from '@/app/actions/user';
+import Loader from '../Loader';
+import { parseDatasetSlug } from '@/utils';
 
 const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
     const metadata = dataset.metadata!;
 
     const isPending = metadata?.status === 'Pending';
 
+    const [user, setUser] = useState(dataset.user);
+    const [isLoading, setIsLoading] = useState(true);
+
     const handleAnal = () => {
         sendGAEvent({ event: 'ds_view', value: dataset?.metadata.title });
     };
+
+    useEffect(() => {
+        (async () => {
+            if (user) {
+                setIsLoading(false);
+                return;
+            }
+
+            const userData = await getUser(dataset.user_id);
+
+            setUser(userData);
+
+            setIsLoading(false);
+        })();
+    }, []);
+
+    if (isLoading) return <Loader />;
 
     return (
         <Link
@@ -30,9 +54,9 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
             href={
                 isPending
                     ? '#'
-                    : `/datasets/@${dataset.user.username}/${dataset.slug}`
+                    : `/datasets/@${user.username}/${parseDatasetSlug(`${dataset.metadata?.title} ${user.username}`)}`
             }
-            className="h-full"
+            className="flex  h-full"
         >
             <Card className="border-primary h-full flex flex-col">
                 <CardHeader>
@@ -58,13 +82,11 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
 
                     <div className="flex gap-2 items-center">
                         <Avatar>
-                            <AvatarImage src={dataset.user.avatar} />
-                            <AvatarFallback>
-                                {dataset.user.username}
-                            </AvatarFallback>
+                            <AvatarImage src={user.avatar} />
+                            <AvatarFallback>{user.username}</AvatarFallback>
                         </Avatar>
 
-                        <p>@{dataset.user.username}</p>
+                        <p>@{user.username}</p>
                     </div>
                 </CardFooter>
             </Card>

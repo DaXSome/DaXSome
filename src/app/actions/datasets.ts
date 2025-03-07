@@ -17,8 +17,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { EmbeddingsModel } from '@/backend/models/embedding';
 import { algoliasearch } from 'algoliasearch';
 
-const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID!;
-const ALGOLIA_API_KEY = process.env.ALGOLIA_API_KEY!;
+const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
+const ALGOLIA_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!;
 
 const algoliaIndex = 'datasets';
 
@@ -446,7 +446,9 @@ export const createCollecion = async (
         finalColId = colId;
     }
 
-    await IndexForSearch(finalColId, data.metadata);
+    if (data.metadata?.status === 'Published') {
+        await IndexForSearch(finalColId, data);
+    }
 
     return finalColId;
 };
@@ -520,16 +522,11 @@ export const getCollection = async (id: string) => {
  * Indexes data for search in Algolia.
  *
  * @param {string} id - The collection ID
- * @param {Partial<CreateCollectionData['metadata']>} data - The metadata to index.
+ * @param {CreateCollectionData} data - The metadata to index.
  * @returns {Promise<void>} A promise that resolves when indexing is complete.
  */
-const IndexForSearch = async (
-    id: string,
-    data: Partial<CreateCollectionData['metadata']>
-) => {
+const IndexForSearch = async (id: string, data: CreateCollectionData) => {
     if (!data) return;
-
-    delete data.status;
 
     const { taskID } = await algoliaClient.saveObject({
         indexName: algoliaIndex,
