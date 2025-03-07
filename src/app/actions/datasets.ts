@@ -15,6 +15,14 @@ import { jsonToCsv, parseDatasetSlug } from '@/utils';
 import { uploadFile } from './storage';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { EmbeddingsModel } from '@/backend/models/embedding';
+import { algoliasearch } from 'algoliasearch';
+
+const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID!;
+const ALGOLIA_API_KEY = process.env.ALGOLIA_API_KEY!;
+
+const algoliaIndex = 'datasets';
+
+const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY);
 
 /**
  * Retrieve all datasets, optionally filtered by a category.
@@ -422,18 +430,24 @@ export const createCollecion = async (
 
     const slug = parseDatasetSlug(`${data.metadata?.title} ${user.username}`);
 
+    let finalColId: string;
+
     if (!colId) {
         const collection = await CollectionModel.create({ ...data, slug });
 
-        return collection.id;
+        finalColId = collection.id;
     } else {
         await CollectionModel.updateOne(
             { _id: colId },
             { $set: { ...data, slug } }
         );
 
-        return colId;
+        finalColId = colId;
     }
+
+    await IndexForSearch(finalColId, data.metadata);
+
+    return finalColId;
 };
 
 /**
@@ -499,6 +513,32 @@ export const getCollection = async (id: string) => {
         ...plainObj,
         _id: plainObj._id.toString(),
     };
+};
+
+/**
+ * Indexes data for search in Algolia.
+ *
+ * @param {string} id - The collection ID
+ * @param {Partial<CreateCollectionData['metadata']>} data - The metadata to index.
+ * @returns {Promise<void>} A promise that resolves when indexing is complete.
+ */
+const IndexForSearch = async (
+    id: string,
+    data: Partial<CreateCollectionData['metadata']>
+) => {
+    if (!data) return;
+
+    delete data.status;
+
+    const { taskID } = await algoliaClient.saveObject({
+        indexName: algoliaIndex,
+        body: { ...data, objectID: id },
+    });
+
+    await algoliaClient.waitForTask({
+        indexName: algoliaIndex,
+        taskID,
+    });
 };
 
 /**
