@@ -13,8 +13,6 @@ import { Database, DatabaseModel } from '@/backend/models/databases';
 import { DocumentSchema, DocumentSchemaModel } from '@/backend/models/schema';
 import { jsonToCsv, parseDatasetSlug } from '@/utils';
 import { uploadFile } from './storage';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { EmbeddingsModel } from '@/backend/models/embedding';
 import { algoliasearch } from 'algoliasearch';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
@@ -539,65 +537,3 @@ const IndexForSearch = async (id: string, data: CreateCollectionData) => {
     });
 };
 
-/**
- * Performs an NLP-based search using an embedding model.
- *
- * @param {string} prompt - The search query input by the user.
- * @returns {Promise<DatasetInfo[]>} - A promise that resolves to an array of dataset information.
- */
-export const NLPSearch = async (prompt: string) => {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-
-    const model = genAI.getGenerativeModel({ model: 'embedding-001' });
-
-    const result = await model.embedContent({
-        content: {
-            role: 'user',
-            parts: [{ text: prompt }],
-        },
-    });
-
-    const embedding = result.embedding.values;
-
-    const results = await EmbeddingsModel.aggregate([
-        {
-            $vectorSearch: {
-                index: 'collection_embeddings_index',
-                path: 'embedding',
-                queryVector: embedding,
-                numCandidates: 100,
-                limit: 10,
-            },
-        },
-        {
-            $lookup: {
-                from: 'collections',
-                localField: 'collection',
-                foreignField: '_id',
-                as: 'collection',
-            },
-        },
-        {
-            $unwind: '$collection',
-        },
-    ]);
-
-    const collections = results.map((res) => res.collection);
-
-    const users = await Promise.all(
-        collections.map((dataset) => getUser(dataset.user_id))
-    );
-
-    const datasets = collections.map((dataset, index) => {
-        const fullDataset = {
-            ...dataset,
-            database: dataset.database.toString(),
-            _id: dataset._id.toString(),
-            user: users[index],
-        };
-
-        return fullDataset as unknown as DatasetInfo;
-    });
-
-    return datasets;
-};
