@@ -56,7 +56,6 @@ const DatasetCard = ({ dataset }: { dataset: DatasetInfo }) => {
                     ? '#'
                     : `/datasets/@${user.username}/${parseDatasetSlug(`${dataset.metadata?.title} ${user.username}`)}`
             }
-            className="flex  h-full"
         >
             <Card className="border-primary h-full flex flex-col">
                 <CardHeader>
