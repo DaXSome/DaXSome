@@ -8,7 +8,6 @@ import {
     Pagination,
     Stats,
 } from 'react-instantsearch';
-import Logo from '@/components/Logo';
 import 'instantsearch.css/themes/satellite.css';
 import { useSearchParams } from 'next/navigation';
 import { searchClient } from '@/utils';

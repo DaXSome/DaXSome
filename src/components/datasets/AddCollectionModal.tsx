@@ -36,6 +36,7 @@ import { readFile, supportedDataTypes } from '@/utils';
 import { useLoadingStore } from '@/states/app';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import mongoose from 'mongoose';
 
 interface Props {
     open: boolean;
@@ -159,7 +160,7 @@ const AddCollectionModal = ({ open, closeModal }: Props) => {
         );
 
         await createDocumentSchema({
-            collection: colId,
+            collection: colId as unknown as mongoose.Types.ObjectId,
             user_id: user.id,
             database: id as string,
             schema: data.fields,
