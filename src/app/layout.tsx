@@ -9,6 +9,8 @@ import Navbar from '@/components/layout/Navbar';
 import { Toaster } from '@/components/ui/toaster';
 import Loader from '@/components/Loader';
 import { TourProvider } from '@/components/tour';
+import { Analytics } from '@vercel/analytics/next';
+import { Fragment } from 'react';
 
 const geistSans = localFont({
     src: './fonts/GeistVF.woff',
@@ -51,10 +53,12 @@ export default function RootLayout({
                     <Footer />
                 </body>
 
-                {typeof window !== 'undefined' &&
-                    window.location.hostname === 'daxsome.org' && (
+                {process.env.NODE_ENV === 'production' && (
+                    <Fragment>
                         <GoogleAnalytics gaId="G-BG5DCFML0B" />
-                    )}
+                        <Analytics />
+                    </Fragment>
+                )}
             </html>
         </ClerkProvider>
     );
