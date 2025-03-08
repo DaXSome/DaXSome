@@ -196,17 +196,10 @@ export const saveData = async ({
 
     if (!user) return;
 
-    const filename = `${hostname}/${user.id}/${database}/${collection}-${Date.now()}.csv`;
-
-    const sanitizedData = data.map(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ({ database, collection, user_id, _id, ...rest }) => rest
-    );
-
     await Promise.all([
-        ...data.map((d) =>
+        ...data.map(({ _id, ...d }) =>
             DocumentModel.findOneAndUpdate(
-                { _id: d._id || new mongoose.Types.ObjectId() },
+                { _id: _id || new mongoose.Types.ObjectId() },
                 {
                     database,
                     collection,
@@ -216,10 +209,20 @@ export const saveData = async ({
                 { upsert: true, strict: false }
             )
         ),
+    ]);
+
+    const allData = await DocumentModel.find({ database, collection });
+
+    const sanitizedData = allData.map((data) => data._doc.data);
+
+    const filename = `${hostname}/${user.id}/${database}/${collection}-${Date.now()}.csv`;
+
+    await Promise.all([
         uploadFile({
             csv: jsonToCsv(sanitizedData),
             filename,
         }),
+
         CollectionModel.updateOne(
             { _id: collection },
             {
@@ -362,9 +365,6 @@ export const getData = async (
 
     return {
         data: data.map((document) => ({
-            database: document.database.toString(),
-            collection: document.database.toString(),
-            user_id: document.user_id,
             _id: document._id.toString(),
             ...document.data,
         })) as Record<string, unknown>[],
@@ -536,4 +536,3 @@ const IndexForSearch = async (id: string, data: CreateCollectionData) => {
         taskID,
     });
 };
-
