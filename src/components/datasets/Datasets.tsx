@@ -7,12 +7,14 @@ import {
     Configure,
     Pagination,
     Stats,
+    useHits,
 } from 'react-instantsearch';
 import 'instantsearch.css/themes/satellite.css';
 import { useSearchParams } from 'next/navigation';
 import { searchClient } from '@/utils';
 import FacetSidebar from './search/FacetSidebar';
 import { SearchResultItem } from './search/SearchResultsItem';
+import { DatasetInfo } from '@/types';
 
 export default function Datasets() {
     const params = useSearchParams();
@@ -51,8 +53,10 @@ export default function Datasets() {
                             <div className="w-full md:ml-8">
                                 <Configure hitsPerPage={10} />
                                 <Stats />
+                                <div className="mb-4">
+                                    <CustomHits />
+                                </div>
 
-                                <Hits hitComponent={SearchResultItem} />
                                 <Pagination />
                             </div>
                         </main>
@@ -62,3 +66,15 @@ export default function Datasets() {
         </div>
     );
 }
+
+const CustomHits = () => {
+    const hits = useHits<DatasetInfo>();
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+            {hits.items.map((hit) => (
+                <SearchResultItem key={hit.objectID} hit={hit} />
+            ))}
+        </div>
+    );
+};

@@ -7,9 +7,5 @@ interface SearchResultItemProps {
 }
 
 export const SearchResultItem = ({ hit }: SearchResultItemProps) => {
-    return (
-        <div className="flex w-full">
-            <DatasetCard dataset={hit} />
-        </div>
-    );
+    return <DatasetCard dataset={hit} />;
 };
