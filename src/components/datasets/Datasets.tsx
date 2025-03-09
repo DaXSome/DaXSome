@@ -2,7 +2,6 @@
 
 import {
     InstantSearch,
-    Hits,
     SearchBox,
     Configure,
     Pagination,
